@@ -69,5 +69,8 @@ export const MapOptions: any = {
 * [Using the ArcGIS API for JavaScript in Applications built with webpack](http://tomwayson.com/2016/11/27/using-the-arcgis-api-for-javascript-in-applications-built-with-webpack/)
 * [Create Angular applications with a Webpack based tooling.](https://angular.io/docs/ts/latest/guide/webpack.html)
 
+## Notes
+Change 3rd party ng2-image-gallery node module with modified (see root directory) ng2-image-gallery version (for Angular 4.x release)  
+
 [Angular]:https://angular.io/
 [ArcGis API]:https://developers.arcgis.com/javascript/
