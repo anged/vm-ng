@@ -1,0 +1,270 @@
+import { Component, OnInit, Input, ElementRef, ViewChild  } from '@angular/core';
+import { ActivatedRoute, Params } from "@angular/router";
+
+import { MapService } from '../../map.service';
+import { MapDefaultService } from './map-default.service';
+import { ProjectsListService } from '../../projects-list/projects-list.service';
+import { SearchService } from '../../search/search.service';
+import { MapOptions } from '../../options';
+import { ProjectsListComponent } from '../../projects-list/projects-list.component';
+import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
+import { CreditsCompponent } from '../../map-widgets/credits.component';
+import { ProjectsGalleryComponent } from '../../gallery/projects-gallery.component';
+
+import watchUtils = require("esri/core/watchUtils");
+import on = require("dojo/on");
+import Bundle = require("dojo/i18n!esri/nls/common");
+
+import { FeatureQueryService } from '../../query/feature-query.service';
+import { IdentifyService } from '../../services/identify/identify.service';
+import { PointAddRemoveService } from '../../query/point-add-remove.service';
+
+import { Subscription } from 'rxjs/Subscription';
+
+@Component({
+  selector: 'esri-map-default',
+  templateUrl: './app/themes/default/map-default.component.html'
+})
+export class MapDefaultComponent implements OnInit {
+
+  //execution of an Observable,
+  subscription: Subscription;
+  queryUrlSubscription: Subscription;
+
+  queryParams: any;
+
+  map: any;
+  view: any;
+  search: any;
+  mobile: boolean;
+  featureLayers: any[];
+
+  mapListActive: number;
+  wordListActive: number;
+
+  helpContainerActive: boolean = false;
+  shareContainerActive: boolean = false;
+
+  //sharing url string
+  shareUrl: string;
+
+  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute) {
+    this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
+      (queryParam: any) => {
+        //console.log("URL Parametrai", queryParam);
+        return this.queryParams = queryParam
+      }
+    );
+  }
+
+  // toggle help container
+  helpOpen(e) {
+    this.helpContainerActive = !this.helpContainerActive;
+  }
+
+  select(e) {
+    e.target.select()
+  }
+  // toggle share container
+  shareToggle(e) {
+    //get share url
+    let currentZoom: number, currentCoordinates: number[];
+    currentZoom = this.view.zoom;
+    currentCoordinates = [this.view.center.x, this.view.center.y];
+    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1];
+    //console.log(this.shareUrl)
+    //console.log(window.location)
+
+    //toggle active state
+    this.shareContainerActive = !this.shareContainerActive;
+
+    //highlight selected input
+    if (this.shareContainerActive) {
+      setTimeout(() => {
+        if (document.getElementById("url-link")) {
+          document.getElementById("url-link").select();
+        }
+      }, 20);
+    }
+  }
+
+  initView(view) {
+    let urls = this.mapDefaultService.getUrls();
+    let identify = this.identify.identify(urls[0]);
+    let identifyParams = this.identify.identifyParams();
+    let count = 0;
+    view.popup.dockOptions = {
+      position: 'bottom-left'
+    };
+
+    //get projects when interacting with the view
+    watchUtils.whenTrue(view, "stationary", (b) => {
+      // Get the new extent of the view only when view is stationary.
+      if (view.extent) {
+        //this.getProjects(itvFeatureUrl, view.extent, sqlStr, count);
+        count += 1;
+      }
+    });
+
+    //console.log("VIEW", view.on)
+    view.on("pointer-move", (event) => {
+      //console.log("MOUSE event", event.native)
+    });
+
+    view.on("click", (event) => {
+      let visibleLayersIds: number[] = this.mapDefaultService.getVisibleLayersIds(view).reverse();
+      //identifyParams.layerIds = [999];
+      //console.log("V",
+      //  this.view.layerViews.items["0"].layer.allSublayers.items["0"].visible);
+      // console.log("VIEWS", this.view.layerViews);
+      // this.view.layerViews.map((layer)=>console.log(layer.layer.sublayers.items[0].layer.sublayers.items["0"].sublayers.items["0"].id));
+      view.popup.dockEnabled = false;
+      view.popup.dockOptions = {
+         // Disables the dock button from the popup
+         buttonEnabled: true,
+         // Ignore the default sizes that trigger responsive docking
+         breakpoint: false,
+         position: 'bottom-left'
+       }
+      identifyParams.geometry = event.mapPoint;
+      identifyParams.mapExtent = view.extent;
+      identifyParams.tolerance = 10;
+      identifyParams.width = view.width;
+      identifyParams.height = view.height;
+      identifyParams.layerOption = 'all';
+      identifyParams.layerIds = visibleLayersIds;
+      //console.log("identifyParams.layerIds", identifyParams.layerIds);
+      //console.log("identifyParams", identifyParams);
+      //setTimeout(()=>{
+      identify.execute(identifyParams).then((response) => {
+        let results = response.results;
+        return results.map((result) => {
+          let name = result.layerName;
+          let feature = result.feature;
+          feature.popupTemplate = {
+            title: `${name}`,
+            content: this.mapDefaultService.getVisibleLayersContent(result)
+          };
+          return feature;
+        });
+      }).then(function(response) {
+        //console.log(view.popup.visible);
+        if (response.length > 0) {
+          view.popup.open({
+            features: response,
+            location: event.mapPoint
+          });
+        }
+      }, (error) => { console.error(error); });
+      //},800)
+
+      //if mobile identify with query
+      if (this.mobile) {
+        //this.pointAddRemoveService.identifyItem(this.map, view, this.featureLayers, event);
+      } else {
+        //else identify with hitTest method
+        //find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
+        this._mapService.removeSelectionLayers(this.map);
+
+        //TODO close any popup if opened,store current view in service
+        //this.view.popup.close()
+        //hitTest check graphics in the view
+        this.hitTestFeaturePopup(view, event);
+
+        //init popup on click event widh identify service
+        //this.identify.showItvPopupOnCLick(view, event, identify, identifyParams);
+      }
+
+    }, (error) => { console.error(error); });
+  }
+
+  //activate word or map list item directly from map
+  activateList(id: number, listName: String) {
+    if (listName === "word") {
+      this.wordListActive = id;
+      //deactivate mapListActive
+      this.mapListActive = null;
+    } else {
+      this.mapListActive = id;
+      //deactivate wordListActive
+      this.wordListActive = null;
+    }
+  }
+
+  hitTestFeaturePopup(view: any, event: any) {
+    // the hitTest() checks to see if any graphics in the view
+    // intersect the given screen x, y coordinates
+    var screenPoint = {
+      x: event.x,
+      y: event.y
+    };
+    //console.log(screenPoint)
+    view.hitTest(screenPoint)
+      .then(features => {
+
+      });
+  }
+
+  addFeaturesToMap() {
+    //count feature layers and add to map
+    this._mapService.countRestlayers(MapOptions.themes.itvTheme.layers.mapLayer + "?f=pjson").subscribe(json => {
+      let layersCount = json.layers.length;
+      //creat layers arr
+      let featureLayerArr = this._mapService.createFeatureLayers(layersCount, MapOptions.themes.itvTheme.layers.mapLayer);
+      this.featureLayers = featureLayerArr;
+      //add layers
+      this.map.addMany(featureLayerArr);
+
+      this.view.whenLayerView(featureLayerArr[0]).then(layerView => {
+        //console.log("layerView:", layerView);
+      });
+    });
+  }
+
+  ngOnInit() {
+    //console.log("LOADING");
+    //url path from Observable / using snapshot instead // TODO change to Observable
+    //this.activatedRoute.url.subscribe((url) => {
+      //url["0"] ? this._mapService.getThemeName(url["0"].path)  : "";
+    //});
+
+    //add snapshot url and pass path name ta Incetable map service
+    let snapshotUrl = this.activatedRoute.snapshot.url["0"]
+    let basemaps: any[] = [];
+
+    this.mobile = this._mapService.mobilecheck();
+    this._mapService.isMobileDevice(this.mobile);
+    //console.dir(Bundle);
+
+    // create the map
+    this.map = this._mapService.initMap(MapOptions.mapOptions);
+    //create view
+    this.view = this._mapService.viewMap(this.map);
+
+    //add  basemap layer
+    basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.basemapDarkUrl, "base-dark"));
+    basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.ortofotoUrl, "base-orto", false));
+    basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.basemapUrl, "base-map", false));
+    this.map.basemap = this._mapService.customBasemaps(basemaps);
+
+    //add dyn layers
+    if (snapshotUrl) {
+      this.map.addMany(this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path));
+    };
+
+    this.view.then((view) => {
+      //if query paremeteters defined zoom and center
+      this._mapService.centerZoom(view, this.queryParams);
+      //add default search widget
+      this.search = this.searchService.defaultSearchWidget(view);
+      view.ui.add(this.search, {
+        position: "top-left",
+        index: 2
+      });
+      this.search.on("search-start", (event) => {
+      });
+      //init view and get projects on vie stationary property changes
+      this.initView(view);
+    });
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "ng2-image-gallery@^0.3.15",
+        "scope": null,
+        "escapedName": "ng2-image-gallery",
+        "name": "ng2-image-gallery",
+        "rawSpec": "^0.3.15",
+        "spec": ">=0.3.15 <0.4.0",
+        "type": "range"
+      },
+      "D:\\ng2\\ng2-arcgis-api4x"
+    ]
+  ],
+  "_from": "ng2-image-gallery@>=0.3.15 <0.4.0",
+  "_id": "ng2-image-gallery@0.3.15",
+  "_inCache": true,
+  "_location": "/ng2-image-gallery",
+  "_nodeVersion": "6.9.5",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/ng2-image-gallery-0.3.15.tgz_1491603121216_0.05674604559317231"
+  },
+  "_npmUser": {
+    "name": "bergben",
+    "email": "benedikt.berger@live.de"
+  },
+  "_npmVersion": "3.10.5",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "ng2-image-gallery@^0.3.15",
+    "scope": null,
+    "escapedName": "ng2-image-gallery",
+    "name": "ng2-image-gallery",
+    "rawSpec": "^0.3.15",
+    "spec": ">=0.3.15 <0.4.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/ng2-image-gallery/-/ng2-image-gallery-0.3.15.tgz",
+  "_shasum": "4ee4c131fca15cd7b9728f987f78f4c37080ee2e",
+  "_shrinkwrap": null,
+  "_spec": "ng2-image-gallery@^0.3.15",
+  "_where": "D:\\ng2\\ng2-arcgis-api4x",
+  "author": {
+    "name": "Benedikt Berger",
+    "email": "benedikt.berger@live.de"
+  },
+  "bugs": {
+    "url": "https://github.com/bergben/ng2-image-gallery/issues"
+  },
+  "dependencies": {
+    "@angular/material": "2.0.0-beta.2",
+    "ng2-dragula": "^1.2.2"
+  },
+  "description": "Basic Angular 2 image gallery",
+  "devDependencies": {
+    "@angular/common": "2.4.8",
+    "@angular/compiler": "^2.4.8",
+    "@angular/compiler-cli": "^2.4.8",
+    "@angular/core": "2.4.8",
+    "@angular/forms": "^2.4.8",
+    "@angular/http": "^2.4.8",
+    "@angular/platform-browser": "2.4.8",
+    "@angular/platform-browser-dynamic": "2.4.8",
+    "@angular/router": "3.4.8",
+    "@types/node": "^7.0.5",
+    "core-js": "^2.4.1",
+    "reflect-metadata": "^0.1.3",
+    "rollup": "^0.41.4",
+    "rxjs": "5.1.1",
+    "tslint": "^4.4.2",
+    "typescript": "^2.1.6",
+    "uglify-js": "^2.7.5",
+    "zone.js": "^0.7.7"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "4ee4c131fca15cd7b9728f987f78f4c37080ee2e",
+    "tarball": "https://registry.npmjs.org/ng2-image-gallery/-/ng2-image-gallery-0.3.15.tgz"
+  },
+  "gitHead": "fda0f217d04294b83795c2172ddda39789829f88",
+  "homepage": "https://github.com/bergben/ng2-image-gallery#readme",
+  "keywords": [
+    "angular",
+    "angular2",
+    "image",
+    "gallery",
+    "lightbox",
+    "photo"
+  ],
+  "license": "MIT",
+  "main": "./dist/bundles/ng2-image-gallery.umd.js",
+  "maintainers": [
+    {
+      "name": "bergben",
+      "email": "benedikt.berger@live.de"
+    }
+  ],
+  "module": "./dist/ng2-image-gallery.js",
+  "name": "ng2-image-gallery",
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "@angular/core": "^2.0.0",
+    "@angular/common": "^2.0.0"
+  },
+  "readme": "[![Join the chat at https://gitter.im/bergben/bergben](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bergben/bergben?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)\r\n\r\n# ng2-image-gallery\r\nBasic Angular 2 image gallery.\r\n\r\n## Install\r\n```bash\r\n$ npm install ng2-image-gallery --save\r\n```\r\n\r\n### Import the module\r\n```TypeScript\r\n// app.module.ts\r\nimport { NgModule } from '@angular/core';\r\nimport { BrowserModule } from '@angular/platform-browser';\r\nimport { Ng2ImageGalleryModule } from 'ng2-image-gallery'; // <-- import the module\r\nimport { MyComponent } from './my.component';\r\n\r\n@NgModule({\r\n    imports: [BrowserModule,\r\n              Ng2ImageGalleryModule // <-- include it in your app module\r\n             ],\r\n    declarations: [MyComponent],  \r\n    bootstrap: [MyComponent]\r\n})\r\nexport class MyAppModule {}\r\n```\r\n### Import the styles\r\nThis library uses <a href=\"https://v4-alpha.getbootstrap.com/getting-started/download/#package-managers\">Bootstrap 4</a> and <a href=\"https://www.npmjs.com/package/font-awesome\">font-awesome</a>, so make sure to install those if you want the default styling to apply.\r\n\r\nIf you use Sass / Scss you can import the styles like so:\r\n```\r\n@import \"{}/node_modules/ng2-image-gallery/ng2-image-gallery.scss\";\r\n```\r\nalternatively just include the css file like this:\r\n``` \r\n<link href=\"node_modules/ng2-image-gallery/ng2-image-gallery.css\" rel=\"stylesheet\" />\r\n```\r\n## Usage\r\n\r\n### Use it in your template\r\n```html\r\n<ng2-image-gallery [images]=\"myImages\"></ng2-image-gallery> \r\n```\r\n\r\nwhereas \"myImages\" is an Array of objects that by default would have the following properties:\r\n```TypeScript\r\nexport interface ImageInterface {\r\n    thumbnail?: any; //image src for the thumbnail\r\n    image?: any; //image src for the image \r\n    text?: string; //optional text to show for the image\r\n    [propName: string]: any;\r\n}\r\n```\r\n\r\nYou can, as it might be more comfortable for you because you have different naming for your properties already, provide different naming for the properties like so:\r\n\r\n```html\r\n<ng2-image-gallery [images]=\"myImages\" [asText]=\"'content'\" [asThumbnail]=\"'mythumb'\"></ng2-image-gallery> \r\n```\r\n\r\n### User interaction\r\n\r\nYou can also add some user interaction to the image by simply providing an actionText.\r\n```html\r\n<ng2-image-gallery [images]=\"myImages\" [actionText]=\"'do something!'\" (onAction)=\"doSomething($event)\"></ng2-image-gallery> \r\n```\r\nYou can then style the button and listen to the onAction output event.\r\n\r\n### Draggable / sortable\r\n\r\nFor administration purposes it might be useful to make the thumbnails draggable so that you can change the order of images in a gallery. Simply set `draggable=\"true\"` to do so.\r\n```html\r\n<ng2-image-gallery [images]=\"myImages\" [draggable]=\"true\" (onDrop)=\"onDrop($event)\"></ng2-image-gallery> \r\n```\r\nYou can listen to the onDrop event, which will have a property `images` which contains the images in the current order.\r\n\r\n## Contribute\r\nIt would be awesome if someone had the time to make some improvements, like animations, limit to show only 10 thumbnails and then \"+x more\" etc. Pull requests are much appreciated!\r\n\r\n## To-do\r\n - Provide a demo\r\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bergben/ng2-image-gallery.git"
+  },
+  "scripts": {
+    "build": "npm run transpile && npm run package && npm run minify",
+    "minify": "uglifyjs dist/bundles/ng2-image-gallery.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/ng2-image-gallery.umd.min.js",
+    "package": "rollup -c",
+    "transpile": "ngc"
+  },
+  "typings": "./dist/ng2-image-gallery.d.ts",
+  "version": "0.3.15"
+}
