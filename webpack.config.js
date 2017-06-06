@@ -108,6 +108,6 @@ module.exports = {
             callback();
         }
     ]
-    //,
-    //devtool: 'source-map'
+    ,
+    devtool: 'source-map'
 };

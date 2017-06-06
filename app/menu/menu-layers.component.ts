@@ -11,6 +11,8 @@ import { MapOptions } from '../options';
         <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
         <div id="layer-list" class="inner">
         </div>
+        <div id="sub-layers-list">
+        </div>
       </div>
     `
 })
