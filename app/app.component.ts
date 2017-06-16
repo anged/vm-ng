@@ -5,7 +5,7 @@ import { Title, Meta }     from '@angular/platform-browser';
 import { MapOptions } from './options';
 
 @Component({
-  selector: 'my-app',
+  selector: 'vilnius-maps',
   templateUrl: './app/app.component.html'
 })
 export class AppComponent implements OnInit {

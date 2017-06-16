@@ -17,13 +17,15 @@ import SimpleLineSymbol = require("esri/symbols/SimpleLineSymbol");
 import SimpleFillSymbol = require("esri/symbols/SimpleFillSymbol");
 
 import MapView = require("esri/views/MapView");
+import GroupLayer = require("esri/layers/GroupLayer");
+import MapImageLayer = require("esri/layers/MapImageLayer");
 import MapImageLayer = require("esri/layers/MapImageLayer");
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import TileLayer = require("esri/layers/TileLayer");
 import GraphicsLayer = require("esri/layers/GraphicsLayer");
 import Basemap = require("esri/Basemap");
 import LayerList = require("esri/widgets/LayerList");
-
+import on = require("dojo/on");
 
 import IdentifyTask = require("esri/tasks/IdentifyTask");
 import IdentifyParameters = require("esri/tasks/support/IdentifyParameters");
@@ -85,6 +87,21 @@ export class MapService {
     return this.view;
   }
 
+  //create GroupLayer
+  //listMode Indicates how the layer should display in the LayerList widget
+  // listMode value	Description:
+  // show:The layer is visible in the table of contents.
+  // hide:	The layer is hidden in the table of contents.
+  // hide-children:	If the layer is a GroupLayer, hide the children layers from the table of contents.
+  initGroupLayer(id: string, name: string, listMode: string) {
+    return new GroupLayer({
+      id: id,
+      title: name,
+      listMode: listMode//,
+      //visibilityMode: "independent"
+    });
+  }
+
   //update view
   updateView(view) {
     return this.view = view;
@@ -92,6 +109,15 @@ export class MapService {
 
   getView() {
     return this.view;
+  }
+
+  //update map
+  updateMap(map) {
+      return this.map = map;
+  }
+
+  returnMap() {
+    return this.map;
   }
 
   initDynamicLayer(layer: string, id: string = "itv", name: string = "itv", opacity = 1) {
@@ -311,11 +337,97 @@ export class MapService {
     return check;
   }
 
+  //createOperationalItems()
+
   initLayerListWidget() {
-    return new LayerList({
+    let listWidget = new LayerList({
       container: "layer-list",
       view: this.view
     });
+
+    setTimeout(() => {
+      //console.log("listWidget", listWidget);
+      //console.log("listWidget ITEMS", listWidget.operationalItems.items);
+      listWidget.operationalItems.items.map(function(item) {
+        item.open = true;
+        item.children.items.map((child) => child.open = true);
+      });
+    }, 800);
+
+    return listWidget;
+  }
+
+  // initSubLayerListWidget(view, map) {
+  //   console.log("SUB VIEW", view);
+  //   console.log("all layers VIEW", map.findLayerById("all-layers"));
+  //   console.log("all layers VIEW", view.layerViews.items[1].layer);
+  //   let subLayer = map.findLayerById("all-layers");
+  //     return new LayerList({
+  //       container: "sub-layers-content-list",
+  //       //operationalItems: this.getOperationalItems(subLayer)
+  //       operationalItems: [
+  //         {
+  //           layer: subLayer,
+  //           open: true,
+  //           view: this.view
+  //         }
+  //       ]
+  //     });
+  // }
+
+  initSubLayerListWidget(view, map) {
+    let subLayer = map.findLayerById("all-layers");
+    //onsole.log("SUB VIEW", view);
+    //console.log("all layers VIEW", subLayer);
+    //let mod = this.modifySubLayer(subLayer);
+    //console.log("MODIFY", mod);
+      return new LayerList({
+        container: "sub-layers-content-list",
+        //operationalItems: this.getOperationalItems(subLayer)
+        operationalItems: [
+          {
+            layer: subLayer,
+            open: true,
+            view: this.view
+          }
+        ]
+      });
+  }
+
+  //modify subLayer and remove current theme layer
+  modifySubLayer(subLayer) {
+    let layerMod = subLayer;
+    console.log("LAYERIS", subLayer)
+    let items = subLayer.sublayers.items.filter(layer => {
+      console.log(layer);
+      if (layer.title !== "Transportas / Dviračiai") {
+        return layer;
+      }
+    });
+    console.log(items)
+    layerMod.sublayers = items;
+    return layerMod;
+
+  }
+
+  //not using this approach as identification extends to many separate promises
+  getOperationalItems(layer) {
+    //operational item
+    let operationalItems: array = [];
+
+    console.log(layer.sublayers.items)
+
+    layer.sublayers.items.forEach(layer => {
+      //operational item's object
+      let innerItem = {
+        layer: layer,
+        open: true,
+        view: this.view
+      };
+      operationalItems.push(innerItem);
+    });
+
+    return operationalItems.reverse();
   }
 
   //init custom basemaps

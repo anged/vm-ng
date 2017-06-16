@@ -2,6 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 
 import { MapOptions } from '../options';
 import { MapService } from '../map.service';
+import { MenuService } from './menu.service';
+
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'menu-map',
@@ -11,6 +14,8 @@ export class MenuComponent implements OnInit {
   @Input() view: any;
 
   mobileActive: boolean = false;
+  subLayersActive: boolean = false;
+  subListSubscribtion: Subscription;
   //get all anchor elements and run hash
   //create array from array-like object
   aTagList: any;
@@ -20,7 +25,7 @@ export class MenuComponent implements OnInit {
   options = MapOptions;
 
   //Hash toggle, get all anchor elements
-  constructor(private mapService: MapService) {
+  constructor(private mapService: MapService, private menuService: MenuService) {
     //temporary: Hash toggle, reload, new page,
     window.location.hash = '#';
   }
@@ -90,5 +95,10 @@ export class MenuComponent implements OnInit {
     // closeList.map(a => a.addEventListener('click', this.activateMenuBtnOnDesktopMode, false));
     // console.log("CLOSE TAGS", closeList)
     //console.log("END");
+
+    //subscribe to sub layer list button activation
+    this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
+      this.subLayersActive = activeState;
+    })
   }
 }

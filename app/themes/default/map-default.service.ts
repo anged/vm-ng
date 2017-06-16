@@ -121,52 +121,55 @@ export class MapDefaultService {
   }
 
   getVisibleLayersIds(view) {
-    //small fix: add layer id that doen't exist, for example 999, in order to prevent all layers identification when all lists are turned off
-    let ids: number[] = [999];
+    let ids: any = {};
     let viewScale = view.scale;
-
+    //console.log("VIEW", view);
     //console.log("layerViews", view.layerViews)
-    view.layerViews.items.map( firstLayer => {
-    //console.log("IDS", firstLayer)
-    //do not identify layer if it is Raster
-    if ((firstLayer.visible) && (!firstLayer.layer.isRaster)) {
-      let subLayers = firstLayer.layer.sublayers.items;
-      //console.log("subLayer", subLayers)
-      subLayers.map((subLayer)=>{
-        let minScale = subLayer.minScale;
-        let maxScale = subLayer.maxScale;
-        //add number to fit viewScale, because 0 in Esri logic means layer is not scaled
-        ((minScale === 0) )? minScale = 99999999 : minScale;
+    view.layerViews.items.map(item => {
+      //small fix: add layer id that doen't exist, for example 999, in order to prevent all layers identification when all lists are turned off
+      ids[item.layer.id] = [999]
+      //console.log("IDS", item)
 
-        // console.log(subLayer.minScale , viewScale , subLayer.maxScale)
-        // console.log(minScale , viewScale , maxScale)
-        //if layer is visible and in view scale
-        if ((subLayer.visible) && (maxScale < viewScale) && (viewScale < minScale)) {
-          //check if sublayer has subsublayers
-          if (subLayer.sublayers) {
-            //3 layer if exist
-            let subsublayers = subLayer.sublayers.items;
-            subsublayers.map(subsublayer => {
-              let subMinScale = subsublayer.minScale;
-              let subMaxScale = subsublayer.maxScale;
-              ((subMinScale === 0) ) ? subMinScale = 99999999 : subMinScale;
-              //if layer is visible and in view scale
-              if ((subsublayer.visible) && (subMaxScale < viewScale) && (viewScale < subMinScale)) {
-                 ids.push(subsublayer.id);
-               }
-            });
+      //do not identify layer if it is Raster
+      if ((item.visible) && (!item.layer.isRaster)) {
+      //UPDATE: identify raster layers as well
+      //if (item.visible) {
+        let subLayers = item.layer.sublayers.items;
+        //console.log("subLayer", subLayers)
+        subLayers.map((subLayer) => {
+          let minScale = subLayer.minScale;
+          let maxScale = subLayer.maxScale;
+          //add number to fit viewScale, because 0 in Esri logic means layer is not scaled
+          ((minScale === 0)) ? minScale = 99999999 : minScale;
+
+          // console.log(subLayer.minScale , viewScale , subLayer.maxScale)
+          // console.log(minScale , viewScale , maxScale)
+          //if layer is visible and in view scale
+          if ((subLayer.visible) && (maxScale < viewScale) && (viewScale < minScale)) {
+            //check if sublayer has subsublayers
+            if (subLayer.sublayers) {
+              //3 layer if exist
+              let subsublayers = subLayer.sublayers.items;
+              subsublayers.map(subsublayer => {
+                let subMinScale = subsublayer.minScale;
+                let subMaxScale = subsublayer.maxScale;
+                ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
+                //if layer is visible and in view scale
+                if ((subsublayer.visible) && (subMaxScale < viewScale) && (viewScale < subMinScale)) {
+                  ids[item.layer.id].push(subsublayer.id);
+                }
+              });
+            }
+            //else push id
+            else {
+              ids.push(subLayer.id);
+            }
           }
-          //else push id
-          else {
-            ids.push(subLayer.id);
-          }
-        }
-      })
-    }
+        })
+      }
     })
     //console.log("FINAL IDS", ids)
     return ids;
   }
-
 
 }

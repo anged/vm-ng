@@ -275,6 +275,9 @@
     /*width: auto;*/
     color: rgb(230, 28, 36);
 }
+.cdk-overlay-container .ng2-igl-loading .fa {
+    display: none;
+}
 .ng2-igl-close .fa {
   width: auto;
 }

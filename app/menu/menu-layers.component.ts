@@ -12,6 +12,8 @@ import { MapOptions } from '../options';
         <div id="layer-list" class="inner">
         </div>
         <div id="sub-layers-list">
+          <menu-sub-layers>
+          </menu-sub-layers>
         </div>
       </div>
     `
@@ -37,17 +39,10 @@ export class MenuLayersComponent implements OnInit {
     //add temp delay to get layers change to Observable
     setTimeout(() => {
       this.name = MapOptions.themes.itvTheme.name;
-    }, 400)
-
+    }, 400);
     // init layers list widget
     let listWidget = this._mapService.initLayerListWidget();
-    //console.log("listWidget", listWidget)
-    //TODO get items with Observable
-    setTimeout(() => {
-      listWidget.operationalItems.items.map((item) => item.open = true);
-    }, 700);
-
-
+  //  console.log("listWidget", listWidget);
   }
 
 }

@@ -14,6 +14,7 @@ import { ProjectsGalleryComponent } from '../../gallery/projects-gallery.compone
 import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
 import Bundle = require("dojo/i18n!esri/nls/common");
+import all = require("dojo/promise/all");
 
 import { FeatureQueryService } from '../../query/feature-query.service';
 import { IdentifyService } from '../../services/identify/identify.service';
@@ -112,12 +113,10 @@ export class MapDefaultComponent implements OnInit {
     });
 
     view.on("click", (event) => {
-      let visibleLayersIds: number[] = this.mapDefaultService.getVisibleLayersIds(view).reverse();
-      //identifyParams.layerIds = [999];
-      //console.log("V",
-      //  this.view.layerViews.items["0"].layer.allSublayers.items["0"].visible);
-      // console.log("VIEWS", this.view.layerViews);
-      // this.view.layerViews.map((layer)=>console.log(layer.layer.sublayers.items[0].layer.sublayers.items["0"].sublayers.items["0"].id));
+      //console.log("view", view);
+      //store all deffered objects of itendtify task in def array
+      let def: array = [];
+      let visibleLayersIds: number[] = this.mapDefaultService.getVisibleLayersIds(view);
       view.popup.dockEnabled = false;
       view.popup.dockOptions = {
          // Disables the dock button from the popup
@@ -131,32 +130,49 @@ export class MapDefaultComponent implements OnInit {
       identifyParams.tolerance = 10;
       identifyParams.width = view.width;
       identifyParams.height = view.height;
-      identifyParams.layerOption = 'all';
-      identifyParams.layerIds = visibleLayersIds;
-      //console.log("identifyParams.layerIds", identifyParams.layerIds);
-      //console.log("identifyParams", identifyParams);
-      //setTimeout(()=>{
-      identify.execute(identifyParams).then((response) => {
-        let results = response.results;
-        return results.map((result) => {
-          let name = result.layerName;
-          let feature = result.feature;
-          feature.popupTemplate = {
-            title: `${name}`,
-            content: this.mapDefaultService.getVisibleLayersContent(result)
-          };
-          return feature;
-        });
-      }).then(function(response) {
-        //console.log(view.popup.visible);
-        if (response.length > 0) {
+      identifyParams.layerOption = 'visible';
+
+      //foreach item execute task
+      view.layerViews.items.forEach(item => {
+        //asgin correct  visible ids based on layer name (layerId property)
+        // layerId === item.layer.id
+        identifyParams.layerIds = visibleLayersIds[item.layer.id];
+        let defferedList = this.identify.identify(item.layer.url).execute(identifyParams).then((response) => {
+          //console.log("RSP", response);
+          let results = response.results;
+          return results.map((result) => {
+            let name = result.layerName;
+            let feature = result.feature;
+            feature.popupTemplate = {
+              title: `${name}`,
+              content: this.mapDefaultService.getVisibleLayersContent(result)
+            };
+
+            //add feature layer id
+            feature["layerId"] = item.layer.id;
+            return feature;
+          });
+        }).then(function(response) {
+          //console.log('response', response)
+          return response;
+        }, (error) => { console.error(error); });
+
+        def.push(defferedList);
+      });
+
+      //console.log("def", def);
+
+      //using dojo/promise/all function that takes multiple promises and returns a new promise that is fulfilled when all promises have been resolved or one has been rejected.
+      all(def).then(function(response){
+        let resultsMerge = [].concat.apply([], response.reverse()); //merger all results
+        //console.log('response resultsMerge', resultsMerge)
+        if (resultsMerge.length > 0) {
           view.popup.open({
-            features: response,
+            features: resultsMerge,
             location: event.mapPoint
           });
         }
-      }, (error) => { console.error(error); });
-      //},800)
+			});
 
       //if mobile identify with query
       if (this.mobile) {
@@ -231,6 +247,7 @@ export class MapDefaultComponent implements OnInit {
     //add snapshot url and pass path name ta Incetable map service
     let snapshotUrl = this.activatedRoute.snapshot.url["0"]
     let basemaps: any[] = [];
+    let themeGroupLayer: any;
 
     this.mobile = this._mapService.mobilecheck();
     this._mapService.isMobileDevice(this.mobile);
@@ -241,15 +258,23 @@ export class MapDefaultComponent implements OnInit {
     //create view
     this.view = this._mapService.viewMap(this.map);
 
+    //create theme main layers grouped
+    themeGroupLayer = this._mapService.initGroupLayer("theme-group", "Main theme layers" "show");
+
     //add  basemap layer
     basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.basemapDarkUrl, "base-dark"));
     basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.ortofotoUrl, "base-orto", false));
     basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.basemapUrl, "base-map", false));
     this.map.basemap = this._mapService.customBasemaps(basemaps);
 
+    this._mapService.updateMap(this.map);
+
     //add dyn layers
     if (snapshotUrl) {
+      // themeGroupLayer.addMany(this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path));
+      // this.map.add(themeGroupLayer);
       this.map.addMany(this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path));
+      //console.log("MAP", this.map);
     };
 
     this.view.then((view) => {

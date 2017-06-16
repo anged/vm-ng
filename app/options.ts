@@ -165,6 +165,7 @@ export const MapOptions: any = {
         viesosIstaigos: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
           "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Viesos_istaigos/MapServer",
+          opacity: 0.6,
           name: "Viešos įstaigos" // dynamicLayers group name
         }
       }
@@ -248,7 +249,7 @@ export const MapOptions: any = {
       id: "legacy", //theme id class and theme URL query name
       imgUrl: "/app/img/old_version.png", //image URL
       imgAlt: "Senoji versija", // image alt attribute
-      url: "https://www.vilnius.lt/vmap/t1.php" // external url if required, if not - gets internal url depending on id property
+      url: "http://www.vilnius.lt/vmap/t1.php" // external url if required, if not - gets internal url depending on id property
     }
   },
   animation: {
