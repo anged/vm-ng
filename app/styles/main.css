@@ -14,6 +14,9 @@ body {
     letter-spacing: 0;
     color: #4c4c4c;
 }
+:focus {
+    outline: none;
+}
 .container-fluid, .container-fluid .row {
   height: 100%;
 }
@@ -420,8 +423,12 @@ li.list-active {
     font-weight: 700;
     background: #f3f3f3;
 }
-.sub-menu.default-legend  p {
+.sub-menu.default-legend  p,
+#layers p:first-child {
    border-bottom: 1px solid #E9E9E9;
+ }
+#layers #sub-layers-list  p:first-child {
+   border-bottom: none;
  }
 .sub-menu.default-legend .esri-legend__layer-caption {
     display: table-caption;
@@ -695,6 +702,11 @@ label {
   height: 14px;
   fill: red;
 }
+#sub-layer-list svg {
+    width: 14px;
+    height: 14px;
+    fill: white;
+}
 .esri-legend__service {
     border-bottom: none;
 }
@@ -735,6 +747,17 @@ label {
   height: 18px;
   float: right;
   margin-right: -10px;
+}
+#sub-layer-list #close-filter {
+  position: absolute;
+  height: 35px;
+  width: 35px;
+  float: right;
+  top: 0;
+  margin: 0px;
+  right: 0;
+  padding: 5px 10px;
+  background: #e61c24;
 }
 #close-filter:hover {
   cursor: pointer;
@@ -1038,6 +1061,10 @@ label {
   width: 400px;
   margin: 10px auto;
   font-size: 16px;
+}
+
+#inner-help-container p.sup {
+    font-size: 14px;
 }
 
 #inner-help-container, #inner-share-container {
@@ -1838,6 +1865,7 @@ ul > li .esri-layer-list__item-title {
     font-size: 15px;
     font-weight: normal;
     border-top: none;
+    padding-left: 28px;
 }
 .esri-layer-list__item--has-children:first-child >.esri-layer-list__list .esri-layer-list__item-container  {
     background: #fff;
@@ -1852,7 +1880,16 @@ ul > li .esri-layer-list__item-title {
     background: #E9E9E9;
     margin-top: 10px;
     margin-bottom: 2px;
-    padding: 2px 15px 2px 20px;
+    padding: 0px 15px 0px 20px;
+}
+.esri-layer-list.esri-widget .esri-layer-list__list .esri-layer-list__item .esri-layer-list__list .esri-layer-list__item  ul li:last-child  {
+    padding-bottom: 6px;
+}
+.esri-layer-list.esri-widget .esri-layer-list__list .esri-layer-list__item .esri-layer-list__list .esri-layer-list__item  ul li {
+    border:none;
+}
+.esri-layer-list__list--root > .esri-layer-list__item--has-children  > .esri-layer-list__list  > .esri-layer-list__item--has-children  > .esri-layer-list__list > .esri-layer-list__item--has-children > .esri-layer-list__item-container  {
+    padding: 0px 4px 0px;
 }
 .esri-layer-list__item--has-children  >.esri-layer-list__list  >.esri-layer-list__item--has-children  >.esri-layer-list__list .esri-layer-list__item-container  .esri-layer-list__item-title {
     font-weight: normal;
@@ -1880,14 +1917,17 @@ ul > li .esri-layer-list__item-title {
 .esri-icon-down-arrow:before {
     content: "\f107";
     font: normal normal normal 18px/1 FontAwesome;
+    color: #e61c24;
 }
 .esri-icon-left-triangle-arrow:before {
   content: "\f104";
   font: normal normal normal 18px/1 FontAwesome;
+  color: #e61c24;
 }
 .esri-icon-right-triangle-arrow:before {
     content: "\f105";
     font: normal normal normal 18px/1 FontAwesome;
+    color: #e61c24;
 }
 .esri-layer-list.esri-widget .esri-icon-down-arrow:before {
   position: absolute;
@@ -1946,6 +1986,50 @@ ul > li .esri-layer-list__item-title {
     padding-left: 60px;
     padding-right: 20px;
     margin-bottom: 0;
+}
+#sub-layer-list {
+  position: fixed;
+  bottom: 0;
+  background-color: #fff;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  left: 0;
+  right: 0;
+  max-width: 320px;
+  min-width: 200px;
+  padding: 10px;
+  padding-top: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.esri-legend__layer-child-table {
+    display: table;
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 0;
+    margin-left: 7px;
+}
+#sub-layer-list .count {
+  display: inline-block;
+  padding: 0 18px;
+  font-size: 27px;
+  border-right: 1px solid red;
+  font-weight: 700;
+}
+#sub-layer-list .explain {
+  display: inline-block;
+  position: relative;
+  padding-left: 20px;
+  top: 6px;
+  line-height: 1.4;
+}
+.sub-layers-inactive a {
+  border-bottom: 1px solid;
+  padding-bottom: 2px;
+}
+.sub-layers-inactive a:hover {
+  cursor: pointer;
+  color: #e61c24;
+  border-bottom: none;
 }
 /*RESPONSIVE*/
 @media only screen and (min-width: 740px) {

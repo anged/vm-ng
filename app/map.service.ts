@@ -55,6 +55,10 @@ export class MapService {
 
   private view: any;
 
+  private view: any;
+
+  private queryParams: any;
+
   constructor(private http: Http, private projectsService: ProjectsListService) { }
 
   initMap(options: Object): Map {
@@ -85,6 +89,10 @@ export class MapService {
       extent: MapOptions.mapOptions.extent
     });
     return this.view;
+  }
+
+  returnQueryParams() {
+    return this.queryParams;
   }
 
   //create GroupLayer
@@ -320,6 +328,40 @@ export class MapService {
     //}, 2000);
   }
 
+  //on map component OnInit read checked layers params (if exists) and activate  visible layers
+  activateLayersVisibility(view: any, params: any, map: any) {
+    this.queryParams = params;
+    if (Object.keys(params).length > 0) {
+      for (let param in params) {
+        if (params.hasOwnProperty(param)) {
+          let layer = map.findLayerById(param);
+          console.log("layer found", layer);
+          if (layer) {
+            layer.on("layerview-create", (event) => {
+              // The LayerView for the layer that emitted this event
+              console.log(event)
+              this.findSublayer(layer, params[param], map);
+            });
+
+          }
+        }
+      }
+    }
+  }
+
+  findSublayer(layer: any, ids: string, map: any) {
+    let idsArr = ids.split("!");
+    console.log(idsArr);
+    idsArr.forEach(id => {
+      //setTimeout(()=>{
+        let sublayer = layer.findSublayerById(parseInt(id));
+        console.log(sublayer);
+        sublayer ? sublayer.visible = true : "";
+      //}, 600)
+
+    })
+  }
+
   getLisProjects(projects): void {
     this.projectsObs.next(projects);
   }
@@ -376,18 +418,20 @@ export class MapService {
   // }
 
   initSubLayerListWidget(view, map) {
-    let subLayer = map.findLayerById("all-layers");
+    let subLayer = map.findLayerById("allLayers");
     //onsole.log("SUB VIEW", view);
     //console.log("all layers VIEW", subLayer);
     //let mod = this.modifySubLayer(subLayer);
     //console.log("MODIFY", mod);
       return new LayerList({
         container: "sub-layers-content-list",
+        view: this.view,
         //operationalItems: this.getOperationalItems(subLayer)
         operationalItems: [
           {
             layer: subLayer,
-            open: true,
+            //actionsOpen: true,
+            //open: true,
             view: this.view
           }
         ]

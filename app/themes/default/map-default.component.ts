@@ -52,7 +52,7 @@ export class MapDefaultComponent implements OnInit {
   constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
-        //console.log("URL Parametrai", queryParam);
+        console.log("URL Parametrai", queryParam);
         return this.queryParams = queryParam
       }
     );
@@ -64,15 +64,20 @@ export class MapDefaultComponent implements OnInit {
   }
 
   select(e) {
-    e.target.select()
+    e.target.select();
   }
   // toggle share container
   shareToggle(e) {
+    //get visible and checked layers ids
+    let ids: any = this.mapDefaultService.getVisibleLayersIds(this.view);
+    let visibleLayersIds: number[] = ids.identificationsIds;
+    let checkedLayersIds: number[] = ids.visibilityIds;
+
     //get share url
     let currentZoom: number, currentCoordinates: number[];
     currentZoom = this.view.zoom;
     currentCoordinates = [this.view.center.x, this.view.center.y];
-    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1];
+    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '?basemap=';
     //console.log(this.shareUrl)
     //console.log(window.location)
 
@@ -87,6 +92,16 @@ export class MapDefaultComponent implements OnInit {
         }
       }, 20);
     }
+  }
+
+  shareCheckedLayersIds(ids: any): string {
+    let shareCheckStr: string = "";
+    Object.keys(ids).forEach(function(key) {
+      let widget = ids[key];
+      shareCheckStr += "&" + key + "=";
+      ids[key].forEach(id => shareCheckStr += id + "!");
+    });
+    return shareCheckStr;
   }
 
   initView(view) {
@@ -114,17 +129,18 @@ export class MapDefaultComponent implements OnInit {
 
     view.on("click", (event) => {
       //console.log("view", view);
-      //store all deffered objects of itendtify task in def array
+      //store all deffered objects of identify task in def array
       let def: array = [];
-      let visibleLayersIds: number[] = this.mapDefaultService.getVisibleLayersIds(view);
+      let ids: any = this.mapDefaultService.getVisibleLayersIds(view);
+      let visibleLayersIds: number[] = ids.identificationsIds;
       view.popup.dockEnabled = false;
       view.popup.dockOptions = {
-         // Disables the dock button from the popup
-         buttonEnabled: true,
-         // Ignore the default sizes that trigger responsive docking
-         breakpoint: false,
-         position: 'bottom-left'
-       }
+        // Disables the dock button from the popup
+        buttonEnabled: true,
+        // Ignore the default sizes that trigger responsive docking
+        breakpoint: false,
+        position: 'bottom-left'
+      }
       identifyParams.geometry = event.mapPoint;
       identifyParams.mapExtent = view.extent;
       identifyParams.tolerance = 10;
@@ -163,7 +179,7 @@ export class MapDefaultComponent implements OnInit {
       //console.log("def", def);
 
       //using dojo/promise/all function that takes multiple promises and returns a new promise that is fulfilled when all promises have been resolved or one has been rejected.
-      all(def).then(function(response){
+      all(def).then(function(response) {
         let resultsMerge = [].concat.apply([], response.reverse()); //merger all results
         //console.log('response resultsMerge', resultsMerge)
         if (resultsMerge.length > 0) {
@@ -172,7 +188,7 @@ export class MapDefaultComponent implements OnInit {
             location: event.mapPoint
           });
         }
-			});
+      });
 
       //if mobile identify with query
       if (this.mobile) {
@@ -234,6 +250,7 @@ export class MapDefaultComponent implements OnInit {
       this.view.whenLayerView(featureLayerArr[0]).then(layerView => {
         //console.log("layerView:", layerView);
       });
+
     });
   }
 
@@ -241,7 +258,7 @@ export class MapDefaultComponent implements OnInit {
     //console.log("LOADING");
     //url path from Observable / using snapshot instead // TODO change to Observable
     //this.activatedRoute.url.subscribe((url) => {
-      //url["0"] ? this._mapService.getThemeName(url["0"].path)  : "";
+    //url["0"] ? this._mapService.getThemeName(url["0"].path)  : "";
     //});
 
     //add snapshot url and pass path name ta Incetable map service
@@ -259,7 +276,7 @@ export class MapDefaultComponent implements OnInit {
     this.view = this._mapService.viewMap(this.map);
 
     //create theme main layers grouped
-    themeGroupLayer = this._mapService.initGroupLayer("theme-group", "Main theme layers" "show");
+    themeGroupLayer = this._mapService.initGroupLayer("theme-group", "Main theme layers", "show");
 
     //add  basemap layer
     basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.basemapDarkUrl, "base-dark"));
@@ -278,7 +295,7 @@ export class MapDefaultComponent implements OnInit {
     };
 
     this.view.then((view) => {
-      //if query paremeteters defined zoom and center
+      //if query paremeteters are defined get zoom and center
       this._mapService.centerZoom(view, this.queryParams);
       //add default search widget
       this.search = this.searchService.defaultSearchWidget(view);
@@ -288,6 +305,9 @@ export class MapDefaultComponent implements OnInit {
       });
       this.search.on("search-start", (event) => {
       });
+      //check other url params if exists
+      this._mapService.activateLayersVisibility(view, this.queryParams, this.map);
+
       //init view and get projects on vie stationary property changes
       this.initView(view);
     });

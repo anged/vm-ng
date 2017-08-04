@@ -23,21 +23,32 @@ export class MapDefaultService {
   //url array
   urlArray: string[] = [];
 
+  //visible layers
+  visibleLayers: {};
+
+  visibleSubLayerNumber: number = 0;
+
+  urlQueryParams: any;
+
   constructor(private http: Http, private mapService: MapService) { }
 
   getUrls(): string[] {
     return this.urlArray;
   }
 
+  returnVisibleSubLayerNumber() {
+    return this.visibleSubLayerNumber;
+  }
+
   //return Dynimac Layers
-  initDefaultDynamicLayers(themeServiceUrl: any, id: string, name: string, opacity: number, raster: boolean = false):any {
-    let dynamicLayer =  this.mapService.initDynamicLayer(themeServiceUrl, id, name, opacity);
+  initDefaultDynamicLayers(themeServiceUrl: any, id: string, name: string, opacity: number, raster: boolean = false): any {
+    let dynamicLayer = this.mapService.initDynamicLayer(themeServiceUrl, id, name, opacity);
     dynamicLayer["isRaster"] = raster;
     return dynamicLayer;
   }
 
   //get service based on theme
-  getDefaultDynamicLayers(urlTheme: string):any[] {
+  getDefaultDynamicLayers(urlTheme: string): any[] {
     let themes: any = MapOptions.themes;
     for (let theme in themes) {
       //if hasOwnProperty and if not custom theme
@@ -52,7 +63,7 @@ export class MapDefaultService {
 
   returnDynamicLayersArray(themeId: string): any[] {
     let layers = MapOptions.themes[themeId].layers;
-    let layersArr: any[]= [];
+    let layersArr: any[] = [];
     for (let layer in layers) {
       //console.log("layeris", layers)
       if (layers.hasOwnProperty(layer)) {
@@ -77,11 +88,11 @@ export class MapDefaultService {
 
   //validate ArcGis date string
   isValidDate(dateStr, reg) {
-		return dateStr.match(reg) !== null;
-	};
+    return dateStr.match(reg) !== null;
+  };
 
   getVisibleLayersContent(result): string {
-    let  reg = /(\d+)[.](\d+)[.](\d+)\s.*/; //regex: match number with . char, clear everything else
+    let reg = /(\d+)[.](\d+)[.](\d+)\s.*/; //regex: match number with . char, clear everything else
     let feature = result.feature,
       content = " ",
       layerName = result.layerName,
@@ -93,8 +104,8 @@ export class MapDefaultService {
       if (attributes.hasOwnProperty(resultAtr)) {
         //console.log(resultAtr);
         if (!(resultAtr == "OBJECTID" || resultAtr == "layerName" || resultAtr == "SHAPE" || resultAtr == "SHAPE.area" || resultAtr == "Shape.area" || resultAtr == "SHAPE.STArea()" || resultAtr == "Shape" || resultAtr == "SHAPE.len" || resultAtr == "Shape.len" || resultAtr == "SHAPE.STLength()" || resultAtr == "SHAPE.fid" ||
-        resultAtr == "Class value" || resultAtr == "Pixel Value"  || resultAtr == "Count_" //TEMP check for raster properties
-           )) { //add layers attributes that you do not want to show
+          resultAtr == "Class value" || resultAtr == "Pixel Value" || resultAtr == "Count_" //TEMP check for raster properties
+        )) { //add layers attributes that you do not want to show
           //AG check for date string
           if (this.isValidDate(attributes[resultAtr], reg)) {
             let attributeDate = attributes[resultAtr];
@@ -121,21 +132,25 @@ export class MapDefaultService {
   }
 
   getVisibleLayersIds(view) {
+    //ids will have 2 properties: 'identificationsIds' (layers to be identified) and 'visibilityIds' (all visible layers that must be checked and visible depending on mxd settings or user activated layers)
     let ids: any = {};
+    ids["identificationsIds"] = {};
+    ids["visibilityIds"] = {};
     let viewScale = view.scale;
     //console.log("VIEW", view);
     //console.log("layerViews", view.layerViews)
     view.layerViews.items.map(item => {
       //small fix: add layer id that doen't exist, for example 999, in order to prevent all layers identification when all lists are turned off
-      ids[item.layer.id] = [999]
+      ids.identificationsIds[item.layer.id] = [999];
+      ids.visibilityIds[item.layer.id] = [999];
       //console.log("IDS", item)
 
       //do not identify layer if it is Raster
       if ((item.visible) && (!item.layer.isRaster)) {
-      //UPDATE: identify raster layers as well
-      //if (item.visible) {
+        //UPDATE: identify raster layers as well
+        //if (item.visible) {
         let subLayers = item.layer.sublayers.items;
-        //console.log("subLayer", subLayers)
+        //console.log("subLayer", subLayers);
         subLayers.map((subLayer) => {
           let minScale = subLayer.minScale;
           let maxScale = subLayer.maxScale;
@@ -145,31 +160,69 @@ export class MapDefaultService {
           // console.log(subLayer.minScale , viewScale , subLayer.maxScale)
           // console.log(minScale , viewScale , maxScale)
           //if layer is visible and in view scale
-          if ((subLayer.visible) && (maxScale < viewScale) && (viewScale < minScale)) {
-            //check if sublayer has subsublayers
-            if (subLayer.sublayers) {
-              //3 layer if exist
-              let subsublayers = subLayer.sublayers.items;
-              subsublayers.map(subsublayer => {
-                let subMinScale = subsublayer.minScale;
-                let subMaxScale = subsublayer.maxScale;
-                ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
-                //if layer is visible and in view scale
-                if ((subsublayer.visible) && (subMaxScale < viewScale) && (viewScale < subMinScale)) {
-                  ids[item.layer.id].push(subsublayer.id);
-                }
-              });
-            }
-            //else push id
-            else {
-              ids.push(subLayer.id);
+          if (subLayer.visible) {
+            ids.visibilityIds[item.layer.id].push(subLayer.id);
+            if ((maxScale < viewScale) && (viewScale < minScale)) {
+              //check if sublayer has subsublayers
+              if (subLayer.sublayers) {
+                //console.log("subsubLayer", subLayers);
+                //3 layer if exist
+                let subsublayers = subLayer.sublayers.items;
+                subsublayers.map(subsublayer => {
+                  let subMinScale = subsublayer.minScale;
+                  let subMaxScale = subsublayer.maxScale;
+                  ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
+                  //if layer is visible and in view scale
+                  if (subsublayer.visible) {
+                    ids.visibilityIds[item.layer.id].push(subsublayer.id);
+                    if ((subMaxScale < viewScale) && (viewScale < subMinScale)) {
+                      //console.log("Sub subsubLayer", subLayers);
+
+                      if (subsublayer.sublayers) {
+                        //4 layer if exist
+                        let subsubsublayers = subsublayer.sublayers.items;
+                        subsubsublayers.map(subsubsublayer => {
+                          let subMinScale = subsubsublayer.minScale;
+                          let subMaxScale = subsubsublayer.maxScale;
+                          ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
+                          //if layer is visible and in view scale
+                          if (subsubsublayer.visible) {
+                            ids.visibilityIds[item.layer.id].push(subsubsublayer.id);
+                            if ((subsubsublayer.visible) && (subMaxScale < viewScale) && (viewScale < subMinScale)) {
+                              //console.log("SubSUB subsubLayer", subsubsublayers);
+                              ids.identificationsIds[item.layer.id].push(subsubsublayer.id);
+
+                            }
+                          }
+                        });
+                      } else {
+                        //push id's if it has no sublayers
+                        ids.identificationsIds[item.layer.id].push(subsublayer.id);
+                      }
+                    }
+                  }
+                });
+              }
+              //else push id
+              else {
+                ids.identificationsIds[item.layer.id].push(subLayer.id);
+              }
             }
           }
         })
       }
     })
-    //console.log("FINAL IDS", ids)
+    console.log("FINAL IDS", ids)
+    this.visibleLayers = ids;
     return ids;
+  }
+
+  getVisibleSubLayerNumber(view: any) {
+    let ids: any = this.getVisibleLayersIds(view);
+    console.log("ids", ids.identificationsIds);
+    ids.identificationsIds.allLayers ? this.visibleSubLayerNumber = ids.identificationsIds.allLayers.length - 1 : this.visibleSubLayerNumber = 0;
+    console.log("visibleSubLayerNumber", this.visibleSubLayerNumber);
+    return this.visibleSubLayerNumber;
   }
 
 }

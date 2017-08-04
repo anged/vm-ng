@@ -3,8 +3,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MapOptions } from '../options';
 import { MapService } from '../map.service';
 import { MenuService } from './menu.service';
+import { MapDefaultService } from '../themes/default/map-default.service';
 
 import { Subscription } from 'rxjs/Subscription';
+
+import watchUtils = require("esri/core/watchUtils");
 
 @Component({
   selector: 'menu-map',
@@ -12,6 +15,7 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class MenuComponent implements OnInit {
   @Input() view: any;
+  @Input() allLayerslayer: any;
 
   mobileActive: boolean = false;
   subLayersActive: boolean = false;
@@ -22,10 +26,14 @@ export class MenuComponent implements OnInit {
 
   themeName: string;
 
+  visibleSubLayerNumber: number;
+  //state if we want to disable help box
+  componentsVisibleSubLayerNumberState: number = 1;
+
   options = MapOptions;
 
   //Hash toggle, get all anchor elements
-  constructor(private mapService: MapService, private menuService: MenuService) {
+  constructor(private mapService: MapService, private menuService: MenuService, private mapDefaultService: MapDefaultService) {
     //temporary: Hash toggle, reload, new page,
     window.location.hash = '#';
   }
@@ -84,7 +92,44 @@ export class MenuComponent implements OnInit {
     window.location.hash === "#open-data" ? window.location.hash = "#" : window.location.hash = "#open-data";
   }
 
+
+  watchLayers() {
+    watchUtils.whenTrue(this.view, "updating", (b) => {
+      console.log("b", b);
+      this.componentsVisibleSubLayerNumberState = this.menuService.getVisibleSubLayerNumberState();
+      //check if help box is enabled with componentsVisibleSubLayerNumberState
+      if (this.componentsVisibleSubLayerNumberState) {
+        this.getVisibleSubLayerNumber();
+      }
+    });
+  }
+
+  getVisibleSubLayerNumber() {
+    this.visibleSubLayerNumber = this.mapDefaultService.getVisibleSubLayerNumber(this.view);
+  }
+
+  closeSubListHelp() {
+    this.visibleSubLayerNumber = null;
+    this.componentsVisibleSubLayerNumberState = this.menuService.setVisibleSubLayerNumberState(0);
+  }
+
+  toggleSubState() {
+    this.menuService.toggleSubListState();
+  }
+
   ngOnInit(): void {
+    //load message abaout sublayers if they are visible on Init
+    this.view.on("layerview-create", (event) => {
+      let map = this.mapService.returnMap();
+      let allLayersLayer = map.findLayerById("allLayers");
+      allLayersLayer.on("layerview-create", (event) => {
+        // The LayerView for the layer that emitted this event
+        this.getVisibleSubLayerNumber();
+      });
+    });
+
+    this.watchLayers();
+
     //get all anchor elements and run hash
     //create array from array-like object
     this.aTagList = Array.from(document.getElementsByTagName('a'));
@@ -99,6 +144,13 @@ export class MenuComponent implements OnInit {
     //subscribe to sub layer list button activation
     this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
       this.subLayersActive = activeState;
+      console.log(activeState)
+
+      //get state after subscribe if help box is closed initiate it
+      if ((!this.menuService.getVisibleSubLayerNumberState()) && activeState) {
+        this.componentsVisibleSubLayerNumberState = this.menuService.setVisibleSubLayerNumberState(1);
+        this.getVisibleSubLayerNumber();
+      }
     })
   }
 }

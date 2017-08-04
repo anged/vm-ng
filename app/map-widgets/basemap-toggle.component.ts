@@ -82,7 +82,11 @@ export class BasemapToggle implements OnInit {
     this.filterBasemap(id);
   }
 
-  //add current basemam visibilty
+  returnActiveBasemap() {
+    return this.activeBasemap;
+  }
+
+  //add current basemap visibilty
   filterBasemap(activeBasemMapId: string){
     this.view.map.basemap.baseLayers.items.map((item)=>{
       if (item.id === activeBasemMapId) {

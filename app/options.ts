@@ -196,15 +196,15 @@ export const MapOptions: any = {
     },
     leisure: {
       //url: "https://maps.vilnius.lt/maps_vilnius/?theme=laisvalaikis",
-      production: false, //if theme is ready for production
+      production: true, //if theme is ready for production
       name: "Laisvalaikis", //theme name
       id: "laisvalaikis", //theme id class and theme URL query name
-      imgUrl: "./app/img/tvarkymas.png", //image URL
+      imgUrl: "./app/img/aktyvus-laisvalaikis.png", //image URL
       imgAlt: "Laisvalaikis", // image alt attribute
       layers: {
-        wifiZon: { // layer unique name //
+        laisvalaikis: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-          "https://services1.arcgis.com/usA3lHW20rGU6glp/arcgis/rest/services/juodos_demes/FeatureServer",
+          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Laisvalaikis/MapServer",
           name: "Laisvalaikis" // dynamicLayers group name
         }
       }

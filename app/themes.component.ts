@@ -23,6 +23,7 @@ import domConstruct = require('dojo/dom-construct');
       margin-left: 0;
       width: 180px;
       text-align: left;
+      font-weight: 600;
     }
     .themes-page-logo {
       padding-top: 30px;
