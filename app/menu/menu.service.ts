@@ -48,7 +48,7 @@ export class MenuService {
     //this.subLayersActive ? this.subListWidget = this.mapService.initSubLayerListWidget(view, map) : "";
     if (this.subListModeOff && this.subLayersActive) {
       this.subListWidget = this.mapService.initSubLayerListWidget(view, map);
-      console.log("Sublayer", this.subListWidget);
+      //console.log("Sublayer", this.subListWidget);
       this.subListModeOff = false;
 
       //this.queryParams = this.mapService.returnQueryParams();
@@ -58,7 +58,7 @@ export class MenuService {
         //open main item
         this.subListWidget.operationalItems.items["0"].open = true;
         this.subListWidget.operationalItems.items["0"].children.forEach(child => {
-          console.log("child", child);
+          //console.log("child", child);
           child.children.items.map(item => {
             if (item.visible) {
               if (item.children.items.length > 0) {

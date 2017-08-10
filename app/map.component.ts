@@ -336,7 +336,7 @@ export class MapComponent implements OnInit, OnDestroy {
     //add  basemap layer
     this.mapWidgetsService.returnBasemaps().forEach(basemap => {
       //if (this.queryParams.basemap) {
-        console.log(basemap.id)
+        //console.log(basemap.id)
         if (this.queryParams.basemap === basemap.id) {
           this.mapWidgetsService.setActiveBasemap(basemap.id);
           basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id))
@@ -356,7 +356,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.addFeaturesToMap();
 
     //add allLayers sublist layers
-    // let subDynamicLayers = this._mapService.initDynamicLayer("http://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
+    // let subDynamicLayers = this._mapService.initDynamicLayer("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
     // this.map.add(subDynamicLayers);
 
     this.view.then((view) => {

@@ -304,7 +304,7 @@ export class MapDefaultComponent implements OnInit {
     };
 
     //add allLayers sublist layers
-    let subDynamicLayers = this._mapService.initDynamicLayer("http://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
+    let subDynamicLayers = this._mapService.initDynamicLayer("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
     this.map.add(subDynamicLayers);
 
     this.view.then((view) => {

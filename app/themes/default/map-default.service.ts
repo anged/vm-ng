@@ -102,7 +102,7 @@ export class MapDefaultService {
       if (attributes.hasOwnProperty(resultAtr)) {
         //console.log(resultAtr);
         if (!(resultAtr == "OBJECTID" || resultAtr == "layerName" || resultAtr == "SHAPE" || resultAtr == "SHAPE.area" || resultAtr == "Shape.area" || resultAtr == "SHAPE.STArea()" || resultAtr == "Shape" || resultAtr == "SHAPE.len" || resultAtr == "Shape.len" || resultAtr == "SHAPE.STLength()" || resultAtr == "SHAPE.fid" ||
-          resultAtr == "Class value" || resultAtr == "Pixel Value" || resultAtr == "Count_" //TEMP check for raster properties
+          resultAtr == "Class value" || resultAtr == "Pixel Value" || resultAtr == "Count_" || resultAtr == "Count" //TEMP check for raster properties
         )) { //add layers attributes that you do not want to show
           //AG check for date string
           if (this.isValidDate(attributes[resultAtr], reg)) {
