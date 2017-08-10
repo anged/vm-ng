@@ -15,6 +15,7 @@ import { ProjectsListComponent } from './projects-list/projects-list.component';
 import { ProjectsFilterService } from './projects-list/projects-filter.service';
 import { AutoCompleteComponent } from './autocomplete/autocomplete.component';
 import { SearchService } from './search/search.service';
+import { MapWidgetsService } from './map-widgets/map-widgets.service';
 import { IdentifyService } from './services/identify/identify.service';
 import { FeatureQueryService } from './query/feature-query.service';
 import { PointAddRemoveService } from './query/point-add-remove.service';
@@ -64,6 +65,7 @@ import { MaterialModule } from '@angular/material';
     ProjectsListService,
     ProjectsFilterService,
     SearchService,
+    MapWidgetsService,
     FeatureQueryService,
     IdentifyService,
     PointAddRemoveService

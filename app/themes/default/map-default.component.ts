@@ -5,6 +5,7 @@ import { MapService } from '../../map.service';
 import { MapDefaultService } from './map-default.service';
 import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
+import { MapWidgetsService } from '../../map-widgets/map-widgets.service';
 import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
@@ -49,11 +50,11 @@ export class MapDefaultComponent implements OnInit {
   //sharing url string
   shareUrl: string;
 
-  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute) {
+  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
-        console.log("URL Parametrai", queryParam);
-        return this.queryParams = queryParam
+        //console.log("URL Parametrai", queryParam);
+        return this.queryParams = queryParam;
       }
     );
   }
@@ -77,7 +78,8 @@ export class MapDefaultComponent implements OnInit {
     let currentZoom: number, currentCoordinates: number[];
     currentZoom = this.view.zoom;
     currentCoordinates = [this.view.center.x, this.view.center.y];
-    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '?basemap=';
+    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
+    + this.mapWidgetsService.returnActiveBasemap();
     //console.log(this.shareUrl)
     //console.log(window.location)
 
@@ -279,9 +281,16 @@ export class MapDefaultComponent implements OnInit {
     themeGroupLayer = this._mapService.initGroupLayer("theme-group", "Main theme layers", "show");
 
     //add  basemap layer
-    basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.basemapDarkUrl, "base-dark"));
-    basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.ortofotoUrl, "base-orto", false));
-    basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.basemapUrl, "base-map", false));
+    //TODO refactor
+    this.mapWidgetsService.returnBasemaps().forEach(basemap => {
+        if (this.queryParams.basemap === basemap.id) {
+          this.mapWidgetsService.setActiveBasemap(basemap.id);
+          basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id))
+        } else {
+          basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id, false));
+        }
+    });
+
     this.map.basemap = this._mapService.customBasemaps(basemaps);
 
     this._mapService.updateMap(this.map);
@@ -293,6 +302,10 @@ export class MapDefaultComponent implements OnInit {
       this.map.addMany(this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path));
       //console.log("MAP", this.map);
     };
+
+    //add allLayers sublist layers
+    let subDynamicLayers = this._mapService.initDynamicLayer("http://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
+    this.map.add(subDynamicLayers);
 
     this.view.then((view) => {
       //if query paremeteters are defined get zoom and center

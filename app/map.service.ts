@@ -55,9 +55,14 @@ export class MapService {
 
   private view: any;
 
-  private view: any;
+  //visible layers
+  visibleLayers: {};
+
+  visibleSubLayerNumber: number = 0;
 
   private queryParams: any;
+
+  map: any;
 
   constructor(private http: Http, private projectsService: ProjectsListService) { }
 
@@ -121,7 +126,7 @@ export class MapService {
 
   //update map
   updateMap(map) {
-      return this.map = map;
+    return this.map = map;
   }
 
   returnMap() {
@@ -335,11 +340,11 @@ export class MapService {
       for (let param in params) {
         if (params.hasOwnProperty(param)) {
           let layer = map.findLayerById(param);
-          console.log("layer found", layer);
+          //console.log("layer found", layer);
           if (layer) {
             layer.on("layerview-create", (event) => {
               // The LayerView for the layer that emitted this event
-              console.log(event)
+              //console.log(event)
               this.findSublayer(layer, params[param], map);
             });
 
@@ -351,12 +356,12 @@ export class MapService {
 
   findSublayer(layer: any, ids: string, map: any) {
     let idsArr = ids.split("!");
-    console.log(idsArr);
+    //console.log(idsArr);
     idsArr.forEach(id => {
       //setTimeout(()=>{
-        let sublayer = layer.findSublayerById(parseInt(id));
-        console.log(sublayer);
-        sublayer ? sublayer.visible = true : "";
+      let sublayer = layer.findSublayerById(parseInt(id));
+      //console.log(sublayer);
+      sublayer ? sublayer.visible = true : "";
       //}, 600)
 
     })
@@ -423,32 +428,30 @@ export class MapService {
     //console.log("all layers VIEW", subLayer);
     //let mod = this.modifySubLayer(subLayer);
     //console.log("MODIFY", mod);
-      return new LayerList({
-        container: "sub-layers-content-list",
-        view: this.view,
-        //operationalItems: this.getOperationalItems(subLayer)
-        operationalItems: [
-          {
-            layer: subLayer,
-            //actionsOpen: true,
-            //open: true,
-            view: this.view
-          }
-        ]
-      });
+    return new LayerList({
+      container: "sub-layers-content-list",
+      view: this.view,
+      //operationalItems: this.getOperationalItems(subLayer)
+      operationalItems: [
+        {
+          layer: subLayer,
+          //actionsOpen: true,
+          //open: true,
+          view: this.view
+        }
+      ]
+    });
   }
 
   //modify subLayer and remove current theme layer
   modifySubLayer(subLayer) {
     let layerMod = subLayer;
-    console.log("LAYERIS", subLayer)
+    //console.log("LAYERIS", subLayer)
     let items = subLayer.sublayers.items.filter(layer => {
-      console.log(layer);
       if (layer.title !== "Transportas / Dviračiai") {
         return layer;
       }
     });
-    console.log(items)
     layerMod.sublayers = items;
     return layerMod;
 
@@ -458,9 +461,7 @@ export class MapService {
   getOperationalItems(layer) {
     //operational item
     let operationalItems: array = [];
-
-    console.log(layer.sublayers.items)
-
+    //console.log(layer.sublayers.items)
     layer.sublayers.items.forEach(layer => {
       //operational item's object
       let innerItem = {
@@ -490,5 +491,147 @@ export class MapService {
 
   returnThemeName() {
     return this.themeName;
+  }
+
+  //validate ArcGis date string
+  isValidDate(dateStr, reg) {
+    return dateStr.match(reg) !== null;
+  };
+
+  getVisibleLayersContent(result): string {
+    let reg = /(\d+)[.](\d+)[.](\d+)\s.*/; //regex: match number with . char, clear everything else
+    let feature = result.feature,
+      content = " ",
+      layerName = result.layerName,
+      attributes = feature.attributes;
+
+    feature.attributes.layerName = layerName;
+
+    for (let resultAtr in attributes) {
+      if (attributes.hasOwnProperty(resultAtr)) {
+        //console.log(resultAtr);
+        if (!(resultAtr == "OBJECTID" || resultAtr == "layerName" || resultAtr == "SHAPE" || resultAtr == "SHAPE.area" || resultAtr == "Shape.area" || resultAtr == "SHAPE.STArea()" || resultAtr == "Shape" || resultAtr == "SHAPE.len" || resultAtr == "Shape.len" || resultAtr == "SHAPE.STLength()" || resultAtr == "SHAPE.fid" ||
+          resultAtr == "Class value" || resultAtr == "Pixel Value" || resultAtr == "Count_" //TEMP check for raster properties
+        )) { //add layers attributes that you do not want to show
+          //AG check for date string
+          if (this.isValidDate(attributes[resultAtr], reg)) {
+            let attributeDate = attributes[resultAtr];
+            content += "<p><span>" + resultAtr + "</br></span>" + attributes[resultAtr].replace(reg, '$1-$2-$3') + "<p>";
+          } else {
+            var attributeResult = attributes[resultAtr];
+            if (attributeResult !== null) { //attributes[resultAtr] == null  equals to (attributes[resultAtr]  === undefined || attributes[resultAtr]  === null)
+              if ((attributeResult === " ") || (attributeResult === "Null")) {
+                attributeResult = "-";
+              }
+            } else {
+              attributeResult = "-";
+            }
+            content += "<p><span>" + resultAtr + "</br></span>" + attributeResult + "<p>";
+          }
+        } else if (resultAtr == "Class value" || resultAtr == "Pixel Value") {
+          //TEMP check for raster properties 	and add custom msg
+          content = '<p class="raster">Išsamesnė sluoksnio informacija pateikiama Meniu lauke <strong>"Žymėjimas"</strong></p>';
+        }
+
+      }
+    }
+    return content;
+  }
+
+  getVisibleLayersIds(view) {
+    //ids will have 2 properties: 'identificationsIds' (layers to be identified) and 'visibilityIds' (all visible layers that must be checked and visible depending on mxd settings or user activated layers)
+    let ids: any = {};
+    ids["identificationsIds"] = {};
+    ids["visibilityIds"] = {};
+    let viewScale = view.scale;
+    //console.log("VIEW", view);
+    //console.log("layerViews", view.layerViews)
+    view.layerViews.items.map(item => {
+      //TODO refactor mapDefaultService and mapService, for projects theme get VisibleLayers Ids only for alllayers service
+      if (item.layer.id === "allLayers") {
+      //small fix: add layer id that doen't exist, for example 999, in order to prevent all layers identification when all lists are turned off
+      ids.identificationsIds[item.layer.id] = [999];
+      ids.visibilityIds[item.layer.id] = [999];
+      //console.log("IDS", item)
+
+      //do not identify layer if it is Raster
+      if ((item.visible) && (!item.layer.isRaster)) {
+        //UPDATE: identify raster layers as well
+        //if (item.visible) {
+        let subLayers = item.layer.sublayers.items;
+        //console.log("subLayer", subLayers);
+        subLayers.map((subLayer) => {
+          let minScale = subLayer.minScale;
+          let maxScale = subLayer.maxScale;
+          //add number to fit viewScale, because 0 in Esri logic means layer is not scaled
+          ((minScale === 0)) ? minScale = 99999999 : minScale;
+
+          // console.log(subLayer.minScale , viewScale , subLayer.maxScale)
+          // console.log(minScale , viewScale , maxScale)
+          //if layer is visible and in view scale
+          if (subLayer.visible) {
+            ids.visibilityIds[item.layer.id].push(subLayer.id);
+            if ((maxScale < viewScale) && (viewScale < minScale)) {
+              //check if sublayer has subsublayers
+              if (subLayer.sublayers) {
+                //console.log("subsubLayer", subLayers);
+                //3 layer if exist
+                let subsublayers = subLayer.sublayers.items;
+                subsublayers.map(subsublayer => {
+                  let subMinScale = subsublayer.minScale;
+                  let subMaxScale = subsublayer.maxScale;
+                  ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
+                  //if layer is visible and in view scale
+                  if (subsublayer.visible) {
+                    ids.visibilityIds[item.layer.id].push(subsublayer.id);
+                    if ((subMaxScale < viewScale) && (viewScale < subMinScale)) {
+                      //console.log("Sub subsubLayer", subLayers);
+
+                      if (subsublayer.sublayers) {
+                        //4 layer if exist
+                        let subsubsublayers = subsublayer.sublayers.items;
+                        subsubsublayers.map(subsubsublayer => {
+                          let subMinScale = subsubsublayer.minScale;
+                          let subMaxScale = subsubsublayer.maxScale;
+                          ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
+                          //if layer is visible and in view scale
+                          if (subsubsublayer.visible) {
+                            ids.visibilityIds[item.layer.id].push(subsubsublayer.id);
+                            if ((subsubsublayer.visible) && (subMaxScale < viewScale) && (viewScale < subMinScale)) {
+                              //console.log("SubSUB subsubLayer", subsubsublayers);
+                              ids.identificationsIds[item.layer.id].push(subsubsublayer.id);
+
+                            }
+                          }
+                        });
+                      } else {
+                        //push id's if it has no sublayers
+                        ids.identificationsIds[item.layer.id].push(subsublayer.id);
+                      }
+                    }
+                  }
+                });
+              }
+              //else push id
+              else {
+                ids.identificationsIds[item.layer.id].push(subLayer.id);
+              }
+            }
+          }
+        })
+      }
+    }
+    })
+    //console.log("FINAL IDS", ids)
+    this.visibleLayers = ids;
+    return ids;
+  }
+
+  getVisibleSubLayerNumber(view: any) {
+    let ids: any = this.getVisibleLayersIds(view);
+    //console.log("ids", ids.identificationsIds);
+    ids.identificationsIds.allLayers ? this.visibleSubLayerNumber = ids.identificationsIds.allLayers.length - 1 : this.visibleSubLayerNumber = 0;
+    //console.log("visibleSubLayerNumber", this.visibleSubLayerNumber);
+    return this.visibleSubLayerNumber;
   }
 }

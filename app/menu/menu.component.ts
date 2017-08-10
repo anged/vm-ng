@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 
 import { MapOptions } from '../options';
 import { MapService } from '../map.service';
-import { MenuService } from './menu.service';
 import { MapDefaultService } from '../themes/default/map-default.service';
+import { MenuService } from './menu.service';
 
 import { Subscription } from 'rxjs/Subscription';
 
@@ -95,7 +95,7 @@ export class MenuComponent implements OnInit {
 
   watchLayers() {
     watchUtils.whenTrue(this.view, "updating", (b) => {
-      console.log("b", b);
+      //console.log("b", b);
       this.componentsVisibleSubLayerNumberState = this.menuService.getVisibleSubLayerNumberState();
       //check if help box is enabled with componentsVisibleSubLayerNumberState
       if (this.componentsVisibleSubLayerNumberState) {
@@ -105,7 +105,7 @@ export class MenuComponent implements OnInit {
   }
 
   getVisibleSubLayerNumber() {
-    this.visibleSubLayerNumber = this.mapDefaultService.getVisibleSubLayerNumber(this.view);
+    this.mapService.returnThemeName() === "projektai" ?  this.visibleSubLayerNumber = this.mapService.getVisibleSubLayerNumber(this.view) : this.visibleSubLayerNumber = this.mapDefaultService.getVisibleSubLayerNumber(this.view);
   }
 
   closeSubListHelp() {
@@ -119,13 +119,16 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
     //load message abaout sublayers if they are visible on Init
+    //add count, as view emits layerview-create on every layer
+    let count = 0;
     this.view.on("layerview-create", (event) => {
       let map = this.mapService.returnMap();
       let allLayersLayer = map.findLayerById("allLayers");
-      allLayersLayer.on("layerview-create", (event) => {
+      count === 0 ? allLayersLayer.on("layerview-create", (event) => {
         // The LayerView for the layer that emitted this event
         this.getVisibleSubLayerNumber();
-      });
+      }) : "";
+      count +=1;
     });
 
     this.watchLayers();
@@ -144,9 +147,7 @@ export class MenuComponent implements OnInit {
     //subscribe to sub layer list button activation
     this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
       this.subLayersActive = activeState;
-      console.log(activeState)
-
-      //get state after subscribe if help box is closed initiate it
+      //get state after subscribe, if help box is closed initiate it
       if ((!this.menuService.getVisibleSubLayerNumberState()) && activeState) {
         this.componentsVisibleSubLayerNumberState = this.menuService.setVisibleSubLayerNumberState(1);
         this.getVisibleSubLayerNumber();

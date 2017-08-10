@@ -11,6 +11,7 @@ export const MapOptions: any = {
       }
     },
     staticServices: {
+      //for basemaps const check basemaps.ts in map-widgets folder
       basemapUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_1000/MapServer",
       basemapDarkUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/TESTAVIMAI/Vilnius_basemap_dark_calibrated/MapServer",
       ortofotoUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORT5LT_2016/MapServer",

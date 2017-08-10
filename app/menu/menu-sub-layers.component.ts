@@ -16,7 +16,7 @@ import { MapOptions } from '../options';
             <svg class="animate" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 42 42">
             <polygon points="42,19 23,19 23,0 19,0 19,19 0,19 0,23 19,23 19,42 23,42 23,23 42,23 "></polygon>
             </svg>
-            Papildomi temų sluoksniai
+            Visų temų sluoksniai
             <!---->
           </button>
         </div>
@@ -44,11 +44,8 @@ export class MenuSubLayersComponent implements OnInit {
   }
 
   ngOnInit() {
-    let view = this.mapService.getView();
-    //console.log("VIEW", view);
-    let subDynamicLayers = this.mapService.initDynamicLayer("http://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Papildomų sluoksnių įjungimas", 0.8);
     let map = this.mapService.returnMap();
-    map.add(subDynamicLayers);
+    //don't show layayers ir main layerlist
     map.layers.items = this.menuService.listModeSelection("theme", map.layers.items);
   }
 }

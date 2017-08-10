@@ -4,6 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { MapService } from './map.service';
 import { ProjectsListService } from './projects-list/projects-list.service';
 import { SearchService } from './search/search.service';
+import { MapWidgetsService } from './map-widgets/map-widgets.service';
 import { MapOptions } from './options';
 import { ProjectsListComponent } from './projects-list/projects-list.component';
 import { ScaleAndLogoComponent } from './map-widgets/scale-and-logo.component';
@@ -13,6 +14,7 @@ import { ProjectsGalleryComponent } from './gallery/projects-gallery.component';
 import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
 import Bundle = require("dojo/i18n!esri/nls/common");
+import all = require("dojo/promise/all");
 
 import { FeatureQueryService } from './query/feature-query.service';
 import { IdentifyService } from './services/identify/identify.service';
@@ -57,7 +59,7 @@ export class MapComponent implements OnInit, OnDestroy {
   //sharing url string
   shareUrl: string;
 
-  constructor(private _mapService: MapService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute) {
+  constructor(private _mapService: MapService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
         //console.log("URL Parametrai", queryParam);
@@ -80,11 +82,17 @@ export class MapComponent implements OnInit, OnDestroy {
   }
   // toggle share container
   shareToggle(e) {
+    //get visible and checked layers ids
+    let ids: any = this._mapService.getVisibleLayersIds(this.view);
+    let visibleLayersIds: number[] = ids.identificationsIds;
+    let checkedLayersIds: number[] = ids.visibilityIds;
+
     //get share url
     let currentZoom: number, currentCoordinates: number[];
     currentZoom = this.view.zoom;
     currentCoordinates = [this.view.center.x, this.view.center.y];
-    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1];
+    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
+    + this.mapWidgetsService.returnActiveBasemap();
     //console.log(this.shareUrl)
     //console.log(window.location)
 
@@ -99,6 +107,16 @@ export class MapComponent implements OnInit, OnDestroy {
         }
       }, 20);
     }
+  }
+
+  shareCheckedLayersIds(ids: any): string {
+    let shareCheckStr: string = "";
+    Object.keys(ids).forEach(function(key) {
+      let widget = ids[key];
+      shareCheckStr += "&" + key + "=";
+      ids[key].forEach(id => shareCheckStr += id + "!");
+    });
+    return shareCheckStr;
   }
 
   onFilter(items) {
@@ -177,6 +195,70 @@ export class MapComponent implements OnInit, OnDestroy {
         //this.identify.showItvPopupOnCLick(view, event, identify, identifyParams);
       }
 
+      //identification for alllayers service
+      //store all deffered objects of identify task in def array
+      // let def: array = [];
+      // let ids: any = this._mapService.getVisibleLayersIds(view);
+      // let visibleLayersIds: number[] = ids.identificationsIds;
+      // //view.popup.dockEnabled = false;
+      // // view.popup.dockOptions = {
+      // //   // Disables the dock button from the popup
+      // //   buttonEnabled: true,
+      // //   // Ignore the default sizes that trigger responsive docking
+      // //   breakpoint: false,
+      // //   position: 'bottom-left'
+      // // }
+      // identifyParams.geometry = event.mapPoint;
+      // identifyParams.mapExtent = view.extent;
+      // identifyParams.tolerance = 20;
+      // identifyParams.width = view.width;
+      // identifyParams.height = view.height;
+      // identifyParams.layerOption = 'visible';
+      //
+      // //foreach item execute task
+      // view.layerViews.items.forEach(item => {
+      //   //asgin correct  visible ids based on layer name (layerId property)
+      //   // layerId === item.layer.id
+      //   if (item.layer.id === "allLayers") {
+      //   identifyParams.layerIds = visibleLayersIds[item.layer.id];
+      //   let defferedList = this.identify.identify(item.layer.url).execute(identifyParams).then((response) => {
+      //     //console.log("RSP", response);
+      //     let results = response.results;
+      //     return results.map((result) => {
+      //       let name = result.layerName;
+      //       let feature = result.feature;
+      //       feature.popupTemplate = {
+      //         title: `${name}`,
+      //         content: this._mapService.getVisibleLayersContent(result)
+      //       };
+      //
+      //       //add feature layer id
+      //       feature["layerId"] = item.layer.id;
+      //       return feature;
+      //     });
+      //   }).then(function(response) {
+      //     //console.log('response', response)
+      //     return response;
+      //   }, (error) => { console.error(error); });
+      //
+      //   def.push(defferedList);
+      // }
+      // });
+      //
+      // //console.log("def", def);
+      //
+      // //using dojo/promise/all function that takes multiple promises and returns a new promise that is fulfilled when all promises have been resolved or one has been rejected.
+      // all(def).then(function(response) {
+      //   let resultsMerge = [].concat.apply([], response.reverse()); //merger all results
+      //   //console.log('response resultsMerge', resultsMerge)
+      //   if (resultsMerge.length > 0) {
+      //     view.popup.open({
+      //       features: resultsMerge,
+      //       location: event.mapPoint
+      //     });
+      //   }
+      // });
+
     }, (error) => { console.error(error); });
   }
 
@@ -252,16 +334,30 @@ export class MapComponent implements OnInit, OnDestroy {
     this.view = this._mapService.viewMap(this.map);
 
     //add  basemap layer
-    basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.basemapDarkUrl, "base-dark"));
-    basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.ortofotoUrl, "base-orto", false));
-    basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices.basemapUrl, "base-map", false));
+    this.mapWidgetsService.returnBasemaps().forEach(basemap => {
+      //if (this.queryParams.basemap) {
+        console.log(basemap.id)
+        if (this.queryParams.basemap === basemap.id) {
+          this.mapWidgetsService.setActiveBasemap(basemap.id);
+          basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id))
+        } else {
+          basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id, false));
+        }
+    });
+
     this.map.basemap = this._mapService.customBasemaps(basemaps);
+
+    this._mapService.updateMap(this.map);
 
     //add additional 2 layers as base
     this.map.add(this._mapService.initDynamicLayer(MapOptions.themes.itvTheme.layers.teritories, "itv-additional", "Teritorijų ribos", 0.2));
 
     //count feature layers, init and add feature layers to map
     this.addFeaturesToMap();
+
+    //add allLayers sublist layers
+    // let subDynamicLayers = this._mapService.initDynamicLayer("http://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
+    // this.map.add(subDynamicLayers);
 
     this.view.then((view) => {
       //if query paremeteters defined zoom and center
@@ -287,6 +383,9 @@ export class MapComponent implements OnInit, OnDestroy {
         this.projectsListComponent.selectFilterByExtention();
         //setTimeout(()=>{this.view.zoom = 6},500);
       });
+      //check other url params if exists
+      this._mapService.activateLayersVisibility(view, this.queryParams, this.map);
+
       //init view and get projects on vie stationary property changes
       this.initView(view);
     });

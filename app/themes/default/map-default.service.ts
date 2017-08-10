@@ -28,8 +28,6 @@ export class MapDefaultService {
 
   visibleSubLayerNumber: number = 0;
 
-  urlQueryParams: any;
-
   constructor(private http: Http, private mapService: MapService) { }
 
   getUrls(): string[] {
@@ -212,16 +210,16 @@ export class MapDefaultService {
         })
       }
     })
-    console.log("FINAL IDS", ids)
+    //console.log("FINAL IDS", ids)
     this.visibleLayers = ids;
     return ids;
   }
 
   getVisibleSubLayerNumber(view: any) {
     let ids: any = this.getVisibleLayersIds(view);
-    console.log("ids", ids.identificationsIds);
+    //console.log("ids", ids.identificationsIds);
     ids.identificationsIds.allLayers ? this.visibleSubLayerNumber = ids.identificationsIds.allLayers.length - 1 : this.visibleSubLayerNumber = 0;
-    console.log("visibleSubLayerNumber", this.visibleSubLayerNumber);
+    //console.log("visibleSubLayerNumber", this.visibleSubLayerNumber);
     return this.visibleSubLayerNumber;
   }
 

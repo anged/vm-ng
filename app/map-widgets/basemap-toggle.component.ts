@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { MapWidgetsService } from './map-widgets.service';
+
 @Component({
   selector: 'basemap-toggle',
   styles: [`
@@ -60,47 +62,18 @@ export class BasemapToggle implements OnInit {
 
   selectedValue: string;
 
-  activeBasemap: string = "base-map";
+  basemaps: any[];
 
-  basemaps: any[] = [
-    {
-      id: "base-dark",
-      name: "Tamsus"
-    },
-    {
-      id: "base-orto",
-      name: "Ortofoto"
-    },
-    {
-      id: "base-map",
-      name: "Žemėlapis"
-    }
-  ];
+  constructor(private mapWidgetsService: MapWidgetsService) {
+    this.basemaps = this.mapWidgetsService.returnBasemaps();
+  }
 
   toggleBasemap(id: string) {
-    this.activeBasemap = id;
-    this.filterBasemap(id);
-  }
-
-  returnActiveBasemap() {
-    return this.activeBasemap;
-  }
-
-  //add current basemap visibilty
-  filterBasemap(activeBasemMapId: string){
-    this.view.map.basemap.baseLayers.items.map((item)=>{
-      if (item.id === activeBasemMapId) {
-        item.visible = true;
-        activeBasemMapId === "base-dark"
-          ? document.getElementsByClassName("container-fluid")[0].className  += " dark"
-          : document.getElementsByClassName("container-fluid")[0].classList.remove("dark");
-      } else {
-        item.visible = false;
-      }
-    })
+    this.mapWidgetsService.toggleBasemap(id, this.view);
   }
 
   ngOnInit() {
-      this.filterBasemap("base-dark");
+    this.selectedValue = this.mapWidgetsService.returnActiveBasemap();
+    this.mapWidgetsService.filterBasemap( this.mapWidgetsService.returnActiveBasemap(), this.view);
   }
 }

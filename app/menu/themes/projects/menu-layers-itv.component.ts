@@ -20,6 +20,11 @@ import { MapOptions } from '../../../options';
             </label>
           </div>
         </div>
+
+        <div id="sub-layers-list" style="display: none">
+          <menu-sub-layers>
+          </menu-sub-layers>
+        </div>
       </div>
     `
 })

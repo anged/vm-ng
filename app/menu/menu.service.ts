@@ -17,6 +17,9 @@ export class MenuService {
   subListWidget: any;
   queryParams: any
 
+  //add boolean property to add subListWidget only once // TODO refactor logic
+  subListModeOff: boolean = true;
+
   //  //state if we want to disable help box in menu.component
   visibleSubLayerNumberState: number = 1;
 
@@ -33,7 +36,7 @@ export class MenuService {
     return this.subLayersActive;
   }
 
-  //just subscribe to current state
+  //just subscribe to current state / not using anymore
   sentSubState() {
     this.subLayersObs.next(this.subLayersActive);
   }
@@ -42,34 +45,38 @@ export class MenuService {
     let view = this.mapService.getView();
     let map = this.mapService.returnMap();
     map.layers.items = this.listModeSelection("allLayers", map.layers.items);
-    this.subLayersActive ? this.subListWidget = this.mapService.initSubLayerListWidget(view, map) : "";
-    console.log("Sublayer", this.subListWidget);
+    //this.subLayersActive ? this.subListWidget = this.mapService.initSubLayerListWidget(view, map) : "";
+    if (this.subListModeOff && this.subLayersActive) {
+      this.subListWidget = this.mapService.initSubLayerListWidget(view, map);
+      console.log("Sublayer", this.subListWidget);
+      this.subListModeOff = false;
 
-    //this.queryParams = this.mapService.returnQueryParams();
-    //console.log("this.queryParams", this.queryParams);
+      //this.queryParams = this.mapService.returnQueryParams();
+      //console.log("this.queryParams", this.queryParams);
 
-    setTimeout(() => {
-      //open main item
-      this.subListWidget.operationalItems.items["0"].open = true;
-      this.subListWidget.operationalItems.items["0"].children.forEach(child => {
-        console.log("child", child);
+      setTimeout(() => {
+        //open main item
+        this.subListWidget.operationalItems.items["0"].open = true;
+        this.subListWidget.operationalItems.items["0"].children.forEach(child => {
+          console.log("child", child);
           child.children.items.map(item => {
             if (item.visible) {
-                if (item.children.items.length > 0) {
-                  item.children.items.map(subItem => {
-                    if (subItem.visible) {
-                      item.open = true;
-                      child.open = true;
-                    }
-                  });
-                } else {
-                  child.open = true;
-                  item.open = true;
-                }
+              if (item.children.items.length > 0) {
+                item.children.items.map(subItem => {
+                  if (subItem.visible) {
+                    item.open = true;
+                    child.open = true;
+                  }
+                });
+              } else {
+                child.open = true;
+                item.open = true;
+              }
             }
           });
-      });
-    }, 500);
+        });
+      }, 500);
+    }
   }
 
   toggleSubListState() {
@@ -83,7 +90,8 @@ export class MenuService {
       }, 500);
     } else if (!(this.toggleNumber % 2) && (this.toggleNumber > 1)) {
       //console.log('destroy');
-      this.subListWidget.destroy();
+      //not using destroy method to avoid Memory leak (as destroy method doesn't remove events lsiteners completely)
+      //this.subListWidget.destroy();
       this.toggleNumber += 1;
     }
   }

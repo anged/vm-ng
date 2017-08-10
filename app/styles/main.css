@@ -1037,6 +1037,7 @@ label {
     right: 70px;
     top: 88px;
     padding: 5px;
+    height: 20px;
 }
 #share-btn:hover {
     cursor: pointer;
@@ -1248,7 +1249,7 @@ label {
 .close {
   text-shadow: none;
 }
-.mobile-menu a.close {
+.mobile-menu a.close, .sublist-off {
   display: none;
 }
 #theme.sub-menu {

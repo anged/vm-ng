@@ -42,7 +42,7 @@ export class MenuLayersComponent implements OnInit {
     }, 400);
     // init layers list widget
     let listWidget = this._mapService.initLayerListWidget();
-    console.log("listWidget", listWidget);
+    //console.log("listWidget", listWidget);
   }
 
 }
