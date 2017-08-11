@@ -24,7 +24,7 @@ import Tooltip = require ("dijit/Tooltip");
       `],
     template: `
       <div id="credits">
-        {{year | date: "y"}} m. <span class="credits-content name">| VMS interaktyvūs žemėlapiai </span> | <a href='#' id='copyright'>Autorinės teisės</a> <span class="credits-content company">| <a href='http://www.vilniausplanas.lt/' target='_blank'>SĮ „Vilniaus planas“</a></span>
+        {{year | date: "y"}} m. <span class="credits-content name">| VMS interaktyvūs žemėlapiai </span> | <a id='copyright'>Autorinės teisės</a> <span class="credits-content company">| <a href='http://www.vilniausplanas.lt/' target='_blank'>SĮ „Vilniaus planas“</a></span>
       </div>
     `
 })

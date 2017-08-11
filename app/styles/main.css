@@ -1971,7 +1971,7 @@ ul > li .esri-layer-list__item-title {
 }
 .sub-layers-container {
   width: calc(100% - 680px);
-  width: 400px;
+  width: 100%;
   height: 100%;
   background-color: #f3f3f3;
   position: absolute;
@@ -2033,6 +2033,11 @@ ul > li .esri-layer-list__item-title {
   border-bottom: none;
 }
 /*RESPONSIVE*/
+@media only screen and (min-width: 420px) {
+  #inner-share-container {
+      margin: -120px auto;
+  }
+}
 @media only screen and (min-width: 740px) {
   .map-col {
     width: -moz-calc(100% - 326px);
@@ -2170,6 +2175,9 @@ ul > li .esri-layer-list__item-title {
   #vilnius-logo {
     display: block;
     bottom: 50px;
+  }
+  .sub-layers-container {
+    width: 400px;
   }
 }
 @media only screen and (min-width: 840px) {
