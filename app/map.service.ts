@@ -324,10 +324,10 @@ export class MapService {
   //on map component OnInit center and zoom based on URL query params
   centerZoom(view: any, params: any) {
     let point: number[];
-    //console.log(view.center)
     point = [params.x ? parseFloat(params.x) : view.center.x, params.y ? parseFloat(params.y) : view.center.y];
     //setTimeout(() => {
     view.zoom = params.zoom;
+
     //center to point adn add spatialReference
     point = new Point({
       x: point[0],
@@ -335,7 +335,6 @@ export class MapService {
       spatialReference: 3346
     });
     view.center = point;
-    //}, 2000);
   }
 
   //on map component OnInit read checked layers params (if exists) and activate  visible layers
