@@ -19,7 +19,6 @@ import SimpleFillSymbol = require("esri/symbols/SimpleFillSymbol");
 import MapView = require("esri/views/MapView");
 import GroupLayer = require("esri/layers/GroupLayer");
 import MapImageLayer = require("esri/layers/MapImageLayer");
-import MapImageLayer = require("esri/layers/MapImageLayer");
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import TileLayer = require("esri/layers/TileLayer");
 import GraphicsLayer = require("esri/layers/GraphicsLayer");
@@ -326,9 +325,15 @@ export class MapService {
   centerZoom(view: any, params: any) {
     let point: number[];
     //console.log(view.center)
-    point = [params.x ? params.x : view.center.x, params.y ? params.y : view.center.y];
+    point = [params.x ? parseFloat(params.x) : view.center.x, params.y ? parseFloat(params.y) : view.center.y];
     //setTimeout(() => {
     view.zoom = params.zoom;
+    //center to point adn add spatialReference
+    point = new Point({
+      x: point[0],
+      y: point[1],
+      spatialReference: 3346
+    });
     view.center = point;
     //}, 2000);
   }
@@ -404,24 +409,6 @@ export class MapService {
     return listWidget;
   }
 
-  // initSubLayerListWidget(view, map) {
-  //   console.log("SUB VIEW", view);
-  //   console.log("all layers VIEW", map.findLayerById("all-layers"));
-  //   console.log("all layers VIEW", view.layerViews.items[1].layer);
-  //   let subLayer = map.findLayerById("all-layers");
-  //     return new LayerList({
-  //       container: "sub-layers-content-list",
-  //       //operationalItems: this.getOperationalItems(subLayer)
-  //       operationalItems: [
-  //         {
-  //           layer: subLayer,
-  //           open: true,
-  //           view: this.view
-  //         }
-  //       ]
-  //     });
-  // }
-
   initSubLayerListWidget(view, map) {
     let subLayer = map.findLayerById("allLayers");
     //onsole.log("SUB VIEW", view);
@@ -430,14 +417,14 @@ export class MapService {
     //console.log("MODIFY", mod);
     return new LayerList({
       container: "sub-layers-content-list",
-      view: this.view,
+      view: view,
       //operationalItems: this.getOperationalItems(subLayer)
       operationalItems: [
         {
           layer: subLayer,
           //actionsOpen: true,
           //open: true,
-          view: this.view
+          view: view
         }
       ]
     });
@@ -459,8 +446,8 @@ export class MapService {
 
   //not using this approach as identification extends to many separate promises
   getOperationalItems(layer) {
-    //operational item
-    let operationalItems: array = [];
+    //operational item type Array<any> or any[]
+    let operationalItems: Array<any> = [];
     //console.log(layer.sublayers.items)
     layer.sublayers.items.forEach(layer => {
       //operational item's object

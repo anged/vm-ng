@@ -43,16 +43,17 @@ export class PointAddRemoveService {
     query.where = "UNIKALUS_NR=" + id;
     query.outFields = ["*"];
     query.returnGeometry = true;
+    console.log("query :", query)
     //get point coordinates from points layer
     this.featureLayers.map(layer => {
-
+    //console.log("featureLayers :", layer)
       return layer.queryFeatures(query).then((results) => {
         if (results.features.length > 0) {
           this.queryResultsToGraphic(this.map, results, layer, number);
           // + 1 after queryResultsToGraphic()
           number += 1;
         }
-      }, (err) => console.log(err)), (err) => console.log(err)
+      }, (err) => console.log(err)), (err) => console.log(err);
 
     });
   }

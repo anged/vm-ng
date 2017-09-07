@@ -49,7 +49,7 @@ export class MenuLegendItvComponent  implements OnInit, OnDestroy {
     let renderedLayers: any[] = [];
     let layersLoadedNumber: number = 0; //count loaded itv layers , 3 layers total
     this.itvLayers.map(layer => {
-      //wait till layerview is rendered than susbscribe
+      //wait till layerview is rendered then susbscribe
       //TODO add layer view event and subscribe to event in map component
       layer.on("layerview-create", (event) =>{
           layersLoadedNumber +=1;

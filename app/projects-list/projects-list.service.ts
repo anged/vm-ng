@@ -36,11 +36,11 @@ export class ProjectsListService {
 
   runProjectsQuery(urlStr: string, queryExpression: any, inputValue) {
     let query = new Query();
-
+    //console.log("QUERY on and out EXTENT");
     //return geometry in order to get popup and graphic on list click
     query.returnGeometry = true;
 
-    //if input value is empty asing to emtpy string, else make additiniol sql query
+    //if input value is empty asign to empty string, else make additiniol sql query
     let valueAutocomplete = inputValue.length > 0 ? "(Pavadinimas LIKE '%" + inputValue + "%')" : "";
     query.outFields = ["*"];
     //check if query expression was set by filters
@@ -70,7 +70,7 @@ export class ProjectsListService {
 
   runProjectsQueryExtent(urlStr: string, extent: Object, queryExpression: any) {
     let query = this.Query(extent);
-
+    //console.log("QUERY on and in EXTENT");
     //return geometry in order to get popup and graphic on list click
     query.returnGeometry = true;
 
@@ -88,6 +88,7 @@ export class ProjectsListService {
 
   //get full list of existing projects
   getAllProjectsQueryData(urlStr: string) {
+    //console.log("QUERY on INIT");
     let query = new Query();
     //get all data
     query.where = "1=1";

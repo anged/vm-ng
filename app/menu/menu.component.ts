@@ -18,7 +18,7 @@ export class MenuComponent implements OnInit {
   @Input() allLayerslayer: any;
 
   mobileActive: boolean = false;
-  subLayersActive: boolean = false;
+  subLayersActive: any = false;
   subListSubscribtion: Subscription;
   //get all anchor elements and run hash
   //create array from array-like object
@@ -118,7 +118,7 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    //load message abaout sublayers if they are visible on Init
+    //load message about sublayers if they are visible on Init
     //add count, as view emits layerview-create on every layer
     let count = 0;
     this.view.on("layerview-create", (event) => {
