@@ -19,9 +19,9 @@ import { Subscription } from 'rxjs/Subscription';
 
 export class Ng2GalleryCompontent implements OnInit, OnDestroy {
   @Input() gallery: any;
-  @Input() subscription: Subscriptions;
+  @Input() subscription: Subscription;
 
-//@ViewChild('galleryDom') galleryDom: ElementRef;
+  //@ViewChild('galleryDom') galleryDom: ElementRef;
 
   constructor() {
     //this.elementRef = myElement;
@@ -34,7 +34,7 @@ export class Ng2GalleryCompontent implements OnInit, OnDestroy {
       let laoder = document.getElementById("gallery-loader");
       //console.log(typeof gallery )
       //console.log(gallery )
-      if ((gallery !== null)) {
+      if ((gallery !== null) && (laoder !== null)) {
         laoder.setAttribute("style", "display: none;");
         //console.log(gallery )
         document.getElementById("gallery-container").appendChild(gallery);

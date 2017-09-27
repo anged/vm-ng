@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, OnDestroy  } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
 
 import { ProjectsListService } from '../projects-list/projects-list.service';
 import { Ng2GalleryCompontent } from './ng2-gallery.component';
@@ -12,9 +12,9 @@ import { Subscription } from 'rxjs/Subscription';
 })
 
 export class ProjectsGalleryComponent implements OnInit, OnDestroy {
-//  @ViewChild('galleryDom') galleryDom: ElementRef;
+  //  @ViewChild('galleryDom') galleryDom: ElementRef;
   //elementRef;
-  gallery: any[] = [];
+  gallery: = [];
   subscription: Subscription;
 
   constructor(myElement: ElementRef, private projectsListService: ProjectsListService) {
@@ -25,13 +25,12 @@ export class ProjectsGalleryComponent implements OnInit, OnDestroy {
     //append Gallery to popup
     this.subscription = this.projectsListService.galleryArr.subscribe((imgGallery) => {
       this.gallery = [];
-      //timeout, to fix ng2 gallery bug, to detroy element every time new images are added
-      setTimeout(()=>{
+      //timeout, to fix ng2 gallery bug, to destroy element every time new images are added
+      setTimeout(() => {
         this.gallery = imgGallery;
       }, 1000)
       //console.log("GALERIJA", imgGallery)
     });
-
   }
 
   ngOnDestroy() {

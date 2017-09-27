@@ -32,13 +32,17 @@ export class MenuLayersItvComponent implements OnInit {
   name: string;
   isChecked: boolean = true;
 
-
   constructor(private _mapService: MapService) {}
 
   toggleLayerVisibility(event) {
     //or use [change]="isChecked" and (change)="toggleLayerVisibility($event)" with event.target.value instead
     this.isChecked = event;
-    this.isChecked ? this._mapService.returnFeatureLayers().map(feature => {feature.visible = true}) : this._mapService.returnFeatureLayers().map(feature => {feature.visible = false;});
+    this._mapService.setLayersStatus(this.isChecked);
+    //this.isChecked ? this._mapService.returnFeatureLayers().map(feature => {feature.visible = true}) : this._mapService.returnFeatureLayers().map(feature => {feature.visible = false;});
+
+    //NEW approach
+    let map = this._mapService.returnMap();
+    this.isChecked ? map.findLayerById("itv-projects").visible = true : map.findLayerById("itv-projects").visible = false;
   }
 
   closeToggle() {

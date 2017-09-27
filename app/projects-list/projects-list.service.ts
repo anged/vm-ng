@@ -14,6 +14,10 @@ export class ProjectsListService {
   private projectsByExtent: any[] = [];
   private projectsByWord: any[] = [];
 
+  //radio buttons data binding for filtering by map or by word
+  //using for direct viewing on map with hitTest method as well
+  mainFilterCheck: String = 'word';
+
   private galleryObs = new Subject();
   galleryArr = this.galleryObs.asObservable();
 
@@ -55,10 +59,6 @@ export class ProjectsListService {
     } else if ((queryExpression.length > 0) && (valueAutocomplete.length > 0)) {
       query.where += " AND " + valueAutocomplete;
     }
-
-    //console.log(inputValue);
-    //console.log(valueAutocomplete.length);
-    //console.log(query.where);
 
     return queryTask.execute(query).then((result) => {
       task = result.features;
@@ -108,20 +108,19 @@ export class ProjectsListService {
   //whenever getPopUpContent executes in projectsService, Observable is beeing subscribed on projectsListComponent and added to popup
   //pass selection string to indentify that content is for selected graphic, so Observable must not be used
   getPopUpContent(attributes: any, selection: string = "") {
-    //console.log(attributes)
-
     let TemaID = attributes.TemaID,
       uniqueID = attributes.UNIKALUS_NR,
       Tema = attributes.Tema,
       //set title to empty string
       galleryTitle = "",
       galleryImages = (function() {
-        //console.log(attributes.PAV)
-        if (attributes.PAV === 1) {
+        //console.log('attributes', attributes)
+        //use ==, as with identify method we receive only string values (values are converted to string by API),
+        if (attributes.PAV == 1) {
           let arr;
           galleryTitle = '<p>Nuotraukų galerija:</p><img id="gallery-loader"style="width: 20px; margin: 20px auto; display: block" src="app/img/ajax-loader.gif">';
           //return gallery based on number of images
-          switch (attributes.PAV_K) {
+          switch (parseInt(attributes.PAV_K)) {
             case 2:
               arr = [
                 {
@@ -243,6 +242,7 @@ export class ProjectsListService {
               ];
               break;
               default:
+
                 arr =  [
                     {
                       thumbnail: "./app/img/projects/U_" + uniqueID + "_1.jpg",  //image src for the thumbnail
@@ -268,7 +268,7 @@ export class ProjectsListService {
       Savivaldybes_biudzeto_lesos = attributes.Savivaldybes_biudzeto_lesos ? (attributes.Savivaldybes_biudzeto_lesos[0] !== '0' ? '<p><span>Savivaldybės biudžeto lėšos</span><br />' + attributes.Savivaldybes_biudzeto_lesos + ' Eur</p>' : '') : "-",
       Valstybes_biudzeto_lesos = attributes.Valstybes_biudzeto_lesos ? (attributes.Valstybes_biudzeto_lesos[0] !== '0' ? '<p><span>Valstybės biudžeto lėšos</span><br />' + attributes.Valstybes_biudzeto_lesos + ' Eur</p>' : '') : '',
       Kitos_viesosios_lesos = attributes.Kitos_viesosios_lesos ? (attributes.Kitos_viesosios_lesos[0] !== '0' ? '<p><span> Kitos viešosios lėšos</span><br />' + attributes.Kitos_viesosios_lesos + ' Eur</p>' : '') : '',
-      Privacios_lesos = attributes.Privacios_lesos ? (attributes.Privacios_lesos[0] !== '0' ? '<p><span> Privačios lėšos</span><br />' + attributes.Privacios_lesos + ' Eur</p>' : '') : '',
+      Privacios_lesos = attributes.Privacios_lesos ? (attributes.Privacios_lesos[0] !== '0' ?  (attributes.Privacios_lesos[0] !== 'N' ? '<p><span> Privačios lėšos</span><br />' + attributes.Privacios_lesos + ' Eur</p>' : '') : '') : '',
       //TODO some attr has http:// prefix, filter it
       Nuoroda_i_projekta = attributes.Nuoroda_i_projekta ? (attributes.Nuoroda_i_projekta.slice(0, 4) === "http" ? '<p><span>Projekto nuoroda</span><br /><a href="' + attributes.Nuoroda_i_projekta + '" target="_blank">' + attributes.Nuoroda_i_projekta + '</a></p>' : '<p><span>Projekto nuoroda</span><br /><a href="http://' + attributes.Nuoroda_i_projekta + '" target="_blank">' + attributes.Nuoroda_i_projekta + '</a></p>') : '',
       Programa = attributes.Programa ? '<p><span>Programa </span><br />' + attributes.Programa + '</p>' : '',
@@ -320,5 +320,13 @@ export class ProjectsListService {
     return new QueryTask({
       url: urlStr
     });
+  }
+
+  //get active name of the filter
+  getFilterListName() {
+    return this.mainFilterCheck;
+  }
+  setFilterListName(name) {
+    this.mainFilterCheck = name;
   }
 }
