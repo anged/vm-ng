@@ -144,7 +144,7 @@ export class MapDefaultService {
       //console.log("IDS", item)
 
       //do not identify layer if it is Raster
-      if ((item.visible) && (!item.layer.isRaster)) {
+      if ((item.visible) && (!item.layer.isRaster) && (item.layer.sublayers)) {
         //UPDATE: identify raster layers as well
         //if (item.visible) {
         let subLayers = item.layer.sublayers.items;

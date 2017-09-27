@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/dom/ajax';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import {Subject} from 'rxjs/Subject';
+import { Subject } from 'rxjs/Subject';
 
 import Map = require("esri/Map");
 import Graphic = require("esri/Graphic");
@@ -63,6 +63,14 @@ export class MapService {
 
   map: any;
 
+  //dynamic projects layer
+  projectsDynamicLayer: any;
+
+  // Observable  source
+  private layersStatusObs = new Subject();
+  // Observable item stream
+  layersStatus = this.layersStatusObs.asObservable();
+
   constructor(private http: Http, private projectsService: ProjectsListService) { }
 
   initMap(options: Object): Map {
@@ -74,7 +82,7 @@ export class MapService {
       //container: this.elementRef.nativeElement.firstChild, // AG good practis
       container: 'map',
       constraints: {
-        snapToZoom: false, //When true, the view snaps to the next LOD when zooming in or out. When false, the zoom is continuous.
+        snapToZoom: true, //When true, the view snaps to the next LOD when zooming in or out. When false, the zoom is continuous.
         rotationEnabled: true  // Disables map rotation
       },
       popup: {
@@ -132,12 +140,36 @@ export class MapService {
     return this.map;
   }
 
-  initDynamicLayer(layer: string, id: string = "itv", name: string = "itv", opacity = 1) {
+  //for default themes
+  initDynamicLayer(layer: string, id: string = "itv", name: string = "itv", opacity = 1, sublayers = null) {
     return new MapImageLayer({
       url: layer,
       id: id,
       outFields: ["*"],
       opacity: opacity,
+      title: name,
+      sublayers: sublayers
+    });
+  }
+
+  //for projects theme
+  initDynamicLayerITV(layer: string, id: string = "itv", name: string = "itv", opacity = 1) {
+    return new MapImageLayer({
+      url: layer,
+      id: id,
+      outFields: ["*"],
+      opacity: opacity,
+      title: name
+    });
+  }
+
+  initSubAllDynamicLayers(layer: string, id: string = "itv", name: string = "itv", opacity = 1, sublayers: array) {
+    return new MapImageLayer({
+      url: layer,
+      id: id,
+      outFields: ["*"],
+      opacity: opacity,
+      sublayers: sublayers,
       title: name
     });
   }
@@ -153,13 +185,22 @@ export class MapService {
 
   initGraphic(type: string, name: String, attr: any, geom, scale: any = "", graphicLayer) {
     return new Graphic({
-      attributes: attr,
+      // attributes: attr,
+      // geometry: geom,
+      // popupTemplate: {
+      //   title: this.projectsService.getPopUpTitle(attr),
+      //   //pass selection string to indentify that content is for selected graphic, so Observable must not be used
+      //   content: this.projectsService.getPopUpContent(attr, "selection")
+      // },
+      // symbol: this.initSymbol(type),
+      // layer: graphicLayer
+      ///attributes: attr,
       geometry: geom,
-      popupTemplate: {
-        title: this.projectsService.getPopUpTitle(attr),
-        //pass selection string to indentify that content is for selected graphic, so Observable must not be used
-        content: this.projectsService.getPopUpContent(attr, "selection")
-      },
+      // popupTemplate: {
+      //   title: this.projectsService.getPopUpTitle(attr),
+      //   //pass selection string to indentify that content is for selected graphic, so Observable must not be used
+      //   content: this.projectsService.getPopUpContent(attr, "selection")
+      // },
       symbol: this.initSymbol(type),
       layer: graphicLayer
     });
@@ -269,14 +310,20 @@ export class MapService {
   }
 
   removeSelectionLayers(map: any): void {
+    //console.log("allGraphicLayers", this.allGraphicLayers)
     if (this.allGraphicLayers.length > 0) {
       //remove all graphic from map
-      this.allGraphicLayers.forEach(graphic => graphic.removeAll());
+      this.allGraphicLayers.forEach(graphic => {
+        graphic.removeAll();
+        this.map.remove(graphic);
+      });
       this.allGraphicLayers = [];
     }
   }
 
   initSelectionGraphic(result, scale, graphicLayer) {
+    //console.log(result.geometry.type)
+    //console.log(scale)
     if (result.geometry.type === "point") {
       return this.initGraphic("point", "selected-feature", result.attributes, result.geometry, scale, graphicLayer);
     }
@@ -295,7 +342,7 @@ export class MapService {
     let graphic;
     //set opacity
     //layer.opacity = 0.9;
-
+    //console.log(maxScale);
     graphicLayer = this.initGraphicLayer(number, { max: maxScale, min: minScale });
     this.allGraphicLayers.push(graphicLayer);
 
@@ -323,7 +370,7 @@ export class MapService {
 
   //on map component OnInit center and zoom based on URL query params
   centerZoom(view: any, params: any) {
-    let point: number[];
+    let point: Point;
     point = [params.x ? parseFloat(params.x) : view.center.x, params.y ? parseFloat(params.y) : view.center.y];
     //setTimeout(() => {
     view.zoom = params.zoom;
@@ -344,7 +391,8 @@ export class MapService {
       for (let param in params) {
         if (params.hasOwnProperty(param)) {
           let layer = map.findLayerById(param);
-          //console.log("layer found", layer);
+          // console.log("layer found", layer);
+          // console.log("param", param);
           if (layer) {
             layer.on("layerview-create", (event) => {
               // The LayerView for the layer that emitted this event
@@ -362,12 +410,8 @@ export class MapService {
     let idsArr = ids.split("!");
     //console.log(idsArr);
     idsArr.forEach(id => {
-      //setTimeout(()=>{
       let sublayer = layer.findSublayerById(parseInt(id));
-      //console.log(sublayer);
       sublayer ? sublayer.visible = true : "";
-      //}, 600)
-
     })
   }
 
@@ -421,8 +465,8 @@ export class MapService {
       operationalItems: [
         {
           layer: subLayer,
-          //actionsOpen: true,
-          //open: true,
+          actionsOpen: true,
+          open: true,
           view: view
         }
       ]
@@ -535,78 +579,77 @@ export class MapService {
     view.layerViews.items.map(item => {
       //TODO refactor mapDefaultService and mapService, for projects theme get VisibleLayers Ids only for alllayers service
       if (item.layer.id === "allLayers") {
-      //small fix: add layer id that doen't exist, for example 999, in order to prevent all layers identification when all lists are turned off
-      ids.identificationsIds[item.layer.id] = [999];
-      ids.visibilityIds[item.layer.id] = [999];
-      //console.log("IDS", item)
+        //small fix: add layer id that doen't exist, for example 999, in order to prevent all layers identification when all lists are turned off
+        ids.identificationsIds[item.layer.id] = [999];
+        ids.visibilityIds[item.layer.id] = [999];
+        //console.log("IDS", item)
+        //do not identify layer if it is Raster
+        if ((item.visible) && (!item.layer.isRaster) && (item.layer.sublayers)) {
+          //UPDATE: identify raster layers as well
+          //if (item.visible) {
+          let subLayers = item.layer.sublayers.items;
+          //console.log("subLayer", subLayers);
+          subLayers.map((subLayer) => {
+            let minScale = subLayer.minScale;
+            let maxScale = subLayer.maxScale;
+            //add number to fit viewScale, because 0 in Esri logic means layer is not scaled
+            ((minScale === 0)) ? minScale = 99999999 : minScale;
 
-      //do not identify layer if it is Raster
-      if ((item.visible) && (!item.layer.isRaster)) {
-        //UPDATE: identify raster layers as well
-        //if (item.visible) {
-        let subLayers = item.layer.sublayers.items;
-        //console.log("subLayer", subLayers);
-        subLayers.map((subLayer) => {
-          let minScale = subLayer.minScale;
-          let maxScale = subLayer.maxScale;
-          //add number to fit viewScale, because 0 in Esri logic means layer is not scaled
-          ((minScale === 0)) ? minScale = 99999999 : minScale;
+            // console.log(subLayer.minScale , viewScale , subLayer.maxScale)
+            // console.log(minScale , viewScale , maxScale)
+            //if layer is visible and in view scale
+            if (subLayer.visible) {
+              ids.visibilityIds[item.layer.id].push(subLayer.id);
+              if ((maxScale < viewScale) && (viewScale < minScale)) {
+                //check if sublayer has subsublayers
+                if (subLayer.sublayers) {
+                  //console.log("subsubLayer", subLayers);
+                  //3 layer if exist
+                  let subsublayers = subLayer.sublayers.items;
+                  subsublayers.map(subsublayer => {
+                    let subMinScale = subsublayer.minScale;
+                    let subMaxScale = subsublayer.maxScale;
+                    ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
+                    //if layer is visible and in view scale
+                    if (subsublayer.visible) {
+                      ids.visibilityIds[item.layer.id].push(subsublayer.id);
+                      if ((subMaxScale < viewScale) && (viewScale < subMinScale)) {
+                        //console.log("Sub subsubLayer", subLayers);
 
-          // console.log(subLayer.minScale , viewScale , subLayer.maxScale)
-          // console.log(minScale , viewScale , maxScale)
-          //if layer is visible and in view scale
-          if (subLayer.visible) {
-            ids.visibilityIds[item.layer.id].push(subLayer.id);
-            if ((maxScale < viewScale) && (viewScale < minScale)) {
-              //check if sublayer has subsublayers
-              if (subLayer.sublayers) {
-                //console.log("subsubLayer", subLayers);
-                //3 layer if exist
-                let subsublayers = subLayer.sublayers.items;
-                subsublayers.map(subsublayer => {
-                  let subMinScale = subsublayer.minScale;
-                  let subMaxScale = subsublayer.maxScale;
-                  ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
-                  //if layer is visible and in view scale
-                  if (subsublayer.visible) {
-                    ids.visibilityIds[item.layer.id].push(subsublayer.id);
-                    if ((subMaxScale < viewScale) && (viewScale < subMinScale)) {
-                      //console.log("Sub subsubLayer", subLayers);
+                        if (subsublayer.sublayers) {
+                          //4 layer if exist
+                          let subsubsublayers = subsublayer.sublayers.items;
+                          subsubsublayers.map(subsubsublayer => {
+                            let subMinScale = subsubsublayer.minScale;
+                            let subMaxScale = subsubsublayer.maxScale;
+                            ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
+                            //if layer is visible and in view scale
+                            if (subsubsublayer.visible) {
+                              ids.visibilityIds[item.layer.id].push(subsubsublayer.id);
+                              if ((subsubsublayer.visible) && (subMaxScale < viewScale) && (viewScale < subMinScale)) {
+                                //console.log("SubSUB subsubLayer", subsubsublayers);
+                                ids.identificationsIds[item.layer.id].push(subsubsublayer.id);
 
-                      if (subsublayer.sublayers) {
-                        //4 layer if exist
-                        let subsubsublayers = subsublayer.sublayers.items;
-                        subsubsublayers.map(subsubsublayer => {
-                          let subMinScale = subsubsublayer.minScale;
-                          let subMaxScale = subsubsublayer.maxScale;
-                          ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
-                          //if layer is visible and in view scale
-                          if (subsubsublayer.visible) {
-                            ids.visibilityIds[item.layer.id].push(subsubsublayer.id);
-                            if ((subsubsublayer.visible) && (subMaxScale < viewScale) && (viewScale < subMinScale)) {
-                              //console.log("SubSUB subsubLayer", subsubsublayers);
-                              ids.identificationsIds[item.layer.id].push(subsubsublayer.id);
-
+                              }
                             }
-                          }
-                        });
-                      } else {
-                        //push id's if it has no sublayers
-                        ids.identificationsIds[item.layer.id].push(subsublayer.id);
+                          });
+                        } else {
+                          //push id's if it has no sublayers
+                          ids.identificationsIds[item.layer.id].push(subsublayer.id);
+                        }
                       }
                     }
-                  }
-                });
-              }
-              //else push id
-              else {
-                ids.identificationsIds[item.layer.id].push(subLayer.id);
+                  });
+                }
+                //else push id
+                else {
+                  ids.identificationsIds[item.layer.id].push(subLayer.id);
+                }
               }
             }
-          }
-        })
+          })
+        }
       }
-    }
     })
     //console.log("FINAL IDS", ids)
     this.visibleLayers = ids;
@@ -619,5 +662,80 @@ export class MapService {
     ids.identificationsIds.allLayers ? this.visibleSubLayerNumber = ids.identificationsIds.allLayers.length - 1 : this.visibleSubLayerNumber = 0;
     //console.log("visibleSubLayerNumber", this.visibleSubLayerNumber);
     return this.visibleSubLayerNumber;
+  }
+
+  //set itv theme dynamic projects layer
+  setProjectsDynamicLayer(projectsDynamicLayer: any) {
+    this.projectsDynamicLayer = projectsDynamicLayer;
+  }
+
+  //get itv theme dynamic projects layer
+  getProjectsDynamicLayer() {
+    return this.projectsDynamicLayer;
+  }
+
+  //set Layer list checkbox status: on or off (true | false)
+  setLayersStatus(isChecked: boolean) {
+    this.layersStatusObs.next(isChecked);
+  };
+
+  //layerlist 4.4 API bug fix, retunrn sublayers array,TODO remove fix in 4.5 API
+  getSubDynamicLayerSubLayers(layers: Array<any>) {
+    let sublayers = [];
+    layers.forEach(item => {
+      if (item.parentLayer) {
+        let currentSublayer = sublayers.forEach((layer, i) => {
+          if (layer.id === item.parentLayer.id) {
+            sublayers[i].sublayers.push({
+              id: item.id,
+              title: item.name,
+              visible: item.defaultVisibility,
+              maxScale: item.maxScale,
+              minScale: item.minScale,
+              legendEnabled: true,
+              sublayers: []
+            });
+          } else {
+            sublayers[i].sublayers.forEach((sublayer, a) => {
+              if (sublayer.id === item.parentLayer.id) {
+                sublayers[i].sublayers[a].sublayers.push({
+                  id: item.id,
+                  title: item.name,
+                  visible: item.defaultVisibility,
+                  maxScale: item.maxScale,
+                  minScale: item.minScale,
+                  legendEnabled: true,
+                  sublayers: []
+                });
+              }
+            });
+          }
+        });
+      }
+      else {
+        sublayers.push({
+          id: item.id,
+          title: item.name,
+          visible: item.defaultVisibility,
+          maxScale: item.maxScale,
+          minScale: item.minScale,
+          legendEnabled: true,
+          sublayers: []
+        });
+      }
+    });
+    //console.log("sublayers", sublayers);
+    sublayers.reverse().map(sublayer => {
+      sublayer.sublayers.length === 0 ? sublayer.sublayers = null : sublayer.sublayers.reverse().map(subSublayer => {
+        subSublayer.sublayers.length === 0 ? subSublayer.sublayers = null : subSublayer.sublayers.reverse().map(subSubSublayer => {
+          subSubSublayer.sublayers.length === 0 ? subSubSublayer.sublayers = null : "";
+          return subSubSublayer;
+        });
+        return subSublayer;
+      });
+      return sublayer;
+    });
+    //console.log("sublayers", sublayers);
+    return sublayers;
   }
 }

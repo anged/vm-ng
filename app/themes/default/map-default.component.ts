@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild  } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from "@angular/router";
 
 import { MapService } from '../../map.service';
@@ -16,12 +16,17 @@ import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
 import Bundle = require("dojo/i18n!esri/nls/common");
 import all = require("dojo/promise/all");
+import StreamLayer = require("esri/layers/StreamLayer");
 
 import { FeatureQueryService } from '../../query/feature-query.service';
 import { IdentifyService } from '../../services/identify/identify.service';
 import { PointAddRemoveService } from '../../query/point-add-remove.service';
 
 import { Subscription } from 'rxjs/Subscription';
+
+import { findKey } from 'lodash';
+import { pick } from 'lodash';
+import { forIn } from 'lodash';
 
 @Component({
   selector: 'esri-map-default',
@@ -41,14 +46,15 @@ export class MapDefaultComponent implements OnInit {
   mobile: boolean;
   featureLayers: any[];
 
-  mapListActive: number;
-  wordListActive: number;
-
   helpContainerActive: boolean = false;
   shareContainerActive: boolean = false;
 
   //sharing url string
   shareUrl: string;
+
+  //bug fix for API 4.4 version
+  //add subDynamicLayers sublayers meta data
+  subDynamicLayerSubLayers: any;
 
   constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
@@ -79,7 +85,7 @@ export class MapDefaultComponent implements OnInit {
     currentZoom = this.view.zoom;
     currentCoordinates = [this.view.center.x, this.view.center.y];
     this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
-    + this.mapWidgetsService.returnActiveBasemap();
+      + this.mapWidgetsService.returnActiveBasemap();
     //console.log(this.shareUrl)
     //console.log(window.location)
 
@@ -124,15 +130,13 @@ export class MapDefaultComponent implements OnInit {
       }
     });
 
-    //console.log("VIEW", view.on)
     view.on("pointer-move", (event) => {
       //console.log("MOUSE event", event.native)
     });
 
     view.on("click", (event) => {
-      //console.log("view", view);
       //store all deffered objects of identify task in def array
-      let def: array = [];
+      let def = [];
       let ids: any = this.mapDefaultService.getVisibleLayersIds(view);
       let visibleLayersIds: number[] = ids.identificationsIds;
       view.popup.dockEnabled = false;
@@ -165,7 +169,6 @@ export class MapDefaultComponent implements OnInit {
               title: `${name}`,
               content: this.mapDefaultService.getVisibleLayersContent(result)
             };
-
             //add feature layer id
             feature["layerId"] = item.layer.id;
             return feature;
@@ -199,30 +202,13 @@ export class MapDefaultComponent implements OnInit {
         //else identify with hitTest method
         //find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
         this._mapService.removeSelectionLayers(this.map);
-
-        //TODO close any popup if opened,store current view in service
         //this.view.popup.close()
         //hitTest check graphics in the view
         this.hitTestFeaturePopup(view, event);
-
         //init popup on click event widh identify service
         //this.identify.showItvPopupOnCLick(view, event, identify, identifyParams);
       }
-
     }, (error) => { console.error(error); });
-  }
-
-  //activate word or map list item directly from map
-  activateList(id: number, listName: String) {
-    if (listName === "word") {
-      this.wordListActive = id;
-      //deactivate mapListActive
-      this.mapListActive = null;
-    } else {
-      this.mapListActive = id;
-      //deactivate wordListActive
-      this.wordListActive = null;
-    }
   }
 
   hitTestFeaturePopup(view: any, event: any) {
@@ -235,7 +221,6 @@ export class MapDefaultComponent implements OnInit {
     //console.log(screenPoint)
     view.hitTest(screenPoint)
       .then(features => {
-
       });
   }
 
@@ -248,21 +233,12 @@ export class MapDefaultComponent implements OnInit {
       this.featureLayers = featureLayerArr;
       //add layers
       this.map.addMany(featureLayerArr);
-
       this.view.whenLayerView(featureLayerArr[0]).then(layerView => {
-        //console.log("layerView:", layerView);
       });
-
     });
   }
 
   ngOnInit() {
-    //console.log("LOADING");
-    //url path from Observable / using snapshot instead // TODO change to Observable
-    //this.activatedRoute.url.subscribe((url) => {
-    //url["0"] ? this._mapService.getThemeName(url["0"].path)  : "";
-    //});
-
     //add snapshot url and pass path name ta Incetable map service
     let snapshotUrl = this.activatedRoute.snapshot.url["0"]
     let basemaps: any[] = [];
@@ -283,29 +259,80 @@ export class MapDefaultComponent implements OnInit {
     //add  basemap layer
     //TODO refactor
     this.mapWidgetsService.returnBasemaps().forEach(basemap => {
-        if (this.queryParams.basemap === basemap.id) {
-          this.mapWidgetsService.setActiveBasemap(basemap.id);
-          basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id))
-        } else {
-          basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id, false));
-        }
+      if (this.queryParams.basemap === basemap.id) {
+        this.mapWidgetsService.setActiveBasemap(basemap.id);
+        basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id))
+      } else {
+        basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id, false));
+      }
     });
 
     this.map.basemap = this._mapService.customBasemaps(basemaps);
 
     this._mapService.updateMap(this.map);
 
-    //add dyn layers
+    //old apprach
+    // //add dyn layers
+    // if (snapshotUrl) {
+    //   // themeGroupLayer.addMany(this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path));
+    //   // this.map.add(themeGroupLayer);
+    //   this.map.addMany(this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path));
+    //   //console.log("MAP", this.map);
+    // };
+
     if (snapshotUrl) {
-      // themeGroupLayer.addMany(this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path));
-      // this.map.add(themeGroupLayer);
-      this.map.addMany(this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path));
-      //console.log("MAP", this.map);
+      //using lodash find and pick themeLayer from options
+      let themeName = findKey(MapOptions.themes, { "id": snapshotUrl.path });
+      let themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
+
+      forIn(themeLayers, (layer, key) => {
+        this._mapService.countRestlayers(layer.dynimacLayerUrls + "/layers?f=pjson").subscribe(json => {
+          //add dyn layers
+          //console.log("snapshotUrl", snapshotUrl.path);
+          let sublayersArray = this._mapService.getSubDynamicLayerSubLayers(json.layers);
+          let dynamicLayer = this._mapService.initDynamicLayer(layer.dynimacLayerUrls, key, layer.name, layer.opacity, sublayersArray)
+          //for Layerlist 4.4 API bug fix
+          this.map.add(dynamicLayer);
+
+          //check other url params if exists
+          //activate layer defined in url query params
+          this._mapService.activateLayersVisibility(this.view, this.queryParams, this.map);
+
+          //old apprach
+          // let dynamicLayersArray = this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path)
+          // dynamicLayersArray = dynamicLayersArray.map(dynamicLayer => {dynamicLayer.sublayers = sublayersArray; return dynamicLayer});
+          //this.map.addMany(dynamicLayersArray);
+        });
+      });
     };
 
-    //add allLayers sublist layers
-    let subDynamicLayers = this._mapService.initDynamicLayer("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
-    this.map.add(subDynamicLayers);
+    // //add allLayers sublist layers
+    // let subDynamicLayers = this._mapService.initDynamicLayer("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
+    // this.map.add(subDynamicLayers);
+    // console.log("subDynamicLayers", subDynamicLayers)
+
+    //count feature layers and add to map
+    this._mapService.countRestlayers("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer" + "/layers?f=pjson").subscribe(json => {
+      //console.log("json 2", json);
+      let sublayersArray = this._mapService.getSubDynamicLayerSubLayers(json.layers);
+      //add allLayers sublist layers
+      let subDynamicLayers = this._mapService.initSubAllDynamicLayers("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8, sublayersArray);
+      this.map.add(subDynamicLayers);
+      //check other url params if exists
+      //activate layer defined in url query params
+      this._mapService.activateLayersVisibility(this.view, this.queryParams, this.map);
+    });
+
+    // //Test:  add stream layer
+    // // Construct Stream Layer
+    // let streamLayer = new StreamLayer({
+    //   url: "https://venera2.vplanas.lt:6443/arcgis/rest/services/GRINDA_TRUCKS_STREAM/StreamServer",
+    //   purgeOptions: {
+    //     displayCount: 10000
+    //   }
+    // });
+    //
+    // this.map.add(streamLayer);
 
     this.view.then((view) => {
       //if query paremeteters are defined get zoom and center
@@ -319,7 +346,7 @@ export class MapDefaultComponent implements OnInit {
       this.search.on("search-start", (event) => {
       });
       //check other url params if exists
-      this._mapService.activateLayersVisibility(view, this.queryParams, this.map);
+      //this._mapService.activateLayersVisibility(view, this.queryParams, this.map);
 
       //init view and get projects on vie stationary property changes
       this.initView(view);

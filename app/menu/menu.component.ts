@@ -119,16 +119,11 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
     //load message about sublayers if they are visible on Init
-    //add count, as view emits layerview-create on every layer
-    let count = 0;
     this.view.on("layerview-create", (event) => {
       let map = this.mapService.returnMap();
       let allLayersLayer = map.findLayerById("allLayers");
-      count === 0 ? allLayersLayer.on("layerview-create", (event) => {
-        // The LayerView for the layer that emitted this event
-        this.getVisibleSubLayerNumber();
-      }) : "";
-      count +=1;
+      //get visibleSubLayerNumber when allLayers layer uis loaded
+      event.layer.id === "allLayers" ? this.getVisibleSubLayerNumber(): void(0);
     });
 
     this.watchLayers();

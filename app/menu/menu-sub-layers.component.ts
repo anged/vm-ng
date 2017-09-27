@@ -44,8 +44,9 @@ export class MenuSubLayersComponent implements OnInit {
   }
 
   ngOnInit() {
-    let map = this.mapService.returnMap();
+    //let map = this.mapService.returnMap();
     //don't show all layers ir main layerlist
-    map.layers.items = this.menuService.listModeSelection("theme", map.layers.items);
+    //UPDATE hide dom instead
+    //map.layers.items = this.menuService.listModeSelection("theme", map.layers.items);
   }
 }

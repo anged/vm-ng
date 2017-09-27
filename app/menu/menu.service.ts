@@ -44,18 +44,16 @@ export class MenuService {
   addSubList() {
     let view = this.mapService.getView();
     let map = this.mapService.returnMap();
-    map.layers.items = this.listModeSelection("allLayers", map.layers.items);
+    //UPDATE hide dom instead
+    //map.layers.items = this.listModeSelection("allLayers", map.layers.items);
     //this.subLayersActive ? this.subListWidget = this.mapService.initSubLayerListWidget(view, map) : "";
     if (this.subListModeOff && this.subLayersActive) {
       //alert("wrking 1")
       view.then((viewMap) => {
-        console.log(viewMap)
         this.subListWidget = this.mapService.initSubLayerListWidget(view, map);
       })
       //this.subListWidget = this.mapService.initSubLayerListWidget(view, map);
-      //alert("wrking 2")
-      console.log("Sublayer", this.subListWidget);
-      console.log("SublayerLISTWIDGET", this.subListWidget);
+      //console.log("SublayerLISTWIDGET", this.subListWidget);
       this.subListModeOff = false;
 
       //this.queryParams = this.mapService.returnQueryParams();
@@ -82,7 +80,6 @@ export class MenuService {
             }
           });
         });
-        //alert("wrking 3")
       }, 500);
 
     }
@@ -95,7 +92,6 @@ export class MenuService {
       //console.log('create');
       setTimeout(() => {
         this.addSubList();
-        console.log('create');
         this.toggleNumber += 1;
       }, 500);
     } else if (!(this.toggleNumber % 2) && (this.toggleNumber > 1)) {
