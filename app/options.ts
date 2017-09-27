@@ -42,15 +42,16 @@ export const MapOptions: any = {
     itvTheme: {
       production: true, //if theme is ready for production
       version: "arcgis4",
-      hide: true, //hide from themes menu, but add route with functionality
+      hide: false, //hide from themes menu, but add route with functionality
       custom: true,
       name: "Investiciniai projektai", //theme name
       id: "projektai", //theme id class and theme URL query name
       imgUrl: "./app/img/projektai.png", //image URL
       imgAlt: "Investiciniai projektai", // image alt attribute
+      info: "Uses static menu legend", //Meta info about project
       layers: {
         //maps layers for scaling on map
-        mapLayer: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/itv_projects/MapServer',
+        mapLayer: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/itv_projects_GDB/MapServer',
         //all projects (converted to polygon) for listing
         uniqueProjects: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/itv_projects_common/MapServer',
         //2 base teritories south and north
