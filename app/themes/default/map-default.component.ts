@@ -311,18 +311,6 @@ export class MapDefaultComponent implements OnInit {
     // this.map.add(subDynamicLayers);
     // console.log("subDynamicLayers", subDynamicLayers)
 
-    //count feature layers and add to map
-    this._mapService.countRestlayers("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer" + "/layers?f=pjson").subscribe(json => {
-      //console.log("json 2", json);
-      let sublayersArray = this._mapService.getSubDynamicLayerSubLayers(json.layers);
-      //add allLayers sublist layers
-      let subDynamicLayers = this._mapService.initSubAllDynamicLayers("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8, sublayersArray);
-      this.map.add(subDynamicLayers);
-      //check other url params if exists
-      //activate layer defined in url query params
-      this._mapService.activateLayersVisibility(this.view, this.queryParams, this.map);
-    });
-
     // //Test:  add stream layer
     // // Construct Stream Layer
     // let streamLayer = new StreamLayer({
@@ -335,6 +323,17 @@ export class MapDefaultComponent implements OnInit {
     // this.map.add(streamLayer);
 
     this.view.then((view) => {
+      //count feature layers and add to map
+      this._mapService.countRestlayers("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer" + "/layers?f=pjson").subscribe(json => {
+        //console.log("json 2", json);
+        let sublayersArray = this._mapService.getSubDynamicLayerSubLayers(json.layers);
+        //add allLayers sublist layers
+        let subDynamicLayers = this._mapService.initSubAllDynamicLayers("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8, sublayersArray);
+        this.map.add(subDynamicLayers);
+        //check other url params if exists
+        //activate layer defined in url query params
+        this._mapService.activateLayersVisibility(this.view, this.queryParams, this.map);
+      });
       //if query paremeteters are defined get zoom and center
       this._mapService.centerZoom(view, this.queryParams);
       //add default search widget

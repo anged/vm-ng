@@ -447,7 +447,7 @@ export class MapService {
         item.open = true;
         item.children.items.map((child) => child.open = true);
       });
-    }, 800);
+    }, 1000);
 
     return listWidget;
   }
