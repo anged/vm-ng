@@ -133,17 +133,27 @@ a:focus, a:hover {
 .esri-popup__content {
     display: flex;
     flex-flow: column nowrap;
-    margin: 0;
+    margin: 5px 5px 15px 15px;
+    padding-top: 5px;
     flex: 1 1 auto;
     font-size: 14px;
     font-weight: 400;
     overflow: auto;
     overflow-x: hidden;
 }
+.esri-popup__navigation {
+    padding: 0 1px;
+}
 .esri-popup__content a {
     color: #6e6e6e;
     text-decoration: none;
     border-bottom: 1px solid #C1272D;
+}
+.esri-icon-zoom-in-magnifying-glass:before {
+    color: #e61c24;
+}
+.esri-icon-dial:before {
+    content: "";
 }
 .esri-popup--is-docked-top-left.esri-popup__position-container .esri-popup__main-container, .esri-popup--is-docked-bottom-left.esri-popup__position-container .esri-popup__main-container {
   max-height: -moz-calc(100% - 158px);
@@ -482,6 +492,20 @@ li.list-active {
 #close-print:hover {
   cursor:pointer;
 }
+.esri-print {
+    position: relative;
+    padding: 12px 15px;
+    overflow-y: auto;
+    width: 300px;
+}
+.esri-print label {
+    padding-left: 0;
+}
+.esri-print .esri-select {
+    cursor: pointer;
+    display: block;
+    width: 270px;
+}
 #drag-print {
   padding: 4px;
   position: relative;
@@ -709,6 +733,7 @@ label {
 }
 .esri-legend__service {
     border-bottom: none;
+    padding: 0;
 }
 .esri-legend__layer-cell--info {
     font-size: 14px;
