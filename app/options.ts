@@ -252,6 +252,17 @@ export const MapOptions: any = {
       imgUrl: "/app/img/old_version.png", //image URL
       imgAlt: "Senoji versija", // image alt attribute
       url: "http://www.vilnius.lt/vmap/t1.php" // external url if required, if not - gets internal url depending on id property
+    },
+    emptyTeam: {
+      //url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
+      production: true, //if theme is ready for production
+      hide: true, //hide from themes menu, but add route with functionality
+      name: "Tuščia tema", //theme name
+      //id: "civ-sauga", //theme id class and theme URL query name
+      id: "empty", //theme id class and theme URL query name
+      imgUrl: "./app/img/civiline-sauga.png", //image URL
+      imgAlt: "Tuščia tema" // image alt attribute
+      }
     }
   },
   animation: {
