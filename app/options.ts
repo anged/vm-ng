@@ -262,7 +262,6 @@ export const MapOptions: any = {
       id: "empty", //theme id class and theme URL query name
       imgUrl: "./app/img/civiline-sauga.png", //image URL
       imgAlt: "Tuščia tema" // image alt attribute
-      }
     }
   },
   animation: {
