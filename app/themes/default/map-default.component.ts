@@ -261,7 +261,7 @@ export class MapDefaultComponent implements OnInit {
     this.mapWidgetsService.returnBasemaps().forEach(basemap => {
       if (this.queryParams.basemap === basemap.id) {
         this.mapWidgetsService.setActiveBasemap(basemap.id);
-        basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id))
+        basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id));
       } else {
         basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id, false));
       }

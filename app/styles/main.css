@@ -781,7 +781,7 @@ label {
   top: 0;
   margin: 0px;
   right: 0;
-  padding: 5px 10px;
+  padding: 10px 10px;
   background: #e61c24;
 }
 #close-filter:hover {
@@ -1160,7 +1160,7 @@ label {
   background: #e61c24;
 }
 .sub-layers-container #close-filter {
-    padding: 16px 18px;
+    padding: 18px 18px;
     height: 53px;
 }
 .sub-layers-container #close-filter svg {

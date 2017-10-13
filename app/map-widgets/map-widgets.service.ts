@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BASEMAPS } from './basemaps.ts'
+import { BASEMAPS } from './basemaps'
 
 
 @Injectable()
@@ -38,6 +38,14 @@ export class MapWidgetsService {
           : document.getElementsByClassName("container-fluid")[0].classList.remove("dark");
       } else {
         item.visible = false;
+        //if active base map is basemapEngineeringUrl, add  another  basemap as well ("base-dark" for example)
+        ((this.activeBasemap === "base-en-t") && (item.id === "base-dark"))
+        ? item.visible = true
+        : void(0);
+
+        ((this.activeBasemap === "base-en-s") && (item.id === "base-map"))
+        ? item.visible = true
+        : void(0);
       }
     })
   }

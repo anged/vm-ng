@@ -75,5 +75,6 @@ export class BasemapToggle implements OnInit {
   ngOnInit() {
     this.selectedValue = this.mapWidgetsService.returnActiveBasemap();
     this.mapWidgetsService.filterBasemap( this.mapWidgetsService.returnActiveBasemap(), this.view);
+    
   }
 }
