@@ -187,7 +187,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
       //if mobile identify with query
       if (this.mobile) {
-        this.pointAddRemoveService.identifyItem(this.map, view, this.featureLayers, event);
+        //this.pointAddRemoveService.identifyItem(this.map, view, this.featureLayers, event);
       } else {
         //else identify with hitTest method
         //find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
