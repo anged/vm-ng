@@ -4,7 +4,7 @@
   "description": "NG2 API 4.x",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anged/ng2-arcgis-api4x.git"
+    "url": "https://github.com/anged/vm-ng.git"
   },
   "scripts": {
     "test": "karma start",
