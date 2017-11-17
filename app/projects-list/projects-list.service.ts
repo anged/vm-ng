@@ -45,7 +45,9 @@ export class ProjectsListService {
     query.returnGeometry = true;
 
     //if input value is empty asign to empty string, else make additiniol sql query
-    let valueAutocomplete = inputValue.length > 0 ? "(Pavadinimas LIKE '%" + inputValue + "%')" : "";
+    //UPDATED words are filtered same way if first letter is uppercase or lowercase
+    //TODO make search by word case insesitive
+    let valueAutocomplete = inputValue.length > 0 ? "((Pavadinimas LIKE '%" + inputValue.charAt(0).toLowerCase() + inputValue.slice(1) + "%')" + " OR " + "(Pavadinimas LIKE '%" + inputValue.charAt(0).toUpperCase() + inputValue.slice(1) + "%'))" : "";
     query.outFields = ["*"];
     //check if query expression was set by filters
     typeof (queryExpression) !== "undefined" ? query.where = "(" + queryExpression + ")" : query.where = "";
@@ -59,6 +61,9 @@ export class ProjectsListService {
     } else if ((queryExpression.length > 0) && (valueAutocomplete.length > 0)) {
       query.where += " AND " + valueAutocomplete;
     }
+
+    console.log(query.where);
+    console.log(inputValue.charAt(0).toUpperCase(), inputValue.slice(1));
 
     return queryTask.execute(query).then((result) => {
       task = result.features;

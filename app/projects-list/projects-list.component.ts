@@ -64,7 +64,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   pointSubscription: Subscription;
 
 
-  keyUpDelay = (function() {
+  keyUpDelay = (() => {
     let timer = 0;
     return function(callback, ms) {
       clearTimeout(timer);
@@ -201,7 +201,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
             location: point
           });
           //TODO change logic
-          //unsubscribe point subscribtion after opup open
+          //unsubscribe point subscribtion after popup opens
           setTimeout(()=>{this.pointSubscription.unsubscribe()}, 200)
         }
         });
@@ -298,13 +298,17 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
         //     return el.toLowerCase().indexOf(this.query.toLowerCase()) > -1;
         // }.bind(this));
         this.filteredList = this.getList().filter(function(project) {
-          return project.attributes.Pavadinimas.toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+          const projectsName = project.attributes.Pavadinimas.toLowerCase();
+          return projectsName.indexOf(this.query.toLowerCase()) > -1;
         }.bind(this));
 
         //console.log(event.target.value)
         //console.log("SARASAS: ", this.filteredList)
         //emit filter list and input value for additional query task if any additional filtering occurs
         this.onFilter.emit([this.filteredList, event.target.value]);
+
+        //UPDATE if query is not empty asign this.fullListChanged = this.filteredList;
+        this.fullListChanged = this.filteredList;
 
         if (event.code == "ArrowDown" && this.selectedIdx < this.filteredList.length) {
 
