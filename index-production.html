@@ -14,7 +14,6 @@
     <link href="app/styles/indigo-pink.css" rel="stylesheet">
     <link rel="stylesheet" href="app/fonts/font-awesome.min.css">
     <link rel="stylesheet" href="app/styles/ng2-image-gallery.css">
-    <!-- Configure and load ESRI libraries -->
     <script>
       window.dojoConfig = {
         locale: "lt",
@@ -23,13 +22,11 @@
       };
     </script>
     <script src="https://js.arcgis.com/4.5/"></script>
-    <!-- Load webpack bundles-->
     <script>
       require(["vendor.bundle.js", "main.bundle.js"], function (vendor, main) {});
     </script>
   </head>
 
-  <!-- 3. Display the application -->
   <body class="calcite">
 
       <vilnius-maps>
