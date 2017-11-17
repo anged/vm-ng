@@ -107,7 +107,6 @@ module.exports = {
             }
             callback();
         }
-    ]
-    ,
-    devtool: 'source-map'
+    ],
+    devtool: PRODUCTION ? 'nosources-source-map' : 'source-map'
 };
