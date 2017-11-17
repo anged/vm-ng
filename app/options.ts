@@ -17,19 +17,22 @@ export const MapOptions: any = {
       ortofotoUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORT5LT_2016/MapServer",
       basemapEngineeringUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services//Baziniai_zemelapiai/Vilnius_Inzinerija/MapServer",
       geometryUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Utilities/Geometry/GeometryServer",
-      printServiceUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/ITV_teritorijos/ITV_teritorijos_spausdinimas/GPServer/Export%20Web%20Map"
+      //printServiceUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/ITV_teritorijos/ITV_teritorijos_spausdinimas/GPServer/Export%20Web%20Map"
+      printServiceUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Interaktyvus_Default/GPServer/Export%20Web%20Map",
+      //allLayers group service for displaying all layers
+      commonMaps: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer"
     },
   },
   themes: {
-    buildings: {
+    buildingsAdministration: {
       url: "https://maps.vilnius.lt/maps_vilnius/?theme=theme-buildings",
       production: true, //if theme is ready for production
       custom: true, // true if theme funcionality is custom
-      name: "Pastatai ir statyba", //theme name
+      name: "Pastatų administravimas", //theme name
       //id: "theme-buildings", //theme id class and theme URL query name
-      id: "pastatai-statyba", //theme id class and theme URL query name
+      id: "pastatai-administravimas", //theme id class and theme URL query name
       imgUrl: "./app/img/statyba.png", //image URL
-      imgAlt: "Pastatai ir statyba", // image alt attribute
+      imgAlt: "Pastatų administravimas", // image alt attribute
       layers: {
         administravimas: { // layer unique name
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
@@ -89,7 +92,7 @@ export const MapOptions: any = {
     },
     teritory: {
       production: true, //if theme is ready for production
-      name: "Teritorijų planavimas", //theme name
+      name: "Planavimas ir statyba", //theme name
       //id: "teritory-planning", //theme id class and theme URL query name
       id: "teritoriju-planavimas", //theme id class and theme URL query name
       imgUrl: "./app/img/teritorijos.png", //image URL
@@ -98,7 +101,7 @@ export const MapOptions: any = {
         teritorijuPlanavimas: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
           "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Teritoriju_planavimas/MapServer",
-          name: "Teritorijų planavimas:",
+          name: "Teritorijų planavimas ir statyba:",
           isGroupService: true,
           opacity: 0.9
         }
