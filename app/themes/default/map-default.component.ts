@@ -6,6 +6,7 @@ import { MapDefaultService } from './map-default.service';
 import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
 import { MapWidgetsService } from '../../map-widgets/map-widgets.service';
+import { MenuService } from '../../menu/menu.service';
 import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
@@ -17,6 +18,7 @@ import on = require("dojo/on");
 import Bundle = require("dojo/i18n!esri/nls/common");
 import all = require("dojo/promise/all");
 import StreamLayer = require("esri/layers/StreamLayer");
+import GraphicsLayer = require('esri/layers/GraphicsLayer');
 
 import { FeatureQueryService } from '../../query/feature-query.service';
 import { IdentifyService } from '../../services/identify/identify.service';
@@ -56,7 +58,7 @@ export class MapDefaultComponent implements OnInit {
   //add subDynamicLayers sublayers meta data
   subDynamicLayerSubLayers: any;
 
-  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService) {
+  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
         //console.log("URL Parametrai", queryParam);
@@ -76,16 +78,19 @@ export class MapDefaultComponent implements OnInit {
   // toggle share container
   shareToggle(e) {
     //get visible and checked layers ids
-    let ids: any = this.mapDefaultService.getVisibleLayersIds(this.view);
-    let visibleLayersIds: number[] = ids.identificationsIds;
-    let checkedLayersIds: number[] = ids.visibilityIds;
+    const ids: any = this.mapDefaultService.getVisibleLayersIds(this.view);
+    const visibleLayersIds: number[] = ids.identificationsIds;
+    const checkedLayersIds: number[] = ids.visibilityIds;
+    //check if there is any visible layers that can be identied in allLayers group
+    let  identify = ids.identificationsIds.allLayers.length === 0 ? "" : "allLayers";
+    //console.log("ids", ids)
 
     //get share url
     let currentZoom: number, currentCoordinates: number[];
     currentZoom = this.view.zoom;
     currentCoordinates = [this.view.center.x, this.view.center.y];
     this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
-      + this.mapWidgetsService.returnActiveBasemap();
+      + this.mapWidgetsService.returnActiveBasemap() + '&identify=' + identify;
     //console.log(this.shareUrl)
     //console.log(window.location)
 
@@ -135,6 +140,8 @@ export class MapDefaultComponent implements OnInit {
     });
 
     view.on("click", (event) => {
+      //check if lasyers suspended
+      const suspended = this._mapService.getSuspendedIdentitication();
       //store all deffered objects of identify task in def array
       let def = [];
       let ids: any = this.mapDefaultService.getVisibleLayersIds(view);
@@ -152,48 +159,61 @@ export class MapDefaultComponent implements OnInit {
       identifyParams.tolerance = 10;
       identifyParams.width = view.width;
       identifyParams.height = view.height;
-      identifyParams.layerOption = 'visible';
+      identifyParams.layerOption = 'all';
 
       //foreach item execute task
       view.layerViews.items.forEach(item => {
-        //asgin correct  visible ids based on layer name (layerId property)
-        // layerId === item.layer.id
-        identifyParams.layerIds = visibleLayersIds[item.layer.id];
-        let defferedList = this.identify.identify(item.layer.url).execute(identifyParams).then((response) => {
-          //console.log("RSP", response);
-          let results = response.results;
-          return results.map((result) => {
-            let name = result.layerName;
-            let feature = result.feature;
-            feature.popupTemplate = {
-              title: `${name}`,
-              content: this.mapDefaultService.getVisibleLayersContent(result)
-            };
-            //add feature layer id
-            feature["layerId"] = item.layer.id;
-            return feature;
-          });
-        }).then(function(response) {
-          //console.log('response', response)
-          return response;
-        }, (error) => { console.error(error); });
+        //do not execute if layer is for buffer graphics
+        if ((item.layer.id !== "bufferPolygon") && (!suspended))  {
+          //asign correct  visible ids based on layer name (layerId property)
+          // layerId === item.layer.id
 
-        def.push(defferedList);
-      });
+          //if layer is buffer result, add custom visibility
+          if (item.layer.id === "bufferLayers") {
+            identifyParams.layerIds = [0];
+          } else {
+            identifyParams.layerIds = visibleLayersIds[item.layer.id];
+          }
 
-      //console.log("def", def);
+          let defferedList = this.identify.identify(item.layer.url).execute(identifyParams).then((response) => {
+            //console.log("RSP", response);
+            //console.log("ids",ids);
+            let results = response.results;
+            return results.map((result) => {
+              let name = result.layerName;
+              let feature = result.feature;
+              feature.popupTemplate = {
+                title: `${name}`,
+                content: this.mapDefaultService.getVisibleLayersContent(result)
+              };
+              //add feature layer id
+              feature["layerId"] = item.layer.id;
+              return feature;
+            });
+          }).then(function(response) {
+            //console.log('response', response)
+            return response;
+          }, (error) => { console.error(error); });
 
-      //using dojo/promise/all function that takes multiple promises and returns a new promise that is fulfilled when all promises have been resolved or one has been rejected.
-      all(def).then(function(response) {
-        let resultsMerge = [].concat.apply([], response.reverse()); //merger all results
-        //console.log('response resultsMerge', resultsMerge)
-        if (resultsMerge.length > 0) {
-          view.popup.open({
-            features: resultsMerge,
-            location: event.mapPoint
-          });
+          def.push(defferedList);
         }
-      });
+        });
+
+        //console.log("def", def);
+
+        //using dojo/promise/all function that takes multiple promises and returns a new promise that is fulfilled when all promises have been resolved or one has been rejected.
+        all(def).then(function(response) {
+          let resultsMerge = [].concat.apply([], response.reverse()); //merger all results
+          //console.log('response resultsMerge', resultsMerge)
+          //remove emtpy Values
+          resultsMerge = resultsMerge.filter((value)=>value);
+          if (resultsMerge.length > 0) {
+            view.popup.open({
+              features: resultsMerge,
+              location: event.mapPoint
+            });
+          }
+        });
 
       //if mobile identify with query
       if (this.mobile) {
@@ -239,6 +259,8 @@ export class MapDefaultComponent implements OnInit {
   }
 
   ngOnInit() {
+    //array of raster layers Name
+    let rasterLayers = [];
     //add snapshot url and pass path name ta Incetable map service
     let snapshotUrl = this.activatedRoute.snapshot.url["0"]
     let basemaps: any[] = [];
@@ -252,6 +274,8 @@ export class MapDefaultComponent implements OnInit {
     this.map = this._mapService.initMap(MapOptions.mapOptions);
     //create view
     this.view = this._mapService.viewMap(this.map);
+
+    this._mapService.updateView(this.view);
 
     //create theme main layers grouped
     themeGroupLayer = this._mapService.initGroupLayer("theme-group", "Main theme layers", "show");
@@ -298,12 +322,16 @@ export class MapDefaultComponent implements OnInit {
           //activate layer defined in url query params
           this._mapService.activateLayersVisibility(this.view, this.queryParams, this.map);
 
-          //old apprach
-          // let dynamicLayersArray = this.mapDefaultService.getDefaultDynamicLayers(snapshotUrl.path)
-          // dynamicLayersArray = dynamicLayersArray.map(dynamicLayer => {dynamicLayer.sublayers = sublayersArray; return dynamicLayer});
-          //this.map.addMany(dynamicLayersArray);
+          //check for type raster and push to array
+          json.layers.forEach((layer) => {
+            if (layer.type === "Raster Layer") {
+              rasterLayers.push(layer.name);
+            }
+          })
         });
       });
+      //set raster layers
+      this._mapService.setRasterLayers(rasterLayers);
     };
 
     // //add allLayers sublist layers
@@ -324,12 +352,25 @@ export class MapDefaultComponent implements OnInit {
 
     this.view.then((view) => {
       //count feature layers and add to map
-      this._mapService.countRestlayers("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer" + "/layers?f=pjson").subscribe(json => {
-        //console.log("json 2", json);
-        let sublayersArray = this._mapService.getSubDynamicLayerSubLayers(json.layers);
-        //add allLayers sublist layers
-        let subDynamicLayers = this._mapService.initSubAllDynamicLayers("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8, sublayersArray);
-        this.map.add(subDynamicLayers);
+      this._mapService.countRestlayers(MapOptions.mapOptions.staticServices.commonMaps + "/layers?f=pjson").subscribe(json => {
+        //console.log("json", json);
+        //jus create sub Layers array for allLayers
+        const sublayersArray = this._mapService.getSubDynamicLayerSubLayers(json.layers);
+
+        //create layer and empty the sublayers object if this.queryParams allayers prop is not set
+        let subLayers = [];
+        if (this.queryParams.allLayers && (this.queryParams.identify === "allLayers")) {
+          subLayers = sublayersArray;
+          //set sublayers state as we will load all layer on map
+          this.menuService.setSubLayersState();
+        };
+        const layer = this._mapService.initSubAllDynamicLayers(MapOptions.mapOptions.staticServices.commonMaps, "allLayers", "Visų temų sluoksniai", 0.8, subLayers);
+        this.map.add(layer);
+
+        // //add allLayers sublist layers
+        // let subDynamicLayers = this._mapService.initSubAllDynamicLayers("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8, sublayersArray);
+        // // this.map.add(subDynamicLayers);
+
         //check other url params if exists
         //activate layer defined in url query params
         this._mapService.activateLayersVisibility(this.view, this.queryParams, this.map);

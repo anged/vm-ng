@@ -23,10 +23,27 @@ export class MenuService {
   //  //state if we want to disable help box in menu.component
   visibleSubLayerNumberState: number = 1;
 
+  //state when sublayers are inittialised, changed only once (on first init)
+  subLayersState = false;
+
   constructor(private mapService: MapService) {}
 
   getSubState(): boolean {
     return this.subLayersActive;
+  }
+
+  //state indicating if sublayers are inittialised, changed only once (on first init "setSubLayersState")
+  getSubLayersState() {
+    return this.subLayersState;
+  }
+
+  setSubLayersState() {
+    this.subLayersState = true;
+  }
+
+  //fetch sublayers arrray to allLayers layer group
+  fetchSublayersToLayer() {
+
   }
 
   //update Sub layr list state after toggle button click

@@ -18,6 +18,8 @@ export class MenuComponent implements OnInit {
   @Input() allLayerslayer: any;
 
   mobileActive: boolean = false;
+  //add tools active class and remove menu wrapper inm order to use tools on map directly
+  toolsActive: boolean = false;
   subLayersActive: any = false;
   subListSubscribtion: Subscription;
   //get all anchor elements and run hash
@@ -31,6 +33,11 @@ export class MenuComponent implements OnInit {
   componentsVisibleSubLayerNumberState: number = 1;
 
   options = MapOptions;
+
+  //Listen to tools component close event
+  onClose(event: boolean) {
+    this.toolsActive = event;
+  }
 
   //Hash toggle, get all anchor elements
   constructor(private mapService: MapService, private menuService: MenuService, private mapDefaultService: MapDefaultService) {
@@ -78,19 +85,30 @@ export class MenuComponent implements OnInit {
   //init target pseudo clas on menu
   targetTheme() {
     window.location.hash === "#theme" ? window.location.hash = "#" : window.location.hash = "#theme";
+    //set  toolsActive to false and get back menu wrapper for mobile
+    this.toolsActive = false;
   }
   targetLayers() {
     window.location.hash === "#layers" ? window.location.hash = "#" : window.location.hash = "#layers";
+    //set  toolsActive to false and get back menu wrapper for mobile
+    this.toolsActive = false;
   }
   targetLegend() {
     window.location.hash === "#legend" ? window.location.hash = "#" : window.location.hash = "#legend";
+    //set  toolsActive to false and get back menu wrapper for mobile
+    this.toolsActive = false;
   }
   targetTools() {
     window.location.hash === "#tools" ? window.location.hash = "#" : window.location.hash = "#tools";
+    //remove menu wrapper in order to use tools directly on mapPoint
+    this.toolsActive = !this.toolsActive;
   }
   targetOpenData() {
     window.location.hash === "#open-data" ? window.location.hash = "#" : window.location.hash = "#open-data";
+    //set  toolsActive to false and get back menu wrapper fro mobile
+    this.toolsActive = false;
   }
+
 
 
   watchLayers() {

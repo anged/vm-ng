@@ -163,6 +163,9 @@ a:focus, a:hover {
   margin: 20px;
   margin-bottom: 20px;
 }
+.esri-view-width-less-than-small .esri-popup__main-container {
+    width: 100%;
+}
 .esri-popup__header {
     position: relative;
     font-size: 12px;
@@ -395,11 +398,30 @@ li.list-active {
     padding-bottom: 0;
     border-top: 1px solid rgba(216, 216, 216, 0.2);
 }
-#filters-button button {
+#filters-button button,
+#measure-button button.active {
     background: #53565d !important;
     color: #f8f8f8 !important;
 }
-#filters-button svg {
+#measure-button button {
+    background: #cfd0d2 !important;
+}
+#measure-button button.active {
+    +color: #4c4c4c !important;
+}
+#measure-button button:disabled, #measure-button button:disabled:hover {
+    background: #cfd0d2 !important;
+    color: #f8f8f8 !important;
+}
+#measure-button button:hover {
+    background: #53565d !important;
+    color: #f8f8f8 !important;
+}
+#measure-button button:focus {
+    box-shadow: 0 0 6px #4e5858;
+}
+#filters-button svg,
+#measure-button svg {
     fill: #fff;
 }
 /*LEGEND*/
@@ -457,31 +479,42 @@ li.list-active {
 }
 #tools-print button {
   margin: 10px;
-  padding: 10px 10px 10px 5px;
-  background-color: #c0c0c0;
+  padding: 6px 10px 6px 10px;
+  background-color: #e9e9e9;
   font-size: 14px;
+  border: 1px solid #53565d;
+  border-radius: 2px;
 }
 #print-container {
   position: absolute;
   margin-left: 10px;
   top: 10px;
 }
-.print {
+.print, .measure {
   display: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-.print:hover {
+.print:hover, .measure:hover {
   cursor: move;
    cursor: -moz-move;
    cursor: -webkit-move;
 }
-.print.print-active {
+.print.print-active, .measure.measure-active {
   display: block;
   z-index: 1003;
 }
-#close-print {
+.esri-widget, #measure-container .measure {
+    box-sizing: border-box;
+    color: #323232;
+    font-size: 14px;
+    font-family: "Avenir Next W00","Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 1.3em;
+    background-color: #fff;
+}
+#close-print,
+#close-measure  {
   padding: 4px;
   position: relative;
   height: 30px;
@@ -489,10 +522,28 @@ li.list-active {
   z-index: 99;
   right: 5px;
 }
-#close-print:hover {
+#close-print:hover,
+#close-measure:hover {
   cursor:pointer;
 }
-.esri-print {
+#measure-container .measure .esri-widget.esri-widget-button {
+    width: 86px;
+    height: 30px;
+    font-size: 16px;
+    color: #53575d;
+    border: 1px solid #caced4;
+    display: inline-flex;
+}
+#measure-container .measure .esri-widget.esri-widget-button.active {
+    width: 86px;
+    height: 30px;
+    font-size: 16px;
+    color: #ffffff;
+    border: 1px solid #53585d;
+    display: inline-flex;
+    background-color: #53575d;
+}
+.esri-print, #measure-container .measure {
     position: relative;
     padding: 12px 15px;
     overflow-y: auto;
@@ -514,7 +565,8 @@ li.list-active {
   right: 5px;
   top: 5px;
 }
-#drag-print  svg {
+#drag-print  svg,
+#drag-measure  svg {
   width: 20px;
   fill: #636363;
 }
@@ -522,8 +574,12 @@ li.list-active {
   position: relative;
   top: 3px;
 }
+.svg-measure {
+  position: relative;
+  top: 5px;
+}
 .svg-print svg {
-  width: 25px;
+  width: 18px;
   fill: #53565d;
 }
 #drag-print  span {
@@ -722,8 +778,8 @@ label {
   font-size: 16px;
 }
 .filter-detail svg, menu-map svg   {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   fill: red;
 }
 #sub-layer-list svg {
@@ -787,7 +843,8 @@ label {
 #close-filter:hover {
   cursor: pointer;
 }
-#filters-button svg  {
+#filters-button svg,
+#measure-button svg-measure  {
   width: 14px;
   top: 4px;
   height: 18px;
@@ -795,7 +852,8 @@ label {
   right: 40px;
   transform: rotate(90deg);
 }
-#filters-button .button-active svg  {
+#filters-button .button-active svg,
+#measure-button .button-active svg,  {
   transform: rotate(-90deg);
 }
 .filter-year, .filter-theme {
@@ -847,7 +905,8 @@ label {
 }
 
 /*BUTTONS*/
-#filters-button button {
+#filters-button button,
+#measure-button button {
   width: -moz-calc(100% - 30px);
   width: -webkit-calc(100% - 30px);
   width: -o-calc(100% - 30px);
@@ -858,6 +917,10 @@ label {
   border: none;
   font-size: 14px;
   font-weight: 700;
+}
+#measure-button button {
+  width: 100%;
+  margin: 10px 0 0;
 }
 #filter-wrapper {}
 /*ANIMATION*/
@@ -1209,6 +1272,27 @@ label {
 #building-help:hover {
   cursor: pointer;
 }
+/*FORMS*/
+.form-check {
+    position: relative;
+    display: block;
+    margin-bottom: .5rem;
+}
+.form-check-inline {
+    display: inline-block;
+    margin-right: .75rem;
+}
+.form-title {
+  width: 100%;
+  display: inline-block;
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+.form-split-title {
+  width: 48%;
+}
+/*Bug fix for form selection with draggable js*/
+.buffer-size { user-select: text;}
 /*DELETE*/
 /*NAVIGATION*/
 .mobile-menu {
@@ -1270,6 +1354,11 @@ label {
   opacity: 0.4;
   top: 0;
   z-index: 8;
+}
+
+/*Temp solution change z-index when using tools in mobile version*/
+.active-tools #menu-wrapper {
+  z-index: -1;
 }
 #menu-wrapper.active-wrapper {
   display: block;
@@ -1452,7 +1541,7 @@ menu-map {
     overflow-y: visible;
 }
 #open-data .inner, #legend .inner, #layers .inner {
-
+  background: #e9e9e9;
 }
 /*END NAVIGATION*/
 #loading-gif {
@@ -2317,6 +2406,106 @@ ul > li .esri-layer-list__item-title {
     position: absolute;
     margin-left: 465px;
     top: 10px;
+  }
+  .measure-tool {
+    position: absolute;
+    margin-left: 465px;
+    top: 10px;
+  }
+  .measure-tool.buffer-tool {
+    margin-left: 0;
+    top: 130px;
+  }
+  .buffer-tool .input-group-addon {
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #555;
+    text-align: center;
+    background-color: none;
+    border: none;
+    border-radius: 0;
+  }
+  .buffer-tool .form-control {
+    font-size: inherit;
+    height: 38px;
+  }
+  .buffer-tool .form-control option {
+    padding-bottom: 5px;
+  }
+  .buffer-tool .form-group {
+    padding: 15px 10px;
+    margin-bottom: 0;
+    background-color: #eee;
+    /*border: 1px solid #ccc;*/
+    border-top: none;
+  }
+  .buffer-tool hr {
+    border-top: 1px solid #d4d4d4;
+  }
+  #tools.sub-menu .buffer-tool .feature-units {
+    padding: 5px;
+    padding-left: 0;
+    font-size: 17px;
+    text-align: left;
+    line-height: 1.4;
+  }
+  #tools.sub-menu .buffer-tool .feature-units.sp-width {
+    width: 152px;
+    display: inherit;
+  }
+  #tools.sub-menu .buffer-tool .feature-units.sp-width {
+    width: 152px;
+    display: inherit;
+  }
+   #tools.sub-menu .buffer-tool .feature-title {
+    font-weight: bold;
+    padding: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #53555c;
+  }
+  .feature-results {
+    margin-top: 20px;
+    background: #dee0e2;
+    padding: 10px;
+    color: #53555c;
+  }
+  .buffer-tool .input-group-addon {
+    background: #fff;
+  }
+  .buffer-tool input,
+  .buffer-tool select {
+    background-color: #eee;
+  }
+  .input-group {
+    /*background-color: #eee;*/
+    /*border: 1px solid #ccc;*/
+    border-radius: 0;
+    padding-bottom: 6px;
+  }
+  /*text {
+    fill: rgb(54, 51, 53);
+  }*/
+  label {
+    font-weight: normal;
+  }
+  .input-group label {
+    width: 100%;
+  }
+  .input-group label:hover {
+    cursor: pointer;
+  }
+  .buffer-size {
+    width: 100px;
+  }
+  .buffer-alert {
+    margin-top: 10px;
+  }
+  .measure-content {
+    margin-top: 30px;
   }
   #open-data .inner, #legend .inner {
     height: auto;

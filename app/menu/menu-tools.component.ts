@@ -1,73 +1,518 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter, ElementRef, Renderer2 } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 import { MapOptions } from '../options';
+import { Symbols } from './symbols';
+import { MapService } from '../map.service';
+import { MenuToolsService } from './menu-tools.service';
 
-import  Print = require ('esri/widgets/Print');
+import Print = require('esri/widgets/Print');
+import Draw = require('esri/views/2d/draw/Draw');
+import Graphic = require('esri/Graphic');
+import Polygon = require('esri/geometry/Polygon');
+import geometryEngine = require('esri/geometry/geometryEngine');
+import BufferParameters = require('esri/tasks/support/BufferParameters');
+import SpatialReference = require('esri/geometry/SpatialReference');
+
+
+import { forOwn } from 'lodash';
 
 @Component({
-    selector: 'menu-tools',
-    template : `
-      <div>
-        <p>Pasirinkite įrankį:</p>
-        <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
-        <div id="tools-measure"></div>
-        <div id="tools-print">
-          <button id="print-button" (click)="printActive = !printActive" [class.active]="printActive">
-          <span class="svg-print">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-              <path style="text-indent:0;text-align:start;line-height:normal;text-transform:none;block-progression:tb;-inkscape-font-specification:Bitstream Vera Sans" d="M 9 4 L 9 5 L 9 11 L 7 11 C 5.3550302 11 4 12.35503 4 14 L 4 23 L 4 24 L 5 24 L 9 24 L 9 27 L 9 28 L 10 28 L 22 28 L 23 28 L 23 27 L 23 24 L 27 24 L 28 24 L 28 23 L 28 14 C 28 12.35503 26.64497 11 25 11 L 23 11 L 23 5 L 23 4 L 22 4 L 10 4 L 9 4 z M 11 6 L 21 6 L 21 11 L 11 11 L 11 6 z M 7 13 L 25 13 C 25.56503 13 26 13.43497 26 14 L 26 22 L 23 22 L 23 19 L 23 18 L 22 18 L 10 18 L 9 18 L 9 19 L 9 22 L 6 22 L 6 14 C 6 13.43497 6.4349698 13 7 13 z M 8 14 C 7.4477153 14 7 14.447715 7 15 C 7 15.552285 7.4477153 16 8 16 C 8.5522847 16 9 15.552285 9 15 C 9 14.447715 8.5522847 14 8 14 z M 11 20 L 21 20 L 21 26 L 11 26 L 11 20 z" color="#000" overflow="visible" font-family="Bitstream Vera Sans"></path>
-          </svg>
-          </span>
-          Spausdinti</button>
-        </div>
-
-        <div id="tools-opacity" style="display: none">
-          <span>Sluoksnių nepermatomumo valdymas:</span>
-          <div id="tools-opacity-widget"></div>
-        </div>
-      </div>
-      <div id="print-container">
-        <div id="print-menu" class="print" [class.print-active]="printActive" [ng2-draggable]="true">
-        <span id="close-print"
-        (click)="printActive = !printActive" [class.print-active]="printActive"
-        >
-            <svg xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" height="612px" id="Capa_1"  version="1.1" viewBox="0 0 612 612" width="612px" x="0px" xmlns="http://www.w3.org/2000/svg" y="0px">
-            <g>
-              <g id="cross">
-                <g>
-                  <polygon points="612,36.004 576.521,0.603 306,270.608 35.478,0.603 0,36.004 270.522,306.011 0,575.997 35.478,611.397      306,341.411 576.521,611.397 612,575.997 341.459,306.011    "></polygon>
-                </g>
-              </g>
-            </g>
-            </svg>
-          </span>
-        <span id="drag-print" [class.print-active]="printActive">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-              <path style="line-height:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000;text-transform:none;block-progression:tb;isolation:auto;mix-blend-mode:normal" d="M 16 2.5859375 L 11.292969 7.2929688 L 12.707031 8.7070312 L 15 6.4140625 L 15 12 L 17 12 L 17 6.4140625 L 19.292969 8.7070312 L 20.707031 7.2929688 L 16 2.5859375 z M 7.2929688 11.292969 L 2.5859375 16 L 7.2929688 20.707031 L 8.7070312 19.292969 L 6.4140625 17 L 13 17 L 13 15 L 6.4140625 15 L 8.7070312 12.707031 L 7.2929688 11.292969 z M 24.707031 11.292969 L 23.292969 12.707031 L 25.585938 15 L 19 15 L 19 17 L 25.585938 17 L 23.292969 19.292969 L 24.707031 20.707031 L 29.414062 16 L 24.707031 11.292969 z M 15 19 L 15 25.585938 L 12.707031 23.292969 L 11.292969 24.707031 L 16 29.414062 L 20.707031 24.707031 L 19.292969 23.292969 L 17 25.585938 L 17 19 L 15 19 z"></path>
-          </svg> <span title="Keiskite padėti pelės pagalba">- keiskite padėti</span>
-          </span>
-        </div>
-      </div>
-    `
+  selector: 'menu-tools',
+  styles: [`
+    .form-control {
+      border: 1px solid #ccc;
+    }
+  `],
+  templateUrl: './app/menu/menu-tools.component.html',
+  providers: [MenuToolsService]
 })
-export class MenuToolsComponent  implements OnInit {
-  @Input() viewTools: any;
-  printActive: false;
 
-  initPrint(): Print {
-    return new Print({
-      view: this.viewTools,
-       printServiceUrl: MapOptions.mapOptions.staticServices.printServiceUrl,
-      container: "print-menu"
+export class MenuToolsComponent implements OnInit, AfterViewInit {
+  @Input() viewTools: any;
+  //set  toolsActive to false in parent component and get back menu wrapper for mobile
+  @Output() close: EventEmitter<any> = new EventEmitter();
+  // @ViewChild('measureButton') measureButton: ElementRef;
+  @ViewChild('bufferCheckbox') bufferCheckbox: ElementRef;
+
+  checkboxChecked: boolean;
+
+  printWidget: any;
+
+  printActive: boolean = false;
+  measureButtonActive: boolean = false;
+  activeToolsState = false;
+
+  analyzeParams = {
+    bufferSize: 1,
+    inputlayer: null,
+    chosenUnit: "km"
+  };
+
+  units = [
+    "km", "m"
+  ];
+
+  //geomettry created by draw tools
+  drawGeometry: any;
+  geometryService: any;
+
+  //calculated result string
+  calculatedUnits: string;
+
+  //calculated feature number
+  calculateCount: number;
+
+  measureActive: boolean;
+
+  measureActiveOpt: any = {
+    pointActive: {
+      name: "draw-point",
+      active: false
+    },
+    lineActive: {
+      name: "draw-line",
+      active: false
+    },
+    polyActive: {
+      name: "draw-polygon",
+      active: false
+    }
+  };
+
+  activeTool = "";
+
+  view: any;
+  draw: any;
+
+  //final form inputs for building selection form
+  themeLayers = [];
+
+  //dojo draw events handlers Array
+  eventHandlers = [];
+
+  constructor(private mapService: MapService, private menuToolsService: MenuToolsService, private renderer: Renderer2) { }
+
+  checkBoxChange() {
+    //clear graphics if exist
+    this.view.graphics.removeAll();
+    this.checkboxChecked = this.bufferCheckbox.nativeElement.checked;
+    this.calculatedUnits = null;
+    this.calculateCount = null;
+  }
+
+  closeMeasure() {
+    this.measureActive = !this.measureActive;
+    this.restoreDefault();
+  }
+
+  restoreDefault() {
+    this.calculatedUnits = null;
+    this.calculateCount = null;
+    this.checkboxChecked = false;
+    this.bufferCheckbox.nativeElement.checked = false;
+    this.deactivateBtn();
+    //set active tool to empty string
+    this.activeTool = "";
+    this.checkBoxChange();
+
+    this.removeEventHandlers();
+  }
+
+  //remove eventHandlers
+  removeEventHandlers() {
+    this.eventHandlers.forEach((event) => {
+      event.remove();
+    });
+    this.eventHandlers = [];
+  }
+
+  drawElement() {
+    //this.measureButtonActive = !this.measureButtonActive;
+    this.measureButtonActive = false;
+    //esri draw approach
+    //this.view.graphics.removeAll(); //TODO check if we need to removeAll in final solution
+    //TODO refactor
+    switch (this.activeTool) {
+      case "draw-polygon":
+        this.enableCreatePolygon(this.draw, this.view, this.activeTool);
+        break;
+      case "draw-line":
+        this.enableCreatePolyline(this.draw, this.view);
+        break;
+      case "draw-point":
+        this.enableCreatePoint(this.draw, this.view);
+        break;
+    }
+  }
+
+  selectDrawEl(evt, id) {
+    //suspend layers toggle (e.g. suspend layers while drawing with measure tools)
+    this.mapService.suspendLayersToggle();
+
+    //reset eventHandler events
+    this.removeEventHandlers();
+
+    this.calculateCount = null;
+    this.calculatedUnits = null;
+    this.measureButtonActive = false;
+    this.view.graphics.removeAll();
+    this.activateTool(id);
+    this.drawElement();
+  }
+
+  //activate measure tools based on id
+  activateTool(id: string) {
+    //check if any tool is active
+    this.activeToolsState = false;
+    //iterate with lodash
+    forOwn(this.measureActiveOpt, (value, key) => {
+      //active tools
+      if (value.name === id) {
+        value.active = !value.active;
+        //add or remove disabled attribute and activeTool name
+        this.activeToolsState = true;
+        this.activeTool = value.name;
+
+      }
     });
   }
 
-  ngOnInit() {
-    this.initPrint();
+  //Polygon approach
+  enableCreatePolygon(draw, view, activeTool) {
+    // create() will return a reference to an instance of PolygonDrawAction
+    let action = this.draw.create("polygon");
+    // focus the view to activate keyboard shortcuts for drawing polygons
+    this.view.focus();
+    // listen to vertex-add event on the action
+    this.eventHandlers.push(action.on("vertex-add", (e) => this.drawPolygon(e)));
+    // listen to cursor-update event on the action
+    this.eventHandlers.push(action.on("cursor-update", (e) => this.drawPolygon(e)));
+    // listen to vertex-remove event on the action
+    this.eventHandlers.push(action.on("vertex-remove", (e) => this.drawPolygon(e)));
+    // listen to draw-complete event on the action
+    this.eventHandlers.push(action.on("draw-complete", (e) => { this.drawPolygon(e) }));
+  }
+
+  //ngClass workout
+  deactivateBtn() {
+    this.measureButtonActive = false;
+  }
+
+  //Label polyon with its area
+  labelAreas(geom, area) {
+    this.calculatedUnits = area.toFixed(4) + " km²"
+    //console.log("Geometry label", geom);
+    const graphic = this.menuToolsService.createAreaLabelGraphic(geom, area);
+    this.view.graphics.add(graphic);
+  }
+
+  analyzeByLayer(evt) {
+    this.measureButtonActive = true;
+  }
+
+  deactivateAndDisable(evt) {
+    //on complete remove class
+    if (evt.type === "draw-complete") {
+      //first unsuspend layers on draw-complete event
+      //set timeout, needed for point element specificallly as we do not want to start identify method too early
+      setTimeout(() => {
+        this.mapService.unSuspendLayersToggle();
+      }, 800);
+
+      this.deactivateBtn();
+      //create buffer if create buffer checkbox checked
+      //(this.checkboxChecked) ? this.createBuffer(this.analyzeParams) : void(0);
+      this.checkboxChecked && (this.createBuffer(this.analyzeParams));
+      //set active tool to empty string
+      this.activeTool = "";
+    }
+  }
+
+  drawPolygon(evt) {
+    //on complete remove class
+    this.deactivateAndDisable(evt);
+
+    let vertices = evt.vertices;
+    //remove existing graphic
+    this.view.graphics.removeAll();
+    // create a new polygon
+    let polygon = new Polygon({
+      rings: vertices,
+      spatialReference: this.view.spatialReference
+    });
+    // create a new graphic representing the polygon, add it to the view
+    let graphic = new Graphic({
+      geometry: polygon,
+      symbol: Symbols.polygonSymbol
+    });
+
+    this.drawGeometry = graphic;
+
+    this.view.graphics.add(graphic);
+
+    // calculate the area of the polygon
+    let area = geometryEngine.planarArea(polygon, "square-kilometers");
+    if (area < 0) {
+      // simplify the polygon if needed and calculate the area again
+      let simplifiedPolygon = geometryEngine.simplify(polygon);
+      if (simplifiedPolygon) {
+        area = geometryEngine.planarArea(simplifiedPolygon, "square-kilometers");
+      }
+    }
+    // start displaying the area of the polygon
+    this.labelAreas(polygon, area);
   }
 
   closeToggle() {
     window.location.hash = "#";
+    //emit close event
+    this.close.emit(false);
   }
 
+  //Polyline approach
+  enableCreatePolyline(draw, view) {
+    let action = draw.create("polyline");
+
+    // listen to PolylineDrawAction.vertex-add
+    // Fires when the user clicks, or presses the "F" key
+    // Can also fire when the "R" key is pressed to redo.
+    this.eventHandlers.push(action.on("vertex-add", (evt) => {
+      this.createPolylineGraphic(evt);
+    }));
+
+    // listen to PolylineDrawAction.vertex-remove
+    // Fires when the "Z" key is pressed to undo the
+    // last added vertex
+    this.eventHandlers.push(action.on("vertex-remove", (evt) => {
+      this.createPolylineGraphic(evt);
+    }));
+
+    // listen to PolylineDrawAction.cursor-update
+    // fires when the pointer moves over the view
+    this.eventHandlers.push(action.on("cursor-update", (evt) => {
+      this.createPolylineGraphic(evt);
+    }));
+
+    // listen to PolylineDrawAction.draw-complete
+    // event to create a graphic when user double-clicks
+    // on the view or presses the "C" key
+    this.eventHandlers.push(action.on("draw-complete", (evt) => {
+      this.createPolylineGraphic(evt);
+    }));
+  }
+
+  createPolylineGraphic(evt) {
+    this.deactivateAndDisable(evt);
+
+    this.view.graphics.removeAll();
+    const polyline = {
+      type: "polyline", // autocasts as Polyline
+      paths: evt.vertices,
+      spatialReference: this.view.spatialReference
+    };
+    const graphic = this.menuToolsService.createGeometry(polyline, Symbols.lineSymbol);
+
+    this.drawGeometry = graphic;
+
+    this.view.graphics.add(graphic);
+
+    // calculate the area of the polygon
+    let line = geometryEngine.planarLength(graphic.geometry, "kilometers");
+    const lastIndex = polyline.paths.length - 1;
+    this.labelLinesAndPoints("line", polyline.paths[lastIndex], line);
+  }
+
+  //Label text
+  labelLinesAndPoints(geometryType: string, points, geometry = undefined) {
+    //this.calculatedUnits
+    let text: string;
+    geometryType === "line" ? text = geometry.toFixed(3) + " km" : text = `x: ${points[0].toFixed(5)}, y: ${points[1].toFixed(5)}`;
+    geometryType === "line" ? this.calculatedUnits = geometry.toFixed(3) + " km" : this.calculatedUnits = `x: ${points[0].toFixed(5)}, y: ${points[1].toFixed(5)}`
+    const graphic = this.menuToolsService.createLineOrPointLabelGraphic(points, text, this.view);
+    this.view.graphics.add(graphic);
+  }
+
+  //Point approach
+  enableCreatePoint(draw, view) {
+    let action = draw.create("point");
+
+    // PointDrawAction.cursor-update
+    // Give a visual feedback to users as they move the pointer over the view
+    this.eventHandlers.push(action.on("cursor-update", (evt) => {
+      this.createPointGraphic(evt);
+    }));
+
+    // PointDrawAction.draw-complete
+    // Create a point when user clicks on the view or presses "C" key.
+    this.eventHandlers.push(action.on("draw-complete", (evt) => {
+      this.createPointGraphic(evt);
+    }));
+  }
+
+  createPointGraphic(evt) {
+    this.deactivateAndDisable(evt);
+
+    this.view.graphics.removeAll();
+    let point = {
+      type: "point", // autocasts as /Point
+      x: evt.coordinates[0],
+      y: evt.coordinates[1],
+      spatialReference: this.view.spatialReference
+    };
+
+    let graphic = new Graphic({
+      geometry: point,
+      symbol: Symbols.pointSymbol
+    });
+
+    this.drawGeometry = graphic;
+
+    this.view.graphics.add(graphic);
+
+    //Add label
+    this.labelLinesAndPoints("point", [point.x, point.y], point);
+  }
+
+  //submit form() // not using at the moment, using NgModel analyzeParams object instead
+  onSubmitAnalyze(form: NgForm) {
+    // console.log("NG Form ", form);
+    // console.log("Form obj ", this.analyzeParams);
+    this.createBuffer(this.analyzeParams)
+  }
+
+  //create buffer inputs data
+  createInputsData(view) {
+    const rasterLayers = this.mapService.getRasterLayers();
+    let themeLayerInputs = [];
+    const currentThemelayers: any[] = view.layerViews.items.filter((item) => item.layer.id !== "allLayers");
+    currentThemelayers.forEach(layer => {
+      layer.layer.allSublayers.items.forEach(item => {
+        if (!item.sublayers) {
+          //check if  layer name is in rasterLayers array and do not add layer to inputs list
+          const hasItem = rasterLayers.includes(item.title);
+          if (!hasItem) {
+            themeLayerInputs.push({ 'name': item.title, 'url': item.url });
+          }
+        }
+      })
+    })
+    return themeLayerInputs.reverse();
+  }
+
+  createBuffer(options: any) {
+    //add required options for buffer execution
+    let parameters = new BufferParameters();
+    parameters.distances = [options.bufferSize];
+    parameters.unit = options.chosenUnit === "m" ? "meters" : "kilometers";
+    parameters.geodesic = true;
+    //options.bufferSpatialReference = new SpatialReference({wkid: 3346});
+    parameters.bufferSpatialReference = this.view.spatialReference;
+    //parameters.spatialReference = new SpatialReference({wkid: 2600});
+    parameters.outSpatialReference = this.view.spatialReference;
+    parameters.geometries = [this.drawGeometry.geometry];
+    this.geometryService.buffer(parameters).then((results) => {
+      const polyline = new Graphic({
+        geometry: results[0],
+        symbol: Symbols.bufferSymbol
+      });
+      //Add as layer approach
+      //const features = result.features
+      // const layer = new GraphicsLayer({
+      //   graphics: [polyline],
+      //   id: "bufferPolygon",
+      //   title: "bufferPolygon",
+      //   popupEnabled: false
+      // })
+      // const map = this.mapService.returnMap();
+      // map.add(layer);
+
+      //Add as graphic on view approach
+      this.view.graphics.add(polyline);
+
+      //add union if only input is selected
+      if (options.inputlayer >= 0) {
+        const input = this.themeLayers.find((le, i) => i === options.inputlayer);
+        //console.log("Selected input", input)
+        const selectedGraphixByInput = this.createQuery(input, polyline);
+      }
+    });
+  }
+
+  getSymbol(feature) {
+    //check geomtery type base on first result
+    let graphicSymbol: any;
+
+    if (feature.geometry.rings) {
+      graphicSymbol = Symbols.selectionPolygon;
+    } else if (feature.geometry.paths) {
+      graphicSymbol = Symbols.selectionLine;
+    } else {
+      graphicSymbol = Symbols.selectionPoint;
+    };
+    return graphicSymbol;
+  }
+
+  //create buffer query and return results
+  createQuery(input, polyline) {
+    const query = this.mapService.addQuery();
+    const queryTask = this.mapService.addQueryTask(input.url);
+
+    query.returnGeometry = true;
+    query.outFields = ["*"];
+    query.geometry = polyline.geometry;
+
+    queryTask.execute(query).then((result) => {
+      const symbol = this.getSymbol(result.features[0]);
+
+      const features = result.features.map((feature) => {
+        feature.symbol = symbol;
+        return feature;
+      });
+
+      this.calculateCount = features.length;
+      //create ulr string
+      const stringArray = input.url.split("/");
+      const stringUrl = input.url.slice(0, -(stringArray[stringArray.length - 1].length + 1))
+
+      //Add as graphic on view approach
+      //graphic to graphics layer
+      features.forEach((graphic) => { this.view.graphics.add(graphic) });
+
+      return result.features;
+    }, (error) => {
+      console.error(error);
+    });
+  }
+
+  ngOnInit() {
+    //measurements geometric service, changed to VP service
+    this.geometryService = this.menuToolsService.addGeometryService(MapOptions.mapOptions.staticServices.geometryUrl)
+
+    this.view = this.mapService.getView();
+
+    //init Print
+    this.printWidget = this.menuToolsService.initPrint(this.view);
+
+    //add draw capabilities for temporary geometries
+    this.view.then((view) => {
+      this.draw = new Draw({
+        view: this.view
+      });
+    });
+
+    this.view.on("layerview-create", (event) => {
+      //wait for last layer to be loaded then init createInputsData
+      if (event.layer.id === "allLayers") {
+        //TODO create buffer inputs from theme layers
+        //create buffer inputs data
+        this.themeLayers = this.createInputsData(this.view);
+      }
+    });
+  }
+
+  ngAfterViewInit() {
+    // console.log("renderer", this.renderer);
+    // console.log("bufferCheckbox", this.bufferCheckbox.nativeElement.checked);
+  }
 }

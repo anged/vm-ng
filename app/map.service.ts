@@ -33,6 +33,9 @@ import { MapOptions } from './options';
 import { PopupTemplates } from './services/identify/popup-templates';
 import { ProjectsListService } from './projects-list/projects-list.service';
 
+import QueryTask = require("esri/tasks/QueryTask");
+import Query = require("esri/tasks/support/Query");
+
 
 @Injectable()
 export class MapService {
@@ -47,6 +50,9 @@ export class MapService {
 
   private projectsObs = new Subject();
   projectsItem = this.projectsObs.asObservable();
+
+  //suspend layers toggle (e.g. suspend layers while drawing with measure tools)
+  suspendedIdentitication: boolean = false;
 
   private mobile: boolean = false;
 
@@ -70,6 +76,12 @@ export class MapService {
   private layersStatusObs = new Subject();
   // Observable item stream
   layersStatus = this.layersStatusObs.asObservable();
+
+  //array of raster layers Name
+  rasterLayers = [];
+
+  //all layers for "allLayers"
+  subDynamicLayers: any;
 
   constructor(private http: Http, private projectsService: ProjectsListService) { }
 
@@ -107,6 +119,16 @@ export class MapService {
     return this.queryParams;
   }
 
+  //special array of Raster layers name in service componentent
+  getRasterLayers() {
+    return this.rasterLayers;
+  }
+
+  //special array of Raster layers name in service componentent
+  setRasterLayers(layers) {
+    this.rasterLayers = layers;
+  }
+
   //create GroupLayer
   //listMode Indicates how the layer should display in the LayerList widget
   // listMode value	Description:
@@ -138,6 +160,21 @@ export class MapService {
 
   returnMap() {
     return this.map;
+  }
+
+  //suspend layers toggle (e.g. suspend layers while drawing with measure tools), define boolean type value, isntead of  this.suspendedIdentitication = !this.suspendedIdentitication
+  suspendLayersToggle() {
+      this.suspendedIdentitication = true;
+      //console.log(this.suspendedIdentitication);
+  }
+
+  unSuspendLayersToggle() {
+      this.suspendedIdentitication = false;
+      //console.log(this.suspendedIdentitication);
+  }
+
+  getSuspendedIdentitication() {
+      return this.suspendedIdentitication;
   }
 
   //for default themes
@@ -173,6 +210,8 @@ export class MapService {
       title: name
     });
   }
+
+
 
   initGraphicLayer(id: number, scale: number[] = []) {
     return new GraphicsLayer({
@@ -679,7 +718,7 @@ export class MapService {
     this.layersStatusObs.next(isChecked);
   };
 
-  //layerlist 4.4 API bug fix, retunrn sublayers array,TODO remove fix in 4.5 API
+  //layerlist 4.4 API bug fix, return sublayers array,TODO remove fix in 4.5 API
   getSubDynamicLayerSubLayers(layers: Array<any>) {
     let sublayers = [];
     layers.forEach(item => {
@@ -736,6 +775,20 @@ export class MapService {
       return sublayer;
     });
     //console.log("sublayers", sublayers);
+    this.subDynamicLayers = sublayers;
     return sublayers;
+  }
+
+  //get sublayers array for allLayers
+  getAllLayers() {
+    return this.subDynamicLayers;
+  }
+
+  addQuery() {
+    return new Query();
+  }
+
+  addQueryTask(url: string) {
+    return new QueryTask(url);
   }
 }

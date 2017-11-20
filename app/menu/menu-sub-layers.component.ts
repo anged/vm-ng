@@ -33,6 +33,22 @@ export class MenuSubLayersComponent implements OnInit {
   }
 
   toggleSubState() {
+    const subLayersSate = this.menuService.getSubLayersState();
+
+    //add sublayers if allLayers group layer is not full defined
+    if (!subLayersSate) {
+      //change subLayersState (only on first init)
+      this.menuService.setSubLayersState();
+
+      const allLayerGroup = this.mapService.getAllLayers();
+      console.log(subLayersSate);
+      const map = this.mapService.returnMap();
+      const layer = map.findLayerById("allLayers");
+      console.log(layer);
+      console.log(layer);
+      layer.sublayers = allLayerGroup;
+    }
+
     this.menuService.toggleSubListState();
     //open help box if it was closed
     if (this.menuService.getVisibleSubLayerNumberState()) {
@@ -40,7 +56,18 @@ export class MenuSubLayersComponent implements OnInit {
       //init subscribe
       this.menuService.sentSubState();
     }
+
     this.state = this.menuService.getSubState();
+    //console.log(this.state);
+    console.log("view", this.mapService.getView());
+
+    //remove allLayers with following built in eventHandlers
+    // if (!this.state) {
+    //   //empty sublayers
+    //   layer.sublayers = [];
+    //   layer.suspended = true;
+    //   //map.removeAll();
+    // }
   }
 
   ngOnInit() {
