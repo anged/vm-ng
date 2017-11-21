@@ -62,9 +62,6 @@ export class ProjectsListService {
       query.where += " AND " + valueAutocomplete;
     }
 
-    console.log(query.where);
-    console.log(inputValue.charAt(0).toUpperCase(), inputValue.slice(1));
-
     return queryTask.execute(query).then((result) => {
       task = result.features;
       this.projectsByWord = task;
