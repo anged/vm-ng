@@ -22,8 +22,8 @@
 <!--End Navigation content-->
 
 <!-- top menu -->
-<div [class.active-tools]="toolsActive">
-  <div id="top-menu" class="top-nav maps-nav col app animate col5 modes bottom small pad4x dark fill-denim animate" [class.mobile-active]="mobileActive">
+<div class="modes" [class.active-tools]="toolsActive">
+  <div id="top-menu" class="top-nav maps-nav col app animate col5 bottom small pad4x dark fill-denim animate" [class.mobile-active]="mobileActive">
     <a id="menu-theme"  class="cell line-right button nav-menu icon big" (click)="targetTheme()"><i class="fa fa-th" aria-hidden="true"></i>Temos</a>
     <a id="menu-layers" class="cell line-right button nav-menu icon big animate" (click)="targetLayers()"><i class="fa fa-list"></i> Sluoksniai</a>
     <a id="menu-legend" class="cell pad1y button hide-mobile nav-menu line-right col4 icon paint animate" (click)="targetLegend()"><i class="fa fa-th-large"></i> Žymėjimas </a>

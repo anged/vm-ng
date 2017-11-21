@@ -1525,7 +1525,7 @@ menu-map {
 #theme .button.close {
   right: 0;
 }
-#layers:target ~ .modes #menu-layers, #legend:target ~ .modes #menu-legend, #tools:target ~ .modes #menu-tools, #open-data:target ~ .modes #menu-open-data {
+#layers:target~.modes #menu-layers, #legend:target~.modes #menu-legend, #tools:target~.modes #menu-tools, #open-data:target~.modes #menu-open-data {
     background-color: #e61c24;
     color: #fff;
 }
@@ -2233,7 +2233,7 @@ ul > li .esri-layer-list__item-title {
   #theme.sub-menu {
     padding-top: 10px;
   }
-  #layers:target ~ .modes #menu-layers, #legend:target ~ .modes #menu-legend, #tools:target ~ .modes #menu-tools, #open-data:target ~ .modes #menu-open-data {
+  #layers:target~.modes #menu-layers, #legend:target~.modes #menu-legend, #tools:target~.modes #menu-tools, #open-data:target~.modes #menu-open-data {
     background-color: #F3F3F3;
     color: #53565D;
   }
@@ -2553,7 +2553,7 @@ ul > li .esri-layer-list__item-title {
   	filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#ed1c24', endColorstr='#c1272d', GradientType=0);
   	background: #E61C24;
   }
-  #layers:target ~ .modes #menu-layers, #legend:target ~ .modes #menu-legend, #tools:target ~ .modes #menu-tools, #open-data:target ~ .modes #menu-open-data {
+  #layers:target~.modes #menu-layers, #legend:target~.modes #menu-legend, #tools:target~.modes #menu-tools, #open-data:target~.modes #menu-open-data {
     background-color: #F3F3F3;
     color: #53565D;
   }
