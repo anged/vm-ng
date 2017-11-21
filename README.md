@@ -70,7 +70,10 @@ export const MapOptions: any = {
 * [Create Angular applications with a Webpack based tooling.](https://angular.io/docs/ts/latest/guide/webpack.html)
 
 ## Notes
-For production change 3rd party ng2-image-gallery node module with modified (see root directory) ng2-image-gallery version (for Angular 4.x release)  
+For older commits use package.json with match version exactly instead of compatible with version, see following [commit](https://github.com/anged/vm-ng/commit/f581b1e5a53b3a99a8f0d2bd8583cd2a37706c6d)
+Latest tests:
+NPM 5.5.1
+Node v8.6.0  
 
 [Angular]:https://angular.io/
 [ArcGis API]:https://developers.arcgis.com/javascript/
