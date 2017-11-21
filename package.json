@@ -11,9 +11,7 @@
     "webpack:w": "webpack --watch",
     "lite": "lite-server",
     "start": "concurrently \"npm run webpack:w\" \"npm run lite\" ",
-    "postinstall": "typings install",
     "webpack": "webpack",
-    "typings": "typings",
     "build:p": "cross-env NODE_ENV=production webpack",
     "build": "cross-env NODE_ENV=developement webpack",
     "del": "rimraf dist"
@@ -36,7 +34,6 @@
     "@angular/platform-server": "^4.0.0",
     "@angular/router": "^4.0.0",
     "@angular/upgrade": "2.2.0",
-    "@types/arcgis-js-api": "^4.5.1",
     "angular2-in-memory-web-api": "0.0.20",
     "bootstrap": "^3.3.6",
     "core-js": "^2.4.1",
@@ -50,8 +47,12 @@
   },
   "devDependencies": {
     "@angular/compiler-cli": "^4.0.0",
+    "@types/arcgis-js-api": "^4.5.1",
+    "@types/core-js": "^0.9.43",
+    "@types/dojo": "^1.9.40",
     "@types/jasmine": "^2.5.47",
     "@types/lodash": "^4.14.74",
+    "@types/node": "^8.0.53",
     "concurrently": "^2.0.0",
     "cross-env": "^4.0.0",
     "css-loader": "^0.28.1",
@@ -72,7 +73,6 @@
     "ts-helpers": "^1.1.2",
     "ts-loader": "^1.2.1",
     "typescript": "2.3.2",
-    "typings": "^2.1.1",
     "web-animations-js": "^2.2.2",
     "webpack": "^1.13.1"
   }
