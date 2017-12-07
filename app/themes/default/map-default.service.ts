@@ -116,7 +116,13 @@ export class MapDefaultService {
             } else {
               attributeResult = "-";
             }
-            content += "<p><span>" + resultAtr + "</br></span>" + attributeResult + "<p>";
+            //check if url contains http or https  + :// string with regex, TODO refactor
+            if (attributeResult.match("^https?://", "i")) {
+              content += `<p><span>${resultAtr}</br></span><a href='${attributeResult}' target='_blank'>${attributeResult}</a><p>`;
+            } else {
+              content += "<p><span>" + resultAtr + "</br></span>" + attributeResult + "<p>";
+            }
+
           }
         } else if (resultAtr == "Class value" || resultAtr == "Pixel Value") {
           //TEMP check for raster properties 	and add custom msg
