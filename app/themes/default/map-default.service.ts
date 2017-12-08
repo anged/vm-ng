@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+//import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/dom/ajax';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import {Subject} from 'rxjs/Subject';
+import { Subject } from 'rxjs/Subject';
 
 import { MapOptions } from '../../options';
 import { MapService } from '../../map.service';
@@ -28,7 +29,7 @@ export class MapDefaultService {
 
   visibleSubLayerNumber: number = 0;
 
-  constructor(private http: Http, private mapService: MapService) { }
+  constructor(private http: HttpClient, private mapService: MapService) { }
 
   getUrls(): string[] {
     return this.urlArray;
