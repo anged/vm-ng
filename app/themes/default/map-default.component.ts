@@ -13,6 +13,7 @@ import { ProjectsListComponent } from '../../projects-list/projects-list.compone
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
 import { CreditsCompponent } from '../../map-widgets/credits.component';
 import { ProjectsGalleryComponent } from '../../gallery/projects-gallery.component';
+import { CommonWidgetsComponent } from '../../common-widgets.component';
 
 import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
@@ -141,7 +142,7 @@ export class MapDefaultComponent implements OnInit {
     });
 
     view.on("click", (event) => {
-      //check if lasyers suspended
+      //check if layer is suspended
       const suspended = this._mapService.getSuspendedIdentitication();
       //store all deffered objects of identify task in def array
       let def = [];
@@ -179,7 +180,7 @@ export class MapDefaultComponent implements OnInit {
           let defferedList = this.identify.identify(item.layer.url).execute(identifyParams).then((response) => {
             //console.log("RSP", response);
             //console.log("ids",ids);
-            let results = response.results;
+            let results = response.results.reverse();
             return results.map((result) => {
               let name = result.layerName;
               let feature = result.feature;
@@ -294,29 +295,13 @@ export class MapDefaultComponent implements OnInit {
       this._mapService.setRasterLayers(rasterLayers);
     };
 
-    // //add allLayers sublist layers
-    // let subDynamicLayers = this._mapService.initDynamicLayer("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
-    // this.map.add(subDynamicLayers);
-    // console.log("subDynamicLayers", subDynamicLayers)
-
-    // //Test:  add stream layer
-    // // Construct Stream Layer
-    // let streamLayer = new StreamLayer({
-    //   url: "https://venera2.vplanas.lt:6443/arcgis/rest/services/GRINDA_TRUCKS_STREAM/StreamServer",
-    //   purgeOptions: {
-    //     displayCount: 10000
-    //   }
-    // });
-    //
-    // this.map.add(streamLayer);
-
     this.view.then((view) => {
       //count sub layers and add to map if required
       const responseFeatures = this._mapService.fetchRequest(MapOptions.mapOptions.staticServices.commonMaps);
       const sublayers = this._mapService.addToMap(responseFeatures, this.queryParams);
 
       if (this.queryParams.allLayers && (this.queryParams.identify === "allLayers")) {
-        //set sublayers state as we will load all layer on map
+        //set sublayers state as we will load all layers layer on map
         this.menuService.setSubLayersState();
       };
 
