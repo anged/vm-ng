@@ -34,11 +34,12 @@ import { forIn } from 'lodash';
 
 @Component({
   selector: 'esri-map-buildings',
-  templateUrl: './app/themes/buildings/map-buildings.component.html',
+  templateUrl: './app/themes/kindergartens/map-kindergartens.component.html',
   styles: [`
     .sidebar-common {
       position: absolute;
       height: 100%;
+      z-index: 1;
     }
     .sidebar-common p {
       padding: 6px 20px;
@@ -59,6 +60,10 @@ import { forIn } from 'lodash';
       font-size: 20px;
       color: #fff;
       border-radius: 0;
+    }
+    .kindergartens .button.close {
+      top: 140px;
+      left: -50px;
     }
     .button.close .fa {
         padding: 0;
@@ -84,7 +89,7 @@ import { forIn } from 'lodash';
       state('s-close', style({
         transform: 'translateX(326px)'
       })),
-      state('s-open',   style({
+      state('s-open', style({
         transform: 'translateX(326px)'
       })),
       transition('s-open => s-close', animate('100ms ease-in')),
@@ -94,7 +99,7 @@ import { forIn } from 'lodash';
       state('s-close', style({
         width: '100%'
       })),
-      state('s-open',   style({
+      state('s-open', style({
         width: 'calc(100% - 326px)'
       })),
       transition('s-open => s-close', animate('100ms ease-in')),
@@ -103,9 +108,9 @@ import { forIn } from 'lodash';
   ]
 
 })
-export class MapBuildingsComponent implements OnInit {
+export class MapKindergartensComponent implements OnInit {
   @ViewChild('mainContainer') mainContainer: ElementRef;
-  @ViewChild('heatContent') heatContent;
+  @ViewChild('kindergartensContent') kindergartensContent;
 
   //execution of an Observable,
   subscription: Subscription;
@@ -123,7 +128,7 @@ export class MapBuildingsComponent implements OnInit {
   shareContainerActive: boolean = false;
 
   //animation for sidebar and map components
-  sidebarState = 's-close';
+  sidebarState = 's-open';
 
   //sharing url string
   shareUrl: string;
@@ -133,6 +138,10 @@ export class MapBuildingsComponent implements OnInit {
   subDynamicLayerSubLayers: any;
 
   sidebarTitle: string;
+
+  dataStore: any;
+
+  seleactedAreaId: number;
 
   constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService, private renderer2: Renderer2) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
@@ -202,6 +211,7 @@ export class MapBuildingsComponent implements OnInit {
   }
 
   initView(view) {
+    //console.log('view', view);
     const rend = this.renderer2;
     const tooltip = rend.createElement('div');
     const mainContainerDom = this.mainContainer;
@@ -230,22 +240,55 @@ export class MapBuildingsComponent implements OnInit {
         rend.setStyle(tooltip, 'padding', '0px');
       };
       view.hitTest(event)
-        .then(function(response){
+        .then((response) => {
           if (response.results.length > 0) {
-            const top = (event.y + 100) < window.innerHeight ? event.y + 10 + 'px' : event.y - 30 + 'px';
-            const left = (event.x + 100) < window.innerWidth ?  event.x + 20 + 'px' : (event.x - 110) + 'px';
-            const values = response.results["0"];
-            const textMsg = `${values.graphic.attributes.ADRESAS}`;
-            const text = rend.createText(textMsg);
-            rend.appendChild(tooltip, text);
-            rend.appendChild(mainContainerDom.nativeElement, tooltip);
-            rend.addClass(tooltip, 'buldings-tooltip')
-            rend.setStyle(tooltip, 'top', top);
-            rend.setStyle(tooltip, 'left', left);
-            rend.setStyle(tooltip, 'padding', '5px');
-            document.body.style.cursor = "pointer";
+            const result = response.results[0];
+            //console.log('AREA ID', response.results[0].graphic.layer.id);
+            if (response.results[0].graphic.layer.id === 'feature-elderates') {
+              if ((this.seleactedAreaId !== result.graphic.attributes.OBJECTID) || !this.seleactedAreaId) {
+                  //remove existing graphic
+                  this._mapService.removeFeatureSelection('elderatesSelection');
+                  this.seleactedAreaId = result.graphic.attributes.OBJECTID;
+                  document.body.style.cursor = "auto";
+                  //console.log('AREA', response.results[0]);
+                  //add selectionResultsToGraphic
+                  const groupFeatureSelectionLayer = this._mapService.initFeatureSelectionGraphicLayer('elderatesSelection', 0, 0);
+                  const { geometry, layer, attributes } = response.results[0].graphic;
+                  const selectionGraphic = this._mapService.initFeatureSelectionGraphic('polyline', geometry, null, attributes);
+                  groupFeatureSelectionLayer.graphics.add(selectionGraphic);
+                  this.map.add(groupFeatureSelectionLayer);
+                }
+            } else {
+              if (response.results[0].graphic.layer.id === 'feature-darzeliai') {
+                //remove existing graphic
+                this._mapService.removeFeatureSelection('elderatesSelection');
+                this.seleactedAreaId = null;
+
+
+                const dataStore = this._mapService.returnAllQueryData();
+                //console.log('dataStore', dataStore);
+                const top = (event.y + 100) < window.innerHeight ? event.y + 10 + 'px' : event.y - 30 + 'px';
+                const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
+                const values = response.results["0"];
+                const featureLayer = response.results["0"].graphic.layer;
+                //const relationData = this._mapService.queryRelationship(featureLayer, '', values.graphic.attributes.OBJECTID);
+                const filter = dataStore.mainInfo.filter(data => data.GARDEN_ID === values.graphic.attributes.Garden_Id);
+                const textMsg = filter[0].LABEL;
+                const text = rend.createText(textMsg);
+                rend.appendChild(tooltip, text);
+                rend.appendChild(mainContainerDom.nativeElement, tooltip);
+                rend.addClass(tooltip, 'buldings-tooltip')
+                rend.setStyle(tooltip, 'top', top);
+                rend.setStyle(tooltip, 'left', left);
+                rend.setStyle(tooltip, 'padding', '5px');
+                document.body.style.cursor = "pointer";
+              }
+            }
           } else {
             document.body.style.cursor = "auto";
+            //remove existing graphic
+            this._mapService.removeFeatureSelection('elderatesSelection');
+            this.seleactedAreaId = null;
           }
         });
     });
@@ -273,9 +316,10 @@ export class MapBuildingsComponent implements OnInit {
 
       //foreach item execute task
       view.layerViews.items.forEach(item => {
+        //console.log(item.layer.id)
         //do not execute if layer is for buffer graphics and if layer is GroupLayer with list mnode 'hide-children' or type is group which means it is dedicated for retrieving data to custom sidebar via feature layer hitTest method
         //skip FeatureSelection layer as well wich is created only for Deature selection graphics
-        if ((item.layer.id !== "bufferPolygon") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group') && (item.layer.id !== 'FeatureSelection') && (item.layer.popupEnabled)) {
+        if ((item.layer.id !== "bufferPolygon") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group') && (item.layer.id !== 'FeatureSelection') && (item.layer.id !== 'AreaSelection') && (item.layer.id !== 'elderatesSelection') && (item.layer.popupEnabled)) {
           //asign correct  visible ids based on layer name (layerId property)
           // layerId === item.layer.id
 
@@ -327,16 +371,16 @@ export class MapBuildingsComponent implements OnInit {
       });
 
 
-    //remove existing graphic
-    this._mapService.removeFeatureSelection();
-    //else identify with hitTest method
-    //find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
-    this._mapService.removeSelectionLayers(this.map);
-    //this.view.popup.close()
-    //hitTest check graphics in the view
-    this.hitTestFeaturePopup(view, event);
-    //init popup on click event widh identify service
-    //this.identify.showItvPopupOnCLick(view, event, identify, identifyParams);
+      //remove existing graphic
+      this._mapService.removeFeatureSelection();
+      //else identify with hitTest method
+      //find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
+      this._mapService.removeSelectionLayers(this.map);
+      //this.view.popup.close()
+      //hitTest check graphics in the view
+      this.hitTestFeaturePopup(view, event);
+      //init popup on click event widh identify service
+      //this.identify.showItvPopupOnCLick(view, event, identify, identifyParams);
 
     }, (error) => { console.error(error); });
   }
@@ -351,18 +395,31 @@ export class MapBuildingsComponent implements OnInit {
     //console.log(screenPoint)
     view.hitTest(screenPoint)
       .then(features => {
+        let fullData = {};
         const values = features.results[0];
-        const showResult = values.graphic;
-        const currentClass = `${values.graphic.attributes.REITING} klasė`;
-        const currentYear = `${values.graphic.attributes.SEZONAS}-${values.graphic.attributes.SEZONAS-1} sezonas`;
-        this.openSidebar();
-        this.heatContent = values.graphic.attributes;
-        //add selectionResultsToGraphic
-        const groupFeatureSelectionLayer = this._mapService.initFeatureSelectionGraphicLayer('FeatureSelection', showResult.layer.maxScale, showResult.layer.minScale, 'hide');
-        const {geometry, layer, attributes} = showResult;
-        const selectionGraphic = this._mapService.initFeatureSelectionGraphic('polygon', geometry, layer, attributes);
-        groupFeatureSelectionLayer.graphics.add(selectionGraphic);
-        this.map.add(groupFeatureSelectionLayer);
+        //console.log(features, values)
+        if ((values && (values.graphic.layer.id !== 'feature-elderates'))) {
+          const showResult = values.graphic;
+          const currentClass = `${values.graphic.attributes.REITING} klasė`;
+          const currentYear = `${values.graphic.attributes.SEZONAS}-${values.graphic.attributes.SEZONAS - 1} sezonas`;
+          const dataStore = this._mapService.returnAllQueryData();
+          const mainInfo = dataStore.mainInfo.forEach(data => {
+            if (data.GARDEN_ID === values.graphic.attributes.Garden_Id) {
+              Object.assign(fullData, data);
+            }
+          });
+          this.openSidebar();
+          this.kindergartensContent = fullData;
+          //add selectionResultsToGraphic
+          const groupFeatureSelectionLayer = this._mapService.initFeatureSelectionGraphicLayer('FeatureSelection', showResult.layer.maxScale, showResult.layer.minScale, 'hide');
+          const { geometry, layer, attributes } = showResult;
+          const selectionGraphic = this._mapService.initFeatureSelectionGraphic('point', geometry, layer, attributes);
+          groupFeatureSelectionLayer.graphics.add(selectionGraphic);
+          this.map.add(groupFeatureSelectionLayer);
+        } else {
+          //TEMP null / 0 trick to initiate componetn change, as we can add data via sidbar compontent as well
+          this.kindergartensContent === null ? this.kindergartensContent = 0 : this.kindergartensContent = null;
+        }
       });
   }
 
@@ -374,7 +431,7 @@ export class MapBuildingsComponent implements OnInit {
     let themeGroupLayer: any;
 
     //add sidebar names
-    this.sidebarTitle = 'Šilumos suvartojimas'
+    this.sidebarTitle = 'Ikimokyklinės ugdymo įstaigos'
 
     this.mobile = this._mapService.mobilecheck();
     this._mapService.isMobileDevice(this.mobile);
@@ -411,18 +468,31 @@ export class MapBuildingsComponent implements OnInit {
       let themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
 
       //all theme layers will be added to common group layer
-      const mainGroupLayer = this._mapService.initGroupLayer(themeName + 'group', 'Pastatai', 'show');
+      const mainGroupLayer = this._mapService.initGroupLayer(themeName + 'group', 'Ikimokylinio ugdymo įstaigos', 'show');
       this.map.add(mainGroupLayer);
 
       forIn(themeLayers, (layer, key) => {
-         const response = this._mapService.fetchRequest(layer.dynimacLayerUrls)
-         const popupEnabled = false;
-         //create group and add all grouped layers to same group, so we could manage group visibility
-         const groupLayer = this._mapService.initGroupLayer(key + 'group', 'Šildymo sezono reitingas', 'hide-children');
-         mainGroupLayer.add(groupLayer);
-         this._mapService.pickMainThemeLayers(response, layer, key, this.queryParams, popupEnabled, groupLayer);
-         //add feature layer with opacity 0
-         this._mapService.pickCustomThemeLayers(response, layer, key, this.queryParams, groupLayer, 2);
+        const response = this._mapService.fetchRequest(layer.dynimacLayerUrls)
+        const popupEnabled = false;
+        //create group and add all grouped layers to same group, so we could manage group visibility
+        const groupLayer = this._mapService.initGroupLayer(key + 'group', 'Ikimokylinio ugdymo įstaigos', 'hide-children');
+        mainGroupLayer.add(groupLayer);
+        this._mapService.pickMainThemeLayers(response, layer, key, this.queryParams, popupEnabled, groupLayer);
+        //add administration area feature layer with opacity 0
+        this._mapService.pickCustomThemeLayers(response, layer, 'area', this.queryParams, groupLayer, 3);
+        //add administration elderates feature layer with opacity 0
+        this._mapService.pickCustomThemeLayers(response, layer, 'elderates', this.queryParams, groupLayer, 1);
+        //add feature layer with opacity 0
+        this._mapService.pickCustomThemeLayers(response, layer, key, this.queryParams, groupLayer, 0, 'simple-marker');
+        //get main info data to dataStore
+        //send each request after previous one
+        this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/4', 'elderates', ["ID", "LABEL"]).then(() => {
+          this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/5', 'mainInfo', ["GARDEN_ID", "LABEL", "EMAIL", "PHONE", "FAX", "ELDERATE", "SCHOOL_TYPE"]).then(() => {
+            this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/6', 'info', ["DARZ_ID", "LAN_LABEL", "TYPE_LABEL", "CHILDS_COUNT", "FREE_SPACE"]).then(() => {
+              this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/7', 'summary', ["DARZ_ID", "CHILDS_COUNT", "FREE_SPACE"]);
+            });
+          });
+        });
       });
       //set raster layers
       const rasterLayers = this._mapService.getRasterLayers();

@@ -1139,6 +1139,8 @@ label {
     top: 88px;
     padding: 5px;
     height: 20px;
+    background-color: #e61d25;
+    border: 1px solid #e61d25;
 }
 #share-btn:hover {
     cursor: pointer;
@@ -2119,7 +2121,7 @@ ul > li .esri-layer-list__item-title {
   padding-right: 20px;
   padding-top: 6px;
   padding-bottom: 6px;
-  line-height: 34px;
+  line-height: 20px;
   margin-bottom: 0;
 }
 #sub-layer-list {
@@ -2761,6 +2763,18 @@ ul > li .esri-layer-list__item-title {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
+}
+
+.gartens-search .esri-widget-button,
+.gartens-search .esri-search .esri-search__container .esri-widget-button {
+  display: none;
+}
+.gartens-search.esri-search {
+    width: 100%;
+}
+.kindergartens-sidebar .esri-search .esri-search__container .esri-search__input {
+  padding: 9px;
+  border: 1px solid #ccc;
 }
 
 /* Tooltips styling for Popper.js */

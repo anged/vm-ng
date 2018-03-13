@@ -149,40 +149,40 @@ pagal mokėjimus už šilumą
   animations: [
     trigger('innerSidebarState', [
       state('s-close', style({
-        transform: 'translateX(326px)'
+        transform: 'translate3d(326px,0,0)'
       })),
       state('s-open',   style({
-        transform: 'translateX(0)'
+        transform: 'translate3d(0,0,0)'
       })),
       transition('s-open => s-close', animate('100ms ease-in')),
       transition('s-close => s-open', animate('100ms ease-out'))
     ]),
     trigger('classesState', [
       state('s-close', style({
-        transform: 'translateX(326px)'
+        transform: 'translate3d(326px,0,0)'
       })),
       state('s-open',   style({
-        transform: 'translateX(0)'
+        transform: 'translate3d(0,0,0)(0)'
       })),
       transition('s-open => s-close', animate('100ms ease-in')),
       transition('s-close => s-open', animate('100ms ease-out'))
     ]),
     trigger('monthsState', [
       state('s-close', style({
-        transform: 'translateX(326px)'
+        transform: 'translate3d(326px,0,0)'
       })),
       state('s-open',   style({
-        transform: 'translateX(0)'
+        transform: 'translate3d(0,0,0)'
       })),
       transition('s-open => s-close', animate('100ms ease-in')),
       transition('s-close => s-open', animate('100ms ease-out'))
     ]),
     trigger('infoState', [
       state('s-close', style({
-        transform: 'translateX(326px)'
+        transform: 'translate3d(326px,0,0)'
       })),
       state('s-open',   style({
-        transform: 'translateX(0)'
+        transform: 'translate3d(0,0,0)'
       })),
       transition('s-open => s-close', animate('100ms ease-in')),
       transition('s-close => s-open', animate('100ms ease-out'))

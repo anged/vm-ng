@@ -1,13 +1,13 @@
 .r-sidebar.sidebar-right {overflow: inherit;}
 .sidebar-right {
-  position: fixed;
+  position: absolute;
   right: 0;
 }
 .sidebar-right.heat-sidebar {
   display: block;
 }
 .sidebar-right p {
-  padding: 6px 20px;
+  padding: 6px 10px;
   margin: 0;
   font-size: 15px;
   font-weight: 700;
@@ -17,6 +17,11 @@
 .sidebar-right a {
   color: #555;
   border-bottom: 1px solid #e61c24;
+}
+.sidebar-right a.button.close {
+    color: #ef0000;
+    border-bottom: 1px solid #e61c24;
+    top: -48px;
 }
 .sidebar-right a:hover {
   border-bottom: none;
@@ -38,9 +43,15 @@
   padding-top: 20px;
 }
 .sidebar-right .main-s-content {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  background: #fff;
+  padding-top: 10px;
+  background: #696969;
+  color: #fff;
+}
+.sidebar-right .main-s-content p {
+  color: #fff;
+}
+.sidebar-right .inner.sub-build {
+    overflow-x: hidden;
 }
 .sidebar-right .heat-tip {
   font-weight: normal;
@@ -76,6 +87,52 @@
   color: #fff;
   font-size: 16px;
 }
+.kindergartens-sidebar.sidebar-right p.build-p:first-child {
+  padding-left: 20px;
+  position: relative;
+  z-index: 99999;
+}
+.kindergartens-sidebar .input-group-addon {
+  border: none;
+}
+.kindergartens-sidebar .form-title {
+  font-size: 14px;
+  margin-top: 6px;
+  padding: 0px 4px;
+}
+.kindergartens-sidebar .form-control {
+  height: 40px;
+  padding: 0 4px;
+  font-size: 14px;
+}
+.kindergartens-sidebar .filter-gartens-button {
+  padding: 12px;
+  margin: 0;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #fff;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: none;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background-color: #53565d;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  -moz-box-shadow: 0 2px 4px rgba(0,0,0,.2);
+}
 .button.close .fa {
     padding: 0;
 }
@@ -85,6 +142,7 @@
   border-bottom: 1px solid #E9E9E9;
   line-height: 28px;
   padding: 10px 20px;
+  padding-right: 40px;
   color: #53565D;
 }
 .sidebar-right canvas {
@@ -93,8 +151,26 @@
   height: 400px !important;
   width: 100% !important;
 }
-.sidebar-right .heat-info {
+.sidebar-right .heat-info, .sidebar-right .list-info {
   margin-top: 20px;
+}
+.sidebar-right .list-info {
+  background-color: #fff;
+}
+.list-info .garten-list {
+  display: block;
+  padding: 5px 10px;
+  font-size: 15px;
+  line-height: 1.6;
+  border-bottom: 1px solid #e4e4e4;
+}
+.list-info .garten-list:hover {
+  cursor: pointer;
+  background: #696969;
+  color: #fff;
+}
+.list-info h4 {
+  padding: 12px 10px;
 }
 .split-half {
   float: left;
@@ -105,6 +181,51 @@
 }
 .sidebar-right p.build-bt {
   padding: 0;
+}
+.sidebar-right .group-grid {
+  margin-top: 20px;
+  padding: 20px 0;
+  background-color: #fff;
+}
+.sidebar-right .flex-grid-3 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  font-size: 15px;
+  padding: 0 20px;
+}
+.sidebar-right .flex-grid-3.title {
+  font-weight: bold;
+}
+.sidebar-right .flex-grid-3  .col-1 {
+  width: 45%;
+}
+.sidebar-right .flex-grid-3  .col-2, .sidebar-right .flex-grid-3  .col-3,
+.sidebar-right .flex-grid-3  .col-4 {
+  width: 15%;
+  text-align: center;
+}
+.sidebar-right .flex-grid-3  .col-2 {
+  text-align: left;
+  width: 20%;
+}
+.sidebar-right .main-sidebar-content {
+  border-bottom: 1px solid #e9e9e9;
+}
+.kindergartens-sidebar .main-sidebar-content {
+  border-bottom: 1px solid #e9e9e9;
+  position: absolute;
+  z-index: 9999;
+  right: 336px;
+  width: 326px;
+  background: #efeff0;
+  top: 10px;
+}
+.kindergartens-sidebar .main-sidebar-content p:last-child {
+  padding-bottom: 20px;
 }
 .sidebar-right .bt-wrapper {
   margin-top: 10px;
@@ -143,12 +264,38 @@
 .sidebar-right .sidebar-container {
   position: absolute;
   top: 0;
-  background: #ececec;
+  background: #696969;
   height: 100%;
   width: 100%;
   z-index: 9999; //needs to set popper.js tooltip above
   overflow-y: auto;
   overflow-x: hidden;
+}
+.kindergartens-sidebar label {
+  font-size: 14px;
+  font-weight: bold;
+}
+.kindergartens-sidebar .input-group {
+  padding-bottom: 0;
+}
+.kindergartens-sidebar.sidebar-right .sidebar-container {
+  position: relative;
+  height: auto;
+}
+.kindergartens-sidebar .input-group-addon {
+  padding: 8px 4px;
+}
+.kindergartens-sidebar .kGartens-form {
+  margin: 10px;
+  padding: 10px;
+  background: #ffffff;
+  color: #343331;
+}
+.kindergartens-sidebar .kGartens-form  .input-group-addon {
+  background-color: #fff;
+}
+.kindergartens-sidebar .kGartens-form  .form-control {
+  border: 1px solid #ccc;
 }
 .sidebar-right .sidebar-header {
   height: 46px;
@@ -191,4 +338,18 @@
     -moz-transition: all .125s ease-in-out;
     -o-transition: all .125s ease-in-out;
     transition: all .125s ease-in-out;
+}
+.selected-garten {
+  background: #696969;
+  color: #fff;
+}
+.kindergartens-sidebar .kGartens-form  .form-control.selected-garten-filter {
+  border-color: rgb(126, 206, 126);
+  border-width: 2px;
+}
+.badge.red {
+  background-color: #a80c0e;
+}
+.badge.red:hover {
+  cursor: pointer;
 }

@@ -106,6 +106,22 @@ export const MapOptions: any = {
         }
       }
     },
+    kindergartens: {
+      production: false, //if theme is ready for production
+      custom: true, // true if theme funcionality is custom
+      name: "Darželiai", //theme name
+      //id: "theme-buildings", //theme id class and theme URL query name
+      id: "darzeliai", //theme id class and theme URL query name
+      imgUrl: "./app/img/svietimas.png", //image URL
+      imgAlt: "Darželiai", // image alt attribute
+      layers: {
+        darzeliai: { // layer unique name
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer",
+          name: "Darželiai"
+        }
+      }
+    },
     teritory: {
       production: true, //if theme is ready for production
       name: "Planavimas ir statyba", //theme name
@@ -235,17 +251,17 @@ export const MapOptions: any = {
       //url: "https://maps.vilnius.lt/maps_vilnius/?theme=caffee",
       production: true, //if theme is ready for production
       name: "Lauko kavinės", //theme name
-			//id: "caffee", //theme id class and theme URL query name
-			id: "kavines", //theme id class and theme URL query name
-			imgUrl: "./app/img/kavines.png", //image URL
-			imgAlt: "Lauko kavinės", // image alt attribute
-			layers: {
-				publicCaf: { // layer unique name //
-					dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-						"https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/lauko_kavines/MapServer",
-					name: "Lauko kavinės" // dynamicLayers group name
-				}
-			}
+      //id: "caffee", //theme id class and theme URL query name
+      id: "kavines", //theme id class and theme URL query name
+      imgUrl: "./app/img/kavines.png", //image URL
+      imgAlt: "Lauko kavinės", // image alt attribute
+      layers: {
+        publicCaf: { // layer unique name //
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/lauko_kavines/MapServer",
+          name: "Lauko kavinės" // dynamicLayers group name
+        }
+      }
     },
     civilSecurity: {
       //url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
@@ -258,7 +274,7 @@ export const MapOptions: any = {
       layers: {
         publicCaf: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Civiline_sauga/MapServer",
+          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Civiline_sauga/MapServer",
           opacity: 0.8,
           name: "Civilinė sauga" // dynamicLayers group name
         }
@@ -275,7 +291,7 @@ export const MapOptions: any = {
       layers: {
         elderships: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Seniunijos/MapServer",
+          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Seniunijos/MapServer",
           opacity: 1,
           name: "Seniūnijos" // dynamicLayers group name
         }
@@ -310,7 +326,8 @@ export const MapOptions: any = {
   },
   search: {
     // search widget locator url
-    locator: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Lokatoriai/PAIESKA_COMPOSITE/GeocodeServer"
+    locator: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Lokatoriai/PAIESKA_COMPOSITE/GeocodeServer",
+    addressLocator: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Lokatoriai/ADRESAI/GeocodeServer"
   }
 }
 

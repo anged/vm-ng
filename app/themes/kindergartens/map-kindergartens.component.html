@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid kindergartens">
   <div class="row">
     <div class="col-xs-12 map-default" [@mapState]="sidebarState">
       <div id="map"  #mainContainer>
@@ -30,11 +30,11 @@
         <common-widgets [view]="view"></common-widgets>
       </div>
     </div>
-    <sidebar-map
+    <sidebar-kindergartens
       class="sidebar-common"
       [title]="sidebarTitle"
       [@sidebarState]="sidebarState"
-      [sidebarHeatContent]="heatContent"
+      [sidebarContent]="kindergartensContent"
       [mainSidebarState]="sidebarState"
     >
       <button
@@ -43,6 +43,6 @@
         (click)=toggleSidebar()
       >✕
       </button>
-    </sidebar-map>
+    </sidebar-kindergartens>
   </div>
 </div>
