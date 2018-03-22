@@ -3,17 +3,25 @@
   position: absolute;
   right: 0;
 }
-.sidebar-right.heat-sidebar {
+/* important mobile fix */
+.sidebar-right.heat-sidebar,
+.kindergartens-sidebar.sidebar-right {
   display: block;
 }
 .sidebar-right p {
-  padding: 6px 10px;
+  padding: 6px 20px;
   margin: 0;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -.4px;
 }
-
+.sidebar-right .button.close {
+  font-size: 12px;
+}
+.sidebar-right .button.close:hover {
+  background-color: #C1272D;
+  color: #fff;
+}
 .sidebar-right a {
   color: #555;
   border-bottom: 1px solid #e61c24;
@@ -44,10 +52,14 @@
 }
 .sidebar-right .main-s-content {
   padding-top: 10px;
+  background: #fff;
+  color: #4c4c4c;;
+}
+.kindergartens-sidebar .main-s-content {
   background: #696969;
   color: #fff;
 }
-.sidebar-right .main-s-content p {
+.kindergartens-sidebar .main-s-content p {
   color: #fff;
 }
 .sidebar-right .inner.sub-build {
@@ -171,6 +183,8 @@
 }
 .list-info h4 {
   padding: 12px 10px;
+  padding-right: 44px;
+  line-height: 1.4;
 }
 .split-half {
   float: left;
@@ -264,12 +278,15 @@
 .sidebar-right .sidebar-container {
   position: absolute;
   top: 0;
-  background: #696969;
+  background: #e9e9e9;
   height: 100%;
   width: 100%;
   z-index: 9999; //needs to set popper.js tooltip above
   overflow-y: auto;
   overflow-x: hidden;
+}
+.kindergartens-sidebar .sidebar-container {
+  background: #696969;
 }
 .kindergartens-sidebar label {
   font-size: 14px;
@@ -287,7 +304,7 @@
 }
 .kindergartens-sidebar .kGartens-form {
   margin: 10px;
-  padding: 10px;
+  padding: 15px;
   background: #ffffff;
   color: #343331;
 }
@@ -347,9 +364,45 @@
   border-color: rgb(126, 206, 126);
   border-width: 2px;
 }
+.kindergartens-sidebar .mat-expansion-panel:not([class*=mat-elevation-z]) {
+  box-shadow: 0 0px 0px 1px rgba(0,0,0,.2), 0 0px 1px 0 rgba(0,0,0,.14), 0 0px 0px 0 rgba(0,0,0,.12);
+  margin: 0;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
 .badge.red {
   background-color: #a80c0e;
 }
 .badge.red:hover {
   cursor: pointer;
+}
+.alert-content {
+  padding: 10px;
+  background: #e9e9e9;
+}
+.alert-content p {
+  font-size: 17px;
+  letter-spacing: 0;
+  padding: 15px;
+  color: #a94442;
+}
+
+@media screen and (max-width: 420px) {
+  .kindergartens .button.close {
+      z-index: 99999;
+      top: 0;
+      left: 0;
+      padding: 13px 16px;
+  }
+  .kindergartens-sidebar.sidebar-right p.build-p:first-child {
+    padding-left: 60px;
+  }
+}
+@media screen and (max-width: 740px) {
+  .kindergartens-sidebar .main-sidebar-content {
+    position: inherit;
+  }
+  .sidebar-right .button.close {
+    right: 20px;
+  }
 }

@@ -34,7 +34,7 @@ import Polygon = require('esri/geometry/Polygon');
     ]),
     trigger('infoState', [
       state('s-close', style({
-        transform: 'translateX(326px)'
+        transform: 'translateX(336px)'
       })),
       state('s-open', style({
         transform: 'translateX(0)'
@@ -62,14 +62,14 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
   groups: Array<any>;
 
   analyzeParams = {
-    eldership: '',
+    eldership: 0,
     groupByAge: '',
     groupByLang: '',
     hasVacancy: false,
     groupByType: '',
     groupByName: '',
     groupByAddress: '',
-    bufferSize: 1
+    bufferSize: 2
   };
 
   dataStore: any;
@@ -91,6 +91,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
 
   selectedGartenId: number;
   filtersOn = false;
+  distance: number;
 
   constructor(private mapWidgetsService: MapWidgetsService, private mapService: MapService, private selectorsService: SelectorsService, private searchService: SearchService, private menuToolsService: MenuToolsService) { }
 
@@ -202,7 +203,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
 
       const groupFeatureSelectionLayer = this.mapService.initFeatureSelectionGraphicLayer('FeatureSelection', features.layer.maxScale, features.layer.minScale, 'hide');
       const { geometry, layer, attributes } = features;
-      const selectionGraphic = this.mapService.initFeatureSelectionGraphic('point', geometry, layer, attributes);
+      const selectionGraphic = this.mapService.initFeatureSelectionGraphic('point', geometry, layer, attributes, '26px', 'dash');
       groupFeatureSelectionLayer.graphics.add(selectionGraphic);
       map.add(groupFeatureSelectionLayer);
     });
@@ -210,7 +211,6 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
 
   filterGartens() {
     const search = this.searchService.returnGartensSearchWidget();
-    const idsGartens = this.mapWidgetsService.filterKindergartents(this.dataStore, this.analyzeParams);
     //console.log('idsGartens', idsGartens);
     this.selectionByFilterState = true;
     const view = this.mapService.getView();
@@ -222,26 +222,35 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     this.sidebarContent = null;
 
     if (search.searchTerm.length > 0) {
+      this.distance = this.analyzeParams.bufferSize;
       this.analyzeParams.groupByAddress = search.searchTerm;
       this.isFiltered();
       //search using search widget
       search.autoSelect = true;
       search.search().then((e) => {
-       //console.log(e, search, this.analyzeParams);
-        this.createBuffer(this.analyzeParams, e.results["0"].results["0"].feature).then(buffer => {
-          //console.log('Buffer', buffer);
-          //console.log('this.fullArea', this.fullArea);
-          this.createQuery(buffer, "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/0", idsGartens).then(filteredIds => {
-            this.filteredGartens = this.dataStore.mainInfo.filter(data => filteredIds.includes(data.GARDEN_ID));
-            this.mapWidgetsService.selectKindergartens(filteredIds, this.selectionByFilterState, buffer);
+        const searchGeometry = e.results["0"].results["0"].feature.geometry;
+        this.mapService.runQueryByGeometry('https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/2', searchGeometry).then((result) => {
+          //assign elderates' name
+          this.analyzeParams.eldership = result.features["0"].attributes.NR;
+          const idsGartens = this.mapWidgetsService.filterKindergartents(this.dataStore, this.analyzeParams);
+          //console.log(e, search, this.analyzeParams);
+          this.createBuffer(this.analyzeParams, e.results["0"].results["0"].feature).then(buffer => {
+            //console.log('Buffer', buffer);
+            //console.log('this.fullArea', this.fullArea);
+            this.createQuery(buffer, "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/0", idsGartens).then(filteredIds => {
+              this.filteredGartens = this.dataStore.mainInfo.filter(data => filteredIds.includes(data.GARDEN_ID));
+              this.mapWidgetsService.selectKindergartens(filteredIds, this.selectionByFilterState, buffer);
 
-            if (this.filteredGartens.length > 0) {
-              this.createBufferPolygon(this.fullArea, buffer);
-            }
-          });
-        })
+              if (this.filteredGartens.length > 0) {
+                this.createBufferPolygon(this.fullArea, buffer);
+              }
+            });
+          })
+        });
       });
     } else {
+      const idsGartens = this.mapWidgetsService.filterKindergartents(this.dataStore, this.analyzeParams);
+      this.distance = null;
       //do not use search widget
       this.filteredGartens = this.dataStore.mainInfo.filter(data => idsGartens.includes(data.GARDEN_ID));
       //console.log('this.filteredGartens', this.filteredGartens);

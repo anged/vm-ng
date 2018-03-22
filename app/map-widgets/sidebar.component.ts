@@ -162,7 +162,7 @@ pagal mokėjimus už šilumą
         transform: 'translate3d(326px,0,0)'
       })),
       state('s-open',   style({
-        transform: 'translate3d(0,0,0)(0)'
+        transform: 'translate3d(0,0,0)'
       })),
       transition('s-open => s-close', animate('100ms ease-in')),
       transition('s-close => s-open', animate('100ms ease-out'))

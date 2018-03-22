@@ -46,7 +46,7 @@ export class SearchService {
   		}]
     });
   }
-  kindergartensSearchWidget(view: any, url: string, container:string) {
+  kindergartensSearchWidget(view: any, url: string, container:string, placeholder = "Adreso Paieška") {
     this.gartensSearchWidget = new Search({
         autoSelect: false, //autoselect to false, selection will be based on only button click event
         view,
@@ -67,7 +67,7 @@ export class SearchService {
     			  distance: 50000
     			},
           locationToAddressDistance:10000,
-    			placeholder: "Adreso paieška",
+    			placeholder,
           zoomScale: 6,
           resultSymbol: new PictureMarkerSymbol({
            url: window.location.origin  + "/app/img/map_marker.png",

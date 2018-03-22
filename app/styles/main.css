@@ -712,7 +712,12 @@ label.label-style.active:after {
     line-height: 20px;
     color: #4C4C4C;
     background-color: #fff;
-    border-right: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
     -webkit-transition: width .175s ease-in;
     -moz-transition: width .175s ease-in;
     -ms-transition: width .175s ease-in;
@@ -1080,12 +1085,16 @@ label {
     padding: 6px 15px;
     background-color: #fff;
     border: none;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
     border-radius: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
     -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
     -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    /* -webkit-appearance: none; */
 }
 /*.form-control, output {
     font-size: 14px;
@@ -1122,6 +1131,11 @@ label {
     padding: 10px 10px 0;
     color: #fff !important;
 }
+.share-btn-title {
+    position: relative;
+    bottom: 5px;
+    margin-right: 4px;
+}
 #building-help {
     top: 88px;
     right: 120px;
@@ -1135,7 +1149,7 @@ label {
     z-index: 1;
     display: block;
     left: auto;
-    right: 70px;
+    right: 66px;
     top: 88px;
     padding: 5px;
     height: 20px;
@@ -2048,6 +2062,9 @@ ul > li .esri-layer-list__item-title {
     margin: 0;
     padding: 0;
 }
+.esri-layer-list__item-toggle {
+    overflow: inherit;
+}
 .esri-icon-down-arrow:before {
     content: "\f107";
     font: normal normal normal 18px/1 FontAwesome;
@@ -2339,7 +2356,7 @@ ul > li .esri-layer-list__item-title {
   }
   .esri-ui-corner .esri-compass.esri-widget {
     top: 77px;
-    right: 96px;
+    right: 100px;
   }
   #theme.sub-menu, #layers.sub-menu, #legend.sub-menu, #tools.sub-menu, #open-data.sub-menu {
     width: 368px;
@@ -2569,7 +2586,7 @@ ul > li .esri-layer-list__item-title {
   }
   .esri-ui-corner .esri-compass.esri-widget {
     top: 77px;
-    right: 46px;
+    right: 100px;
   }
   .button.close:hover, #build-data .button.close:hover {
     background-color: #C1272D;
@@ -2742,6 +2759,11 @@ ul > li .esri-layer-list__item-title {
     display: inline-block;
   }
 }
+@media only screen and (max-width: 720px) {
+  .share-btn-title {
+    display: none;
+  }
+}
 @media only screen and (min-width: 740px) {
   .themes-page-logo span {
     margin-right: 260px;
@@ -2774,7 +2796,7 @@ ul > li .esri-layer-list__item-title {
 }
 .kindergartens-sidebar .esri-search .esri-search__container .esri-search__input {
   padding: 9px;
-  border: 1px solid #ccc;
+  border: 1px solid #c6c5c5;
 }
 
 /* Tooltips styling for Popper.js */
@@ -2789,3 +2811,29 @@ popper-content {
   border: none !important;
   z-index: 99999;
 }
+
+/* Material */
+.kindergartens-sidebar .mat-expansion-panel-body {
+  padding: 0 8px 16px;
+}
+.kindergartens-sidebar label {
+  padding-left: 0;
+}
+.kindergartens-sidebar .button.close .fa {
+    width: 18px;
+    height: 20px;
+}
+.kindergartens-sidebar .address.input-field {
+  margin-top: 10px;
+}
+.kindergartens-sidebar .mat-checkbox-frame {
+  border-width: 1px;
+  border-color: rgb(169, 169, 169);
+}
+.kindergartens-sidebar .mat-expansion-panel-header {
+    padding: 0 24px 0 12px;
+}
+.mat-checkbox-checked.mat-accent .mat-checkbox-background, .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+    background-color: #e61d25;
+}
+.mat-checkbox:not(.mat-checkbox-disabled).mat-accent .mat-checkbox-ripple .mat-ripple-element {background-color:rgba(230,28,36,.26)}

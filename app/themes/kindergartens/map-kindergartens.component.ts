@@ -38,6 +38,7 @@ import { forIn } from 'lodash';
   styles: [`
     .sidebar-common {
       position: absolute;
+      position: fixed;
       height: 100%;
       z-index: 1;
     }
@@ -82,6 +83,18 @@ import { forIn } from 'lodash';
       box-shadow: 0 1px 3px rgba(0,0,0,.25);
       color: #000;
       line-height: 1.4;
+    }
+    @media screen and (max-width: 420px) {
+      .kindergartens .button.close {
+          z-index: 99999;
+          top: 0;
+          left: 0;
+          padding: 13px 16px;
+      }
+      .kindergartens .s-close.button.close {
+        top: 140px;
+        left: -50px;
+      }
     }
     `],
   animations: [
@@ -141,8 +154,6 @@ export class MapKindergartensComponent implements OnInit {
 
   dataStore: any;
 
-  seleactedAreaId: number;
-
   constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService, private renderer2: Renderer2) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
@@ -168,6 +179,7 @@ export class MapKindergartensComponent implements OnInit {
   select(e) {
     e.target.select();
   }
+
   // toggle share container
   shareToggle(e) {
     //get visible and checked layers ids
@@ -176,7 +188,6 @@ export class MapKindergartensComponent implements OnInit {
     const checkedLayersIds: number[] = ids.visibilityIds;
     //check if there is any visible layers that can be identied in allLayers group
     let identify = ids.identificationsIds.allLayers.length <= 1 ? "" : "allLayers";
-    //console.log("ids", ids)
 
     //get share url
     let currentZoom: number, currentCoordinates: number[];
@@ -184,8 +195,6 @@ export class MapKindergartensComponent implements OnInit {
     currentCoordinates = [this.view.center.x, this.view.center.y];
     this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
       + this.mapWidgetsService.returnActiveBasemap() + '&identify=' + identify;
-    //console.log(this.shareUrl)
-    //console.log(window.location)
 
     //toggle active state
     this.shareContainerActive = !this.shareContainerActive;
@@ -197,7 +206,9 @@ export class MapKindergartensComponent implements OnInit {
           document.getElementById("url-link").select();
         }
       }, 20);
+
     }
+
   }
 
   shareCheckedLayersIds(ids: any): string {
@@ -223,72 +234,44 @@ export class MapKindergartensComponent implements OnInit {
       position: 'bottom-left'
     };
 
-    //get projects when interacting with the view
-    watchUtils.whenTrue(view, "stationary", (b) => {
-      // Get the new extent of the view only when view is stationary.
-      if (view.extent) {
-        //this.getProjects(itvFeatureUrl, view.extent, sqlStr, count);
-        count += 1;
-      }
-    });
-
     //add tooltip on mouse move
-    this.view.on("pointer-move", (event) => {
-
+    view.on("pointer-move",  (event) => {
+      const screenPoint = {
+        //FIXME bug with x coordinate value, when menu icon is in view, temp solution: change x value from 0 to any value
+        x: event.x ? event.x : 600,
+        y: event.y
+      };
       if (tooltip.textContent.length > 0) {
         tooltip.textContent = '';
         rend.setStyle(tooltip, 'padding', '0px');
       };
-      view.hitTest(event)
+      //console.log(event)
+      view.hitTest(screenPoint)
         .then((response) => {
           if (response.results.length > 0) {
             const result = response.results[0];
-            //console.log('AREA ID', response.results[0].graphic.layer.id);
-            if (response.results[0].graphic.layer.id === 'feature-elderates') {
-              if ((this.seleactedAreaId !== result.graphic.attributes.OBJECTID) || !this.seleactedAreaId) {
-                  //remove existing graphic
-                  this._mapService.removeFeatureSelection('elderatesSelection');
-                  this.seleactedAreaId = result.graphic.attributes.OBJECTID;
-                  document.body.style.cursor = "auto";
-                  //console.log('AREA', response.results[0]);
-                  //add selectionResultsToGraphic
-                  const groupFeatureSelectionLayer = this._mapService.initFeatureSelectionGraphicLayer('elderatesSelection', 0, 0);
-                  const { geometry, layer, attributes } = response.results[0].graphic;
-                  const selectionGraphic = this._mapService.initFeatureSelectionGraphic('polyline', geometry, null, attributes);
-                  groupFeatureSelectionLayer.graphics.add(selectionGraphic);
-                  this.map.add(groupFeatureSelectionLayer);
-                }
+            if ((response.results[0].graphic.layer.id === 'feature-darzeliai') && (response.results[0].graphic.layer.id !== 'feature-area')) {
+              const dataStore = this._mapService.returnAllQueryData();
+              const top = (event.y + 100) < window.innerHeight ? event.y + 10 + 'px' : event.y - 30 + 'px';
+              const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
+              const values = response.results["0"];
+              const featureLayer = response.results["0"].graphic.layer;
+              //const relationData = this._mapService.queryRelationship(featureLayer, '', values.graphic.attributes.OBJECTID);
+              const filter = dataStore.mainInfo.filter(data => data.GARDEN_ID === values.graphic.attributes.Garden_Id);
+              const textMsg = filter[0].LABEL;
+              const text = rend.createText(textMsg);
+              rend.appendChild(tooltip, text);
+              rend.appendChild(mainContainerDom.nativeElement, tooltip);
+              rend.addClass(tooltip, 'buldings-tooltip')
+              rend.setStyle(tooltip, 'top', top);
+              rend.setStyle(tooltip, 'left', left);
+              rend.setStyle(tooltip, 'padding', '5px');
+              document.body.style.cursor = "pointer";
             } else {
-              if (response.results[0].graphic.layer.id === 'feature-darzeliai') {
-                //remove existing graphic
-                this._mapService.removeFeatureSelection('elderatesSelection');
-                this.seleactedAreaId = null;
-
-
-                const dataStore = this._mapService.returnAllQueryData();
-                //console.log('dataStore', dataStore);
-                const top = (event.y + 100) < window.innerHeight ? event.y + 10 + 'px' : event.y - 30 + 'px';
-                const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
-                const values = response.results["0"];
-                const featureLayer = response.results["0"].graphic.layer;
-                //const relationData = this._mapService.queryRelationship(featureLayer, '', values.graphic.attributes.OBJECTID);
-                const filter = dataStore.mainInfo.filter(data => data.GARDEN_ID === values.graphic.attributes.Garden_Id);
-                const textMsg = filter[0].LABEL;
-                const text = rend.createText(textMsg);
-                rend.appendChild(tooltip, text);
-                rend.appendChild(mainContainerDom.nativeElement, tooltip);
-                rend.addClass(tooltip, 'buldings-tooltip')
-                rend.setStyle(tooltip, 'top', top);
-                rend.setStyle(tooltip, 'left', left);
-                rend.setStyle(tooltip, 'padding', '5px');
-                document.body.style.cursor = "pointer";
-              }
+              document.body.style.cursor = "auto";
             }
           } else {
             document.body.style.cursor = "auto";
-            //remove existing graphic
-            this._mapService.removeFeatureSelection('elderatesSelection');
-            this.seleactedAreaId = null;
           }
         });
     });
@@ -319,7 +302,7 @@ export class MapKindergartensComponent implements OnInit {
         //console.log(item.layer.id)
         //do not execute if layer is for buffer graphics and if layer is GroupLayer with list mnode 'hide-children' or type is group which means it is dedicated for retrieving data to custom sidebar via feature layer hitTest method
         //skip FeatureSelection layer as well wich is created only for Deature selection graphics
-        if ((item.layer.id !== "bufferPolygon") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group') && (item.layer.id !== 'FeatureSelection') && (item.layer.id !== 'AreaSelection') && (item.layer.id !== 'elderatesSelection') && (item.layer.popupEnabled)) {
+        if ((item.layer.id !== "bufferPolygon") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group') && (item.layer.id !== 'FeatureSelection') && (item.layer.id !== 'AreaSelection') && (item.layer.popupEnabled)) {
           //asign correct  visible ids based on layer name (layerId property)
           // layerId === item.layer.id
 
@@ -396,30 +379,38 @@ export class MapKindergartensComponent implements OnInit {
     view.hitTest(screenPoint)
       .then(features => {
         let fullData = {};
-        const values = features.results[0];
-        //console.log(features, values)
-        if ((values && (values.graphic.layer.id !== 'feature-elderates'))) {
-          const showResult = values.graphic;
-          const currentClass = `${values.graphic.attributes.REITING} klasė`;
-          const currentYear = `${values.graphic.attributes.SEZONAS}-${values.graphic.attributes.SEZONAS - 1} sezonas`;
-          const dataStore = this._mapService.returnAllQueryData();
-          const mainInfo = dataStore.mainInfo.forEach(data => {
-            if (data.GARDEN_ID === values.graphic.attributes.Garden_Id) {
-              Object.assign(fullData, data);
+        const values = Array.from(features.results);
+        //const value = features.results[0];
+        const isShown = false;
+        values.forEach((value) => {
+          if ((values && (value.graphic.layer.id !== 'feature-area'))) {
+            if (!isShown) {
+              isShown = true;
+              const showResult = value.graphic;
+              const currentClass = `${value.graphic.attributes.REITING} klasė`;
+              const currentYear = `${value.graphic.attributes.SEZONAS}-${value.graphic.attributes.SEZONAS - 1} sezonas`;
+              const dataStore = this._mapService.returnAllQueryData();
+              const mainInfo = dataStore.mainInfo.forEach(data => {
+                if (data.GARDEN_ID === value.graphic.attributes.Garden_Id) {
+                  Object.assign(fullData, data);
+                }
+              });
+              this.openSidebar();
+              this.kindergartensContent = fullData;
+              //add selectionResultsToGraphic
+              const groupFeatureSelectionLayer = this._mapService.initFeatureSelectionGraphicLayer('FeatureSelection', showResult.layer.maxScale, showResult.layer.minScale, 'hide');
+              const { geometry, layer, attributes } = showResult;
+              const selectionGraphic = this._mapService.initFeatureSelectionGraphic('point', geometry, layer, attributes, '26px', 'dash');
+              groupFeatureSelectionLayer.graphics.add(selectionGraphic);
+              this.map.add(groupFeatureSelectionLayer);
             }
-          });
-          this.openSidebar();
-          this.kindergartensContent = fullData;
-          //add selectionResultsToGraphic
-          const groupFeatureSelectionLayer = this._mapService.initFeatureSelectionGraphicLayer('FeatureSelection', showResult.layer.maxScale, showResult.layer.minScale, 'hide');
-          const { geometry, layer, attributes } = showResult;
-          const selectionGraphic = this._mapService.initFeatureSelectionGraphic('point', geometry, layer, attributes);
-          groupFeatureSelectionLayer.graphics.add(selectionGraphic);
-          this.map.add(groupFeatureSelectionLayer);
-        } else {
-          //TEMP null / 0 trick to initiate componetn change, as we can add data via sidbar compontent as well
-          this.kindergartensContent === null ? this.kindergartensContent = 0 : this.kindergartensContent = null;
-        }
+          } else {
+            if (!isShown) {
+            //TEMP null / 0 trick to initiate componetn change, as we can add data via sidbar compontent as well
+            this.kindergartensContent === null ? this.kindergartensContent = 0 : this.kindergartensContent = null;
+            }
+          }
+        });
       });
   }
 
@@ -480,16 +471,14 @@ export class MapKindergartensComponent implements OnInit {
         this._mapService.pickMainThemeLayers(response, layer, key, this.queryParams, popupEnabled, groupLayer);
         //add administration area feature layer with opacity 0
         this._mapService.pickCustomThemeLayers(response, layer, 'area', this.queryParams, groupLayer, 3);
-        //add administration elderates feature layer with opacity 0
-        this._mapService.pickCustomThemeLayers(response, layer, 'elderates', this.queryParams, groupLayer, 1);
-        //add feature layer with opacity 0
+        //add feature kindergartens layer with opacity 0
         this._mapService.pickCustomThemeLayers(response, layer, key, this.queryParams, groupLayer, 0, 'simple-marker');
         //get main info data to dataStore
         //send each request after previous one
-        this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/4', 'elderates', ["ID", "LABEL"]).then(() => {
-          this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/5', 'mainInfo', ["GARDEN_ID", "LABEL", "EMAIL", "PHONE", "FAX", "ELDERATE", "SCHOOL_TYPE"]).then(() => {
-            this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/6', 'info', ["DARZ_ID", "LAN_LABEL", "TYPE_LABEL", "CHILDS_COUNT", "FREE_SPACE"]).then(() => {
-              this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/7', 'summary', ["DARZ_ID", "CHILDS_COUNT", "FREE_SPACE"]);
+        this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/4', 'elderates', ['ID', 'LABEL']).then(() => {
+          this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/5', 'mainInfo', ['GARDEN_ID', 'LABEL', 'EMAIL', 'PHONE', 'FAX', 'ELDERATE', 'ELDERATE2','ELDERATE3', 'ELDERATE4', 'SCHOOL_TYPE']).then(() => {
+            this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/6', 'info', ['DARZ_ID', 'LAN_LABEL', 'TYPE_LABEL', 'CHILDS_COUNT', 'FREE_SPACE']).then(() => {
+              this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/7', 'summary', ['DARZ_ID', 'CHILDS_COUNT', 'FREE_SPACE']);
             });
           });
         });

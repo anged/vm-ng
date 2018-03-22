@@ -241,7 +241,7 @@ export class MapService {
     });
   }
 
-  initGraphic(type: string, name: String, attr: any, geom, scale: any = "", graphicLayer) {
+  initGraphic(type: string, name: String, attr: any, geom, scale: any = "", graphicLayer, size = '12px', style = 'solid') {
     return new Graphic({
       // attributes: attr,
       // geometry: geom,
@@ -259,32 +259,32 @@ export class MapService {
       //   //pass selection string to indentify that content is for selected graphic, so Observable must not be used
       //   content: this.projectsService.getPopUpContent(attr, "selection")
       // },
-      symbol: this.initSymbol(type),
+      symbol: this.initSymbol(type, size, style),
       layer: graphicLayer
     });
   }
 
   //create selection graphic for feature layers
-  initFeatureSelectionGraphic(type: string, geometry, layer, attributes) {
+  initFeatureSelectionGraphic(type: string, geometry, layer, attributes, size = '12px', style = 'solid') {
     return new Graphic({
       attributes,
       geometry,
       layer,
-      symbol: this.initSymbol(type)
+      symbol: this.initSymbol(type, size, style)
     });
   }
 
-  initSymbol(type: string) {
+  initSymbol(type: string, size: string, style: string) {
     let symbol;
     switch (type) {
       case "point":
         symbol = new SimpleMarkerSymbol({
-          //color: [251,215,140],
-          size: "12px",
+          color: [ 255, 255, 255, 0],
+          size,
           outline: { // autocasts as new SimpleLineSymbol()
             //color: [251,215,140],
             color: [181, 14, 18],
-            style: "solid",
+            style,
             width: 3
           }
         });
@@ -319,6 +319,9 @@ export class MapService {
     const selectionLayer = this.map.findLayerById(name)
     if (selectionLayer) {
       this.map.remove(selectionLayer)
+
+      //FIXME temp removing dublicates
+      this.removeFeatureSelection();
     }
   }
 
@@ -330,12 +333,12 @@ export class MapService {
     });
   }
 
-  initFeatureLayer(layer: string, opacity, index: number): FeatureLayer {
+  initFeatureLayer(layer: string, opacity = 1 , index: number): FeatureLayer {
     return new FeatureLayer({
       url: layer,
       id: 'itv-feature-' + index,
       outFields: ["*"],
-      opacity: opacity || 1,
+      opacity,
       //definitionExpression: 'Pabaiga=2018',
       title: 'itv-feature-layer-' + index,
       //add popupTemplate
@@ -343,27 +346,55 @@ export class MapService {
     });
   }
 
-  initCommonFeatureLayer(layer: string, opacity, id: number, title, symbolType): FeatureLayer {
+  initCommonFeatureLayer(layer: string, opacity = 1, id: number, title, symbolType): FeatureLayer {
     return new FeatureLayer({
       url: layer,
       id: 'feature-' + id,
       outFields: ["*"],
-      opacity: opacity || 1,
+      opacity,
       title,
       legendEnabled: false, // do not show in Legend widget
       listMode: 'hide', //do not show in LayerList widget
       renderer: {
         type: 'simple',  // autocasts as new SimpleRenderer()
-        symbol: {
-          type: symbolType,
-          color: [255, 255, 255, 0],
-          outline: {  // autocasts as new SimpleLineSymbol()
-            width: 1,
-            color: [255, 255, 255, 0]
-          }
-        }
+        symbol: this.initAutocastSymbol(symbolType)
       }
     })
+  }
+
+  initAutocastSymbol(type) {
+    let symbol;
+    switch (type) {
+      case 'simple-marker':
+        symbol = {
+          type,  // autocasts as new SimpleMarkerSymbol()
+          color: [ 181, 14, 18, 0 ],
+          outline: {
+            style: "dash-dot",
+            color: [ 181, 14, 18, 0 ]
+          }
+        };
+        break;
+      case 'simple-line':
+        symbol = {
+          type,
+          color: [ 181, 14, 18 ],
+          width: "1px",
+          style: "long-dash-dot"
+        };
+        break;
+      case 'simple-fill':
+        symbol = {
+          type,
+          color: [255, 255, 255, 0 ],
+          outline: {  // autocasts as new SimpleLineSymbol()
+            width: 1,
+            color: [181, 14, 18, 0 ]
+          }
+        };
+        break;
+    }
+    return symbol;
   }
 
   //http fetch for default themes
@@ -451,7 +482,7 @@ export class MapService {
 
   //get All Data
   getAllQueryData(urlStr: string, name: string, outFields) {
-    let query = new Query();
+    let query = this.addQuery();
     const queryTask = this.addQueryTask(urlStr);
     //console.log(arguments);
     //get all data
@@ -464,6 +495,18 @@ export class MapService {
     }, (error) => { console.error(error); });
   }
 
+  //run query by geometry
+  runQueryByGeometry(urlStr: string, geometry: any) {
+    const query = this.addQuery();
+    const queryTask = this.addQueryTask(urlStr);
+    query.geometry  = geometry;
+    query.outFields = ['*'];
+    query.returnGeometry = true;
+    return queryTask.execute(query).then((result) => {
+      return result;
+    }, (error) => { console.error(error); });
+  }
+
   getArrayByUniqueValue(array, valueName) {
     //return array.filter((data, index, arr) => data )
   }
@@ -472,12 +515,11 @@ export class MapService {
     return this.dataStore;
   }
 
-  pickCustomThemeLayers(response, layer, key, queryParams, groupLayer, serviceKey, symbolType: string = 'simple-fill') {
+  pickCustomThemeLayers(response, layer, key, queryParams, groupLayer, serviceKey, symbolType = 'simple-fill') {
     //console.log('arguments', arguments);
     response.subscribe(json => {
       //(layer: string, opacity, index: number, id: number, title)
       let feature = this.initCommonFeatureLayer(layer.dynimacLayerUrls + '/' + serviceKey, layer.opacity, key, layer.name, symbolType);
-
       if (groupLayer) {
         groupLayer.add(feature);
       } else {
@@ -525,8 +567,6 @@ export class MapService {
   }
 
   initSelectionGraphic(result, scale, graphicLayer) {
-    //console.log(result.geometry.type)
-    //console.log(scale)
     if (result.geometry.type === "point") {
       return this.initGraphic("point", "selected-feature", result.attributes, result.geometry, scale, graphicLayer);
     }

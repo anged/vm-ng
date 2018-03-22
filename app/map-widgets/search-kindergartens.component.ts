@@ -33,7 +33,7 @@ export class SearchKindergartensComponent implements OnInit {
   }
 
   ngOnInit() {
-      this.searchWidget = this.searchService.kindergartensSearchWidget(this.mapService.getView(), MapOptions.search.addressLocator, this.searchWidgetDOM.nativeElement);
+      this.searchWidget = this.searchService.kindergartensSearchWidget(this.mapService.getView(), MapOptions.search.addressLocator, this.searchWidgetDOM.nativeElement, "Adresas, pvz.: Konstitucijos pr. 3");
 
       // on(this.searchWidget, 'search-complete', (e) => {
       //   //console.log(e, this.analyzeParams, this.searchWidget);

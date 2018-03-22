@@ -171,7 +171,7 @@ export class MapWidgetsService {
     //filter feature layers
     const featureLayer = map.findLayerById('feature-darzeliai');
     //console.log(featureLayer);
-    (toggleState && (ids.length > 0)) ? featureLayer.definitionExpression = `GARDEN_ID in (${idsQueryString})` : featureLayer.definitionExpression = '';
+    (toggleState && (ids.length > 0)) ? featureLayer.definitionExpression = `GARDEN_ID in (${idsQueryString})` : featureLayer.definitionExpression = 'GARDEN_ID = 9999';
 
     //filter dynamic layers
     const dynLayers = map.findLayerById('darzeliai')
@@ -179,7 +179,7 @@ export class MapWidgetsService {
       //console.log(item)
       //id 0 is layer of kindergartens
       if (item.id === 0) {
-        (toggleState && (ids.length > 0)) ? item.definitionExpression = `GARDEN_ID in (${idsQueryString})` : item.definitionExpression = '';
+        (toggleState && (ids.length > 0)) ? item.definitionExpression = `GARDEN_ID in (${idsQueryString})` : item.definitionExpression = 'GARDEN_ID = 9999';
       }
     });
     if (ids.length > 0) {
@@ -221,8 +221,10 @@ export class MapWidgetsService {
 }
 
 filterKindergartents(dataStore, { eldership, groupByAge, groupByLang, groupByName, groupByType, hasVacancy }) {
-  //console.log("STORE", eldership, groupByAge, groupByLang, groupByName, groupByType, hasVacancy)
+  //console.log("STORE", dataStore, '\n', eldership, groupByAge, groupByLang, groupByName, groupByType, hasVacancy)
   const gartens = dataStore.mainInfo;
+  const elderate = dataStore.elderates.filter(data => data.ID === eldership)[0];
+  const eldarateLabel = elderate ? elderate.LABEL : '';
   let gartensIDs = [];
   gartens.forEach((garten) => {
     const idByAge = dataStore.info.map(data => {
@@ -240,20 +242,7 @@ filterKindergartents(dataStore, { eldership, groupByAge, groupByLang, groupByNam
         return data.DARZ_ID;
       }
     });
-    // console.log(garten.ELDERATE === eldership,
-    //   garten.SCHOOL_TYPE === groupByType,
-    //   (garten.LABEL === groupByName),
-    //   idByAge.includes(garten.GARDEN_ID),
-    //   idByLang.includes(garten.GARDEN_ID),
-    //   idByVacancy.includes(garten.GARDEN_ID)
-    // )
-    // console.log("BOOLEANS", !eldership,
-    //   !groupByType,
-    //   !groupByName,
-    //   !groupByAge,
-    //   !groupByLang
-    // )
-    if (((garten.ELDERATE === eldership) || (eldership === '')) &&
+    if (((garten.ELDERATE === eldarateLabel) || (!eldership) || (garten.ELDERATE === 'Visos seniūnijos')) &&
       ((garten.SCHOOL_TYPE === groupByType) || (groupByType === '')) &&
       ((garten.LABEL === groupByName) || (groupByName === '')) &&
       (idByAge.includes(garten.GARDEN_ID) || (groupByAge === '')) &&

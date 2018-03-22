@@ -38,6 +38,7 @@ import { forIn } from 'lodash';
   styles: [`
     .sidebar-common {
       position: absolute;
+      position: fixed;
       height: 100%;
     }
     .sidebar-common p {
