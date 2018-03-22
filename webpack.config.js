@@ -108,5 +108,5 @@ module.exports = {
             callback();
         }
     ],
-    devtool: PRODUCTION ? 'nosources-source-map' : 'source-map'
+    devtool: PRODUCTION ? '(none)' : 'source-map'
 };
