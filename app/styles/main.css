@@ -2848,10 +2848,10 @@ popper-content {
 .mat-checkbox:not(.mat-checkbox-disabled).mat-accent .mat-checkbox-ripple .mat-ripple-element {background-color:rgba(230,28,36,.26)}
 
 .mat-expanded .mat-expansion-indicator {
-  height: 36px;
+  height: 16px;
 }
 .mat-expansion-indicator {
-  height: 34px;
+  height: 16px;
   color: #e61d26;
 }
 .mat-expansion-indicator::after {
@@ -2862,7 +2862,8 @@ popper-content {
 }
 .vp-select {
   position: absolute;
-  top: 34px;right: 15px;
+  top: 44px;
+  right: 15px;
 }
 .vp-select:after {
   border-width: 0 1px 1px 0 !important;

@@ -5,6 +5,7 @@ var HTMLWebpackPlugin = require("html-webpack-plugin");
 
 var DEVELOPEMENT = process.env.NODE_ENV === 'developement'; //true / false
 var PRODUCTION = process.env.NODE_ENV === 'production';
+console.log('PRODUCTION: ', PRODUCTION);
 
 var plugins = PRODUCTION
   ? [

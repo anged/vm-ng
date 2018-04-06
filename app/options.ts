@@ -31,7 +31,7 @@ export const MapOptions: any = {
       name: "Pastatų administravimas", //theme name
       //id: "theme-buildings", //theme id class and theme URL query name
       id: "pastatu-administravimas", //theme id class and theme URL query name
-      imgUrl: "./app/img/statyba.png", //image URL
+      imgUrl: "./app/img/pastatu-administravimas.png", //image URL
       imgAlt: "Pastatų administravimas", // image alt attribute
       layers: {
         administravimas: { // layer unique name
@@ -87,7 +87,7 @@ export const MapOptions: any = {
       custom: true, // true if theme funcionality is custom
       name: "Reklamos leidimai", //theme name
       id: "leidimai", //theme id class and theme URL query name
-      imgUrl: "./app/img/laisvalaikis.png", //image URL
+      imgUrl: "./app/img/reklamos.png", //image URL
       imgAlt: "Reklamos vietos" // image alt attribute
     },
     schools: {
@@ -97,7 +97,7 @@ export const MapOptions: any = {
       name: "Švietimas", //theme name
       //id: "schools", //theme id class and theme URL query name
       id: "svietimas", //theme id class and theme URL query name
-      imgUrl: "./app/img/svietimas.png", //image URL
+      imgUrl: "./app/img/mokyklos.png", //image URL
       imgAlt: "Švietimas", // image alt attribute
       layers: {
         mokyklos: { // layer unique name //
@@ -107,12 +107,12 @@ export const MapOptions: any = {
       }
     },
     kindergartens: {
-      production: false, //if theme is ready for production
+      production: true, //if theme is ready for production
       custom: true, // true if theme funcionality is custom
       name: "Darželiai", //theme name
       //id: "theme-buildings", //theme id class and theme URL query name
       id: "darzeliai", //theme id class and theme URL query name
-      imgUrl: "./app/img/svietimas.png", //image URL
+      imgUrl: "./app/img/darzeliai.png", //image URL
       imgAlt: "Darželiai", // image alt attribute
       layers: {
         darzeliai: { // layer unique name
@@ -162,7 +162,7 @@ export const MapOptions: any = {
       name: "Miesto tvarkymas", //theme name
       //id: "teritory-maintenance", //theme id class and theme URL query name
       id: "miesto-tvarkymas", //theme id class and theme URL query name
-      imgUrl: "./app/img/tvarkymas.png", //image URL
+      imgUrl: "./app/img/miesto-tvarkymas.png", //image URL
       imgAlt: "Miesto tvarkymas", // image alt attribute
       layers: {
         miestoTvarkymas: { // layer unique name //
@@ -237,7 +237,7 @@ export const MapOptions: any = {
       production: true, //if theme is ready for production
       name: "Laisvalaikis", //theme name
       id: "laisvalaikis", //theme id class and theme URL query name
-      imgUrl: "./app/img/aktyvus-laisvalaikis.png", //image URL
+      imgUrl: "./app/img/laisvalaikis.png", //image URL
       imgAlt: "Laisvalaikis", // image alt attribute
       layers: {
         laisvalaikis: { // layer unique name //
