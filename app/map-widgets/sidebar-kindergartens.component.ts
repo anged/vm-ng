@@ -34,7 +34,7 @@ import Polygon = require('esri/geometry/Polygon');
     ]),
     trigger('infoState', [
       state('s-close', style({
-        transform: 'translateX(336px)'
+        transform: 'translateX(326px)'
       })),
       state('s-open', style({
         transform: 'translateX(0)'

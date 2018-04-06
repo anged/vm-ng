@@ -201,8 +201,6 @@ export class MapDefaultComponent implements OnInit {
         }
       });
 
-      //console.log("def", def);
-
       //using dojo/promise/all function that takes multiple promises and returns a new promise that is fulfilled when all promises have been resolved or one has been rejected.
       all(def).then(function(response) {
         let resultsMerge = [].concat.apply([], response.reverse()); //merger all results
@@ -217,33 +215,7 @@ export class MapDefaultComponent implements OnInit {
         }
       });
 
-      //if mobile identify with query
-      if (this.mobile) {
-        //this.pointAddRemoveService.identifyItem(this.map, view, this.featureLayers, event);
-      } else {
-        //else identify with hitTest method
-        //find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
-        this._mapService.removeSelectionLayers(this.map);
-        //this.view.popup.close()
-        //hitTest check graphics in the view
-        this.hitTestFeaturePopup(view, event);
-        //init popup on click event widh identify service
-        //this.identify.showItvPopupOnCLick(view, event, identify, identifyParams);
-      }
     }, (error) => { console.error(error); });
-  }
-
-  hitTestFeaturePopup(view: any, event: any) {
-    // the hitTest() checks to see if any graphics in the view
-    // intersect the given screen x, y coordinates
-    var screenPoint = {
-      x: event.x,
-      y: event.y
-    };
-    //console.log(screenPoint)
-    view.hitTest(screenPoint)
-      .then(features => {
-      });
   }
 
   ngOnInit() {

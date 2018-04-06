@@ -99,6 +99,7 @@
                   <option value="">Pasirinkite</option>
                   <option #theme *ngFor="let data of dataType; index as i"  [ngValue]="data">{{data}}</option>
               </select>
+              <span class="mat-expansion-indicator vp-select" style="transform: rotate(0deg);"></span>
             </div>
             <div class="input-field col s12">
               <div class="form-title">Ugdomoji kalba</div>
@@ -107,6 +108,7 @@
                   <option value="">Pasirinkite</option>
                   <option #theme *ngFor="let data of dataLang; index as i"  [ngValue]="data">{{data}}</option>
               </select>
+              <span class="mat-expansion-indicator vp-select" style="transform: rotate(0deg);"></span>
             </div>
             <div class="input-field col s12">
               <div class="form-title">Grupės amžius</div>
@@ -115,6 +117,7 @@
                   <option value="">Pasirinkite</option>
                   <option #theme *ngFor="let data of dataAge; index as i"  [ngValue]="data">{{data}}</option>
               </select>
+              <span class="mat-expansion-indicator vp-select" style="transform: rotate(0deg);"></span>
             </div>
             <div class="feature-results"  *ngIf="checkboxChecked">
               <div class="feature-count">

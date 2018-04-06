@@ -23,12 +23,12 @@ export class MenuLayersComponent implements OnInit {
   isChecked: boolean = true;
 
 
-  constructor(private _mapService: MapService) { }
+  constructor(private mapService: MapService) { }
 
   toggleLayerVisibility(event) {
     //or use [change]="isChecked" and (change)="toggleLayerVisibility($event)" with event.target.value instead
     this.isChecked = event;
-    this.isChecked ? this._mapService.returnFeatureLayers().map(feature => { feature.visible = true }) : this._mapService.returnFeatureLayers().map(feature => { feature.visible = false; });
+    this.isChecked ? this.mapService.returnFeatureLayers().map(feature => { feature.visible = true }) : this.mapService.returnFeatureLayers().map(feature => { feature.visible = false; });
   }
 
   closeToggle() {
@@ -41,8 +41,11 @@ export class MenuLayersComponent implements OnInit {
       this.name = MapOptions.themes.itvTheme.name;
     }, 400);
     // init layers list widget
-    let listWidget = this._mapService.initLayerListWidget();
-    //console.log("listWidget", listWidget);
+    const view = this.mapService.getView();
+    const map = this.mapService.returnMap();
+    view.then((e)=>{
+      const listWidget = this.mapService.initLayerListWidget();
+    });
   }
 
 }

@@ -380,7 +380,6 @@ export class MapKindergartensComponent implements OnInit {
       .then(features => {
         let fullData = {};
         const values = Array.from(features.results);
-        //const value = features.results[0];
         const isShown = false;
         values.forEach((value) => {
           if ((values && (value.graphic.layer.id !== 'feature-area'))) {
@@ -406,7 +405,7 @@ export class MapKindergartensComponent implements OnInit {
             }
           } else {
             if (!isShown) {
-            //TEMP null / 0 trick to initiate componetn change, as we can add data via sidbar compontent as well
+            //TEMP null / 0 trick to initiate component change, as we can add data via sidbar compontent as well
             this.kindergartensContent === null ? this.kindergartensContent = 0 : this.kindergartensContent = null;
             }
           }

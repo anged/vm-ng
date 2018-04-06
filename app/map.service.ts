@@ -684,13 +684,11 @@ export class MapService {
     });
 
     setTimeout(() => {
-      //console.log("listWidget", listWidget);
-      //console.log("listWidget ITEMS", listWidget.operationalItems.items);
       listWidget.operationalItems.items.map(function(item) {
         item.open = true;
         item.children.items.map((child) => child.open = true);
       });
-    }, 1000);
+    }, 1500);
 
     return listWidget;
   }

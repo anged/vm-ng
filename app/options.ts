@@ -167,7 +167,7 @@ export const MapOptions: any = {
       layers: {
         miestoTvarkymas: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Miesto_tvarkymas/MapServer",
+          "https://gis.vplanas.lt/arcgisin/rest/services/Interaktyvus_zemelapis/Miesto_tvarkymas/MapServer",
           name: "Miesto tvarkymas:", // dynamicLayers group name
           isGroupService: true
         }
@@ -217,13 +217,13 @@ export const MapOptions: any = {
       imgUrl: "./app/img/dviraciai.png", //image URL
       imgAlt: "Transportas / Dviračiai", // image alt attribute
       layers: {
-        accidentsRaster: { // layer unique name //
-          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Eismo_ivykiu_tankumas/MapServer",
-          name: "Eismo įvykių tankumas", // dynamicLayers group name
-          opacity: 0.7,
-          isRaster: true //is layer Ratser , do not identify layer if true / default value is false
-        },
+        // accidentsRaster: { // layer unique name //
+        //   dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+        //   "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Eismo_ivykiu_tankumas/MapServer",
+        //   name: "Eismo įvykių tankumas", // dynamicLayers group name
+        //   opacity: 0.7,
+        //   isRaster: true //is layer Ratser , do not identify layer if true / default value is false
+        // },
         transportas: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
           "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Transportas/MapServer",
@@ -291,7 +291,7 @@ export const MapOptions: any = {
       layers: {
         elderships: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Seniunijos/MapServer",
+          "https://zemelapiai.vplanas.lt/arcgisin/rest/services/Interaktyvus_zemelapis/Seniunijos/MapServer",
           opacity: 1,
           name: "Seniūnijos" // dynamicLayers group name
         }

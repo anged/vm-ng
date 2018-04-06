@@ -242,6 +242,7 @@ filterKindergartents(dataStore, { eldership, groupByAge, groupByLang, groupByNam
         return data.DARZ_ID;
       }
     });
+
     if (((garten.ELDERATE === eldarateLabel) || (!eldership) || (garten.ELDERATE === 'Visos seniūnijos')) &&
       ((garten.SCHOOL_TYPE === groupByType) || (groupByType === '')) &&
       ((garten.LABEL === groupByName) || (groupByName === '')) &&

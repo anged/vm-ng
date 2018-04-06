@@ -2138,7 +2138,7 @@ ul > li .esri-layer-list__item-title {
   padding-right: 20px;
   padding-top: 6px;
   padding-bottom: 6px;
-  line-height: 20px;
+  line-height: 35px;
   margin-bottom: 0;
 }
 #sub-layer-list {
@@ -2795,8 +2795,16 @@ ul > li .esri-layer-list__item-title {
     width: 100%;
 }
 .kindergartens-sidebar .esri-search .esri-search__container .esri-search__input {
-  padding: 9px;
+  padding: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
   border: 1px solid #c6c5c5;
+  height: 44px;
+  font-size: 17px;
+  border-radius: 2px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 /* Tooltips styling for Popper.js */
@@ -2814,7 +2822,7 @@ popper-content {
 
 /* Material */
 .kindergartens-sidebar .mat-expansion-panel-body {
-  padding: 0 8px 16px;
+  padding: 0;
 }
 .kindergartens-sidebar label {
   padding-left: 0;
@@ -2831,9 +2839,31 @@ popper-content {
   border-color: rgb(169, 169, 169);
 }
 .kindergartens-sidebar .mat-expansion-panel-header {
-    padding: 0 24px 0 12px;
+  padding: 0;
+  padding-right: 108px;
 }
 .mat-checkbox-checked.mat-accent .mat-checkbox-background, .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
     background-color: #e61d25;
 }
 .mat-checkbox:not(.mat-checkbox-disabled).mat-accent .mat-checkbox-ripple .mat-ripple-element {background-color:rgba(230,28,36,.26)}
+
+.mat-expanded .mat-expansion-indicator {
+  height: 36px;
+}
+.mat-expansion-indicator {
+  height: 34px;
+  color: #e61d26;
+}
+.mat-expansion-indicator::after {
+  padding: 4px !important;
+}
+.kindergartens-sidebar .input-field {
+  position: relative;
+}
+.vp-select {
+  position: absolute;
+  top: 34px;right: 15px;
+}
+.vp-select:after {
+  border-width: 0 1px 1px 0 !important;
+}
