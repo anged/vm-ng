@@ -237,7 +237,7 @@ export class MapKindergartensComponent implements OnInit {
     //add tooltip on mouse move
     view.on("pointer-move", (event) => {
       const screenPoint = {
-        //hitTest BUG, as browaser fails to execute 'elementFromPoint' on 'Document'
+        //hitTest BUG, as browser fails to execute 'elementFromPoint' on 'Document'
         //FIXME bug with x coordinate value, when menu icon is in view, temp solution: change x value from 0 to any value
         x: event.x ? event.x : 600,
         y: event.y
