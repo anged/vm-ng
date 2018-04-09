@@ -235,8 +235,9 @@ export class MapKindergartensComponent implements OnInit {
     };
 
     //add tooltip on mouse move
-    view.on("pointer-move",  (event) => {
+    view.on("pointer-move", (event) => {
       const screenPoint = {
+        //hitTest BUG, as browaser fails to execute 'elementFromPoint' on 'Document'
         //FIXME bug with x coordinate value, when menu icon is in view, temp solution: change x value from 0 to any value
         x: event.x ? event.x : 600,
         y: event.y
@@ -369,6 +370,7 @@ export class MapKindergartensComponent implements OnInit {
   }
 
   hitTestFeaturePopup(view: any, event: any) {
+    // hitTest BUG
     // the hitTest() checks to see if any graphics in the view
     // intersect the given screen x, y coordinates
     var screenPoint = {

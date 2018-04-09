@@ -225,12 +225,17 @@ export class MapBuildingsComponent implements OnInit {
 
     //add tooltip on mouse move
     this.view.on("pointer-move", (event) => {
-
+      const screenPoint = {
+        //hitTest BUG, as browaser fails to execute 'elementFromPoint' on 'Document'
+        //FIXME bug with x coordinate value, when menu icon is in view, temp solution: change x value from 0 to any value
+        x: event.x ? event.x : 600,
+        y: event.y
+      };
       if (tooltip.textContent.length > 0) {
         tooltip.textContent = '';
         rend.setStyle(tooltip, 'padding', '0px');
       };
-      view.hitTest(event)
+      view.hitTest(screenPoint)
         .then(function(response){
           if (response.results.length > 0) {
             const top = (event.y + 100) < window.innerHeight ? event.y + 10 + 'px' : event.y - 30 + 'px';
