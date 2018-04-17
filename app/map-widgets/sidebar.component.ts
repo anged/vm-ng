@@ -139,7 +139,7 @@ pagal mokėjimus už šilumą
         </div>
         <div class="heat-info">
           <p><a href="http://www.vilnius.lt/lit/daugiabuciu_namu_atnaujinimas_modernizav/4234">Daugiabučių namų atnaujinimo tvarka</a></p>
-          <p>Šilumos suvartojimo duomenys - UAB "Vilniaus energija"</p>
+          <p>Šilumos suvartojimo duomenys - AB „Vilniaus šilumos tinklai“</p>
           <p>Kilus klausimams kreiptis <a href="mailto:e.vicemeras@vilnius.lt">e.vicemeras@vilnius.lt</a></p>
         </div>
       </div>
