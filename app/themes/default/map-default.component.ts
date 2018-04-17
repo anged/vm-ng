@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params } from "@angular/router";
+import { ActivatedRoute, Params, Router } from "@angular/router";
 
 import { MapService } from '../../map.service';
 import { MapDefaultService } from './map-default.service';
@@ -60,10 +60,14 @@ export class MapDefaultComponent implements OnInit {
   //add subDynamicLayers sublayers meta data
   subDynamicLayerSubLayers: any;
 
-  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService) {
+  constructor(private _mapService: MapService, private router: Router, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
-        //console.log("URL Parametrai", queryParam);
+        //navigate specific legacy map urls
+        if (queryParam['theme'] === 'teritory-planning') {
+          router.navigate(['/teritoriju-planavimas']);
+        }
+
         return this.queryParams = queryParam;
       }
     );
