@@ -291,7 +291,7 @@ export const MapOptions: any = {
       layers: {
         elderships: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-          "https://zemelapiai.vplanas.lt/arcgisin/rest/services/Interaktyvus_zemelapis/Seniunijos/MapServer",
+          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Seniunijos/MapServer",
           opacity: 1,
           name: "Seniūnijos" // dynamicLayers group name
         }

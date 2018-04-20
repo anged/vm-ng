@@ -156,7 +156,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       groupByType: '',
       groupByName: '',
       groupByAddress: '',
-      bufferSize: 1
+      bufferSize: 2
     };
     this.filterGartens();
   }
