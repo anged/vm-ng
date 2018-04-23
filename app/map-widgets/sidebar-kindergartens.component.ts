@@ -127,10 +127,9 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
   isFiltered() {
     const { eldership, groupByAge, groupByLang, hasVacancy, groupByType, groupByName, groupByAddress } = this.analyzeParams;
     //console.log('change', this.analyzeParams);
-    if ((eldership !== '') ||
-      (groupByAge !== '') ||
+    if ((groupByAge !== '') ||
       (groupByLang !== '') ||
-      (hasVacancy) ||
+      hasVacancy ||
       (groupByType !== '') ||
       (groupByName !== '') ||
       (groupByAddress !== '')) {
