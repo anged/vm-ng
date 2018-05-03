@@ -678,19 +678,45 @@ export class MapService {
   //createOperationalItems()
 
   initLayerListWidget() {
-    let listWidget = new LayerList({
+    const listWidget = new LayerList({
       container: "layer-list",
-      view: this.view
+      view: this.view,
+      listItemCreatedFunction: this.updateListItem
     });
-
-    setTimeout(() => {
-      listWidget.operationalItems.items.map(function(item) {
-        item.open = true;
-        item.children.items.map((child) => child.open = true);
-      });
-    }, 1500);
-
     return listWidget;
+  }
+
+  //update certain features of Listlayer ListItems
+  updateListItem(listItem) {
+    listItem.item.open = true;
+    if (listItem.item.parent == null) {
+      listItem.item.actionsSections = [
+        [],
+        [{
+          title: "Padidinti nepermatomumą",
+          className: "esri-icon-up",
+          id: "increase-opacity"
+        }, {
+          title: "Sumažinti nepermatomumą",
+          className: "esri-icon-down",
+          id: "decrease-opacity"
+        }]
+      ];
+    }
+  }
+
+  updateOpacity(event) {
+    const parentLayer = event.item.layer;
+    const actionName = event.action.id;
+    if (actionName === 'increase-opacity') {
+      if (parentLayer.opacity < 1) {
+        parentLayer.opacity += 0.1;
+      }
+    } else if (actionName === 'decrease-opacity') {
+      if (parentLayer.opacity > 0) {
+        parentLayer.opacity -= 0.1;
+      }
+    }
   }
 
   initSubLayerListWidget(view, map) {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MapService } from '../map.service';
 import { MapOptions } from '../options';
+import watchUtils = require("esri/core/watchUtils");
 
 @Component({
   selector: 'menu-layers',
@@ -42,10 +43,13 @@ export class MenuLayersComponent implements OnInit {
     }, 400);
     // init layers list widget
     const view = this.mapService.getView();
+    //console.log(view.updating);
     const map = this.mapService.returnMap();
-    view.then((e)=>{
+    view.then((e) => {
       const listWidget = this.mapService.initLayerListWidget();
-    });
+      listWidget.on('trigger-action', (event) => {
+        this.mapService.updateOpacity(event);
+      });
+    }
   }
-
 }
