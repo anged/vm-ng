@@ -25,6 +25,7 @@ import { TextHighlightPipe } from './pipes/text-highlight.pipe';
 import { ScaleAndLogoComponent, BasemapToggle, CreditsCompponent, CompassComponent, SidebarComponent, SidebarKindergartensComponent } from './map-widgets';
 import { ProjectsGalleryComponent } from './gallery/projects-gallery.component';
 import { Ng2GalleryCompontent } from './gallery/ng2-gallery.component';
+import { MaintenanceComponent } from './map-widgets/maintenance.component';
 import { Routing } from './app.routing';
 
 import { Ng2ImageGalleryModule } from 'ng2-image-gallery';
@@ -68,7 +69,8 @@ import { NgxPopperModule } from 'ngx-popper';
     ProjectsGalleryComponent,
     Ng2GalleryCompontent,
     CommonWidgetsComponent,
-    SearchKindergartensComponent
+    SearchKindergartensComponent,
+    MaintenanceComponent
   ],
   providers: [
     MapService,

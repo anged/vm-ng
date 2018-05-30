@@ -14,6 +14,7 @@ import { ProjectsListComponent } from '../../projects-list/projects-list.compone
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
 import { CreditsCompponent } from '../../map-widgets/credits.component';
 import { ProjectsGalleryComponent } from '../../gallery/projects-gallery.component';
+import { MaintenanceComponent } from './map-widgets/maintenance.component';
 
 import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
@@ -153,6 +154,8 @@ export class MapKindergartensComponent implements OnInit {
   sidebarTitle: string;
 
   dataStore: any;
+
+  maintenanceOn: false;
 
   constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService, private renderer2: Renderer2) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
@@ -442,11 +445,20 @@ export class MapKindergartensComponent implements OnInit {
     //add  basemap layer
     //TODO refactor
     this.mapWidgetsService.returnBasemaps().forEach(basemap => {
+      const baseMapRestEndpoint = MapOptions.mapOptions.staticServices[basemap.serviceName];
       if (this.queryParams.basemap === basemap.id) {
         this.mapWidgetsService.setActiveBasemap(basemap.id);
-        basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id));
+        const visibleBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id);
+        basemaps.push(visibleBaseMap);
+        visibleBaseMap.then(() => {}, err => {
+          this.maintenanceOn = true;
+        });
       } else {
-        basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id, false));
+        const hiddenBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id, false);
+        hiddenBaseMap.then(() => {}, err => {
+          this.maintenanceOn = true;
+        });
+        basemaps.push(hiddenBaseMap);
       }
     });
 

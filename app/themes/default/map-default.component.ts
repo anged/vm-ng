@@ -14,6 +14,7 @@ import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.componen
 import { CreditsCompponent } from '../../map-widgets/credits.component';
 import { ProjectsGalleryComponent } from '../../gallery/projects-gallery.component';
 import { CommonWidgetsComponent } from '../../common-widgets.component';
+import { MaintenanceComponent } from '../../map-widgets/maintenance.component';
 
 import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
@@ -43,6 +44,7 @@ export class MapDefaultComponent implements OnInit {
   queryUrlSubscription: Subscription;
 
   queryParams: any;
+  maintenanceOn: false;
 
   map: any;
   view: any;
@@ -224,7 +226,7 @@ export class MapDefaultComponent implements OnInit {
 
   ngOnInit() {
     //add snapshot url and pass path name ta Incetable map service
-    let snapshotUrl = this.activatedRoute.snapshot.url["0"];
+    const snapshotUrl = this.activatedRoute.snapshot.url["0"];
     let basemaps: any[] = [];
     let themeGroupLayer: any;
 
@@ -245,15 +247,26 @@ export class MapDefaultComponent implements OnInit {
     //add  basemap layer
     //TODO refactor
     this.mapWidgetsService.returnBasemaps().forEach(basemap => {
+      const baseMapRestEndpoint = MapOptions.mapOptions.staticServices[basemap.serviceName];
       if (this.queryParams.basemap === basemap.id) {
         this.mapWidgetsService.setActiveBasemap(basemap.id);
-        basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id));
+        const visibleBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id);
+        basemaps.push(visibleBaseMap);
+        visibleBaseMap.then(() => {}, err => {
+          this.maintenanceOn = true;
+        });
       } else {
-        basemaps.push(this._mapService.initTiledLayer(MapOptions.mapOptions.staticServices[basemap.serviceName], basemap.id, false));
+        const hiddenBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id, false);
+        hiddenBaseMap.then(() => {}, err => {
+          this.maintenanceOn = true;
+        });
+        basemaps.push(hiddenBaseMap);
       }
     });
 
     this.map.basemap = this._mapService.customBasemaps(basemaps);
+
+    console.log(this.map)
 
     this._mapService.updateMap(this.map);
 
@@ -295,6 +308,6 @@ export class MapDefaultComponent implements OnInit {
 
       //init view and get projects on vie stationary property changes
       this.initView(view);
-    });
+    }, err => {console.log(`www.maps.vilnius.lt View error ${err}`)});
   }
 }

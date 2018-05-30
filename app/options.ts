@@ -173,7 +173,7 @@ export const MapOptions: any = {
       layers: {
         miestoTvarkymas: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Miesto_tvarkymas/MapServer",
+          "http://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Miesto_tvarkymas/MapServer",
           name: "Miesto tvarkymas:", // dynamicLayers group name
           isGroupService: true
         }
@@ -296,7 +296,7 @@ export const MapOptions: any = {
       production: true, //if theme is ready for production
       name: "Seniūnijos", //theme name
       //id: "civ-sauga", //theme id class and theme URL query name
-      description: "Seniūnijų temoje rasite informaciją apie seniūnijų ribas, būstines, seniūnaitijas, kaimynijas, planuojamus miesto tvarkymo darbus",
+      description: "Seniūnijų temoje rasite informaciją apie seniūnijų ribas, būstines, seniūnaitijas, kaimynijas, planuojamus miesto tvarkymo darbų",
       id: "seniunijos", //theme id class and theme URL query name
       imgUrl: "./app/img/seniunijos.png", //image URL
       imgAlt: "Seniūnijos", // image alt attribute
@@ -340,6 +340,9 @@ export const MapOptions: any = {
     // search widget locator url
     locator: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Lokatoriai/PAIESKA_COMPOSITE/GeocodeServer",
     addressLocator: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Lokatoriai/ADRESAI/GeocodeServer"
+  },
+  maintenance: {
+    msg: 'Puslapis laikinai nepasiekiamas - vykdomi priežiūros darbai. Atsiprašome už nepatogumus'
   }
 }
 
