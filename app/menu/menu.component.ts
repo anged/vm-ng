@@ -5,7 +5,7 @@ import { MapService } from '../map.service';
 import { MapDefaultService } from '../themes/default/map-default.service';
 import { MenuService } from './menu.service';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import watchUtils = require("esri/core/watchUtils");
 

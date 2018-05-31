@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
 
 import { ProjectsListService } from '../projects-list/projects-list.service';
 import { Ng2GalleryCompontent } from './ng2-gallery.component';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'projects-gallery',
@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs/Subscription';
 export class ProjectsGalleryComponent implements OnInit, OnDestroy {
   //  @ViewChild('galleryDom') galleryDom: ElementRef;
   //elementRef;
-  gallery: = [];
+  gallery: = []; 
   subscription: Subscription;
 
   constructor(myElement: ElementRef, private projectsListService: ProjectsListService) {

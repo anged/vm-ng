@@ -5,7 +5,7 @@ import MapImageLayer = require("esri/layers/MapImageLayer");
 import QueryTask = require("esri/tasks/QueryTask");
 import Query = require("esri/tasks/support/Query");
 
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 
 
 @Injectable()

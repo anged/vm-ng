@@ -8,22 +8,8 @@ var PRODUCTION = process.env.NODE_ENV === 'production';
 console.log('PRODUCTION: ', PRODUCTION);
 
 var plugins = PRODUCTION
-  ? [
-    new webpack.optimize.UglifyJsPlugin({
-        comments: false
-    }),
-    new ExtractTextPlugin('dist/style-[contenthash:10].css'),
-    new HTMLWebpackPlugin ({
-      hash: true,
-      filename: 'dist/index.html',
-      template: 'index-production.html'
-    })
-  ]
-  : [
-    //   new webpack.optimize.UglifyJsPlugin({
-    //     comments: false
-    // })
-  ];
+  ? [ ]
+  : [ ];
 
 plugins.push(
   new webpack.optimize.CommonsChunkPlugin({
@@ -40,18 +26,7 @@ plugins.push(
 );
 
   var styles = PRODUCTION
-    ? {
-        test: /\.css$/,
-        //loader: "style-loader!css-loader",
-        use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: "css-loader",
-          publicPath: "/dist"
-        }) ,
-        options: {
-          minimize: true || {/* CSSNano Options */}
-        }
-    }
+    ? { }
     : {
         test: /\.css$/,
         use: [
@@ -63,7 +38,7 @@ plugins.push(
 module.exports = {
     entry: {
         main: './app/main.ts', // entry point for your application code
-        vendor: '/app/vendor.ts'
+        vendor: './app/vendor.ts'
     },
     output: {
         filename: 'dist/[name].bundle.js',

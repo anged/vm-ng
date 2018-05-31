@@ -16,13 +16,7 @@
     ],
     "experimentalDecorators": true,
     "preserveConstEnums": true,
-    "suppressImplicitAnyIndexErrors": true
-  },
-  "include": [
-    "./app/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "!node_modules/@types"
-  ]
+    "suppressImplicitAnyIndexErrors": true,
+    "types": [],
+  }
 }

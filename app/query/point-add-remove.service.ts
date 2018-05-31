@@ -8,7 +8,7 @@ import { IdentifyService } from '../services/identify/identify.service';
 import Extent = require("esri/geometry/Extent");
 import Point = require("esri/geometry/Point");
 
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 
 
 @Injectable()

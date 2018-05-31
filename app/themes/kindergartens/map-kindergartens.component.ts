@@ -13,7 +13,6 @@ import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
 import { CreditsCompponent } from '../../map-widgets/credits.component';
-import { ProjectsGalleryComponent } from '../../gallery/projects-gallery.component';
 import { MaintenanceComponent } from '../../map-widgets/maintenance.component';
 
 import watchUtils = require("esri/core/watchUtils");
@@ -26,7 +25,7 @@ import { FeatureQueryService } from '../../query/feature-query.service';
 import { IdentifyService } from '../../services/identify/identify.service';
 import { PointAddRemoveService } from '../../query/point-add-remove.service';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { findKey } from 'lodash';
 import { pick } from 'lodash';

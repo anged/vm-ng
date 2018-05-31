@@ -11,7 +11,7 @@ import { SelectorsService } from '../selectors/selectors.service';
 import { MenuToolsService } from '../menu/menu-tools.service';
 import { Symbols } from '../menu/symbols';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import Graphic = require('esri/Graphic');
 import geometryEngine = require('esri/geometry/geometryEngine');
 import BufferParameters = require('esri/tasks/support/BufferParameters');

@@ -1,7 +1,7 @@
 {
   "name": "ng5-arcgis-4",
-  "version": "1.0.2",
-  "description": "NG5 API 4.x",
+  "version": "2.0.1",
+  "description": "NG6 API 4.x",
   "repository": {
     "type": "git",
     "url": "https://github.com/anged/vm-ng.git"
@@ -17,22 +17,23 @@
     "del": "rimraf dist"
   },
   "keywords": [
-    "Angular-5",
+    "Angular-6",
     "Esri-4"
   ],
   "dependencies": {
-    "@angular/animations": "^5.1.0",
-    "@angular/cdk": "2.0.0-beta.9",
-    "@angular/common": "^5.1.0",
-    "@angular/compiler": "^5.1.0",
-    "@angular/core": "^5.1.0",
-    "@angular/forms": "^5.1.0",
-    "@angular/http": "^5.1.0",
-    "@angular/material": "2.0.0-beta.9",
-    "@angular/platform-browser": "^5.1.0",
-    "@angular/platform-browser-dynamic": "^5.1.0",
-    "@angular/platform-server": "^5.1.0",
-    "@angular/router": "^5.1.0",
+    "@angular/animations": "^6.0.3",
+    "@angular/cdk": "6.2.0",
+    "@angular/cli": "^6.0.7",
+    "@angular/common": "^6.0.3",
+    "@angular/compiler": "^6.0.3",
+    "@angular/core": "^6.0.3",
+    "@angular/forms": "^6.0.3",
+    "@angular/http": "^6.0.3",
+    "@angular/material": "6.2.0",
+    "@angular/platform-browser": "^6.0.3",
+    "@angular/platform-browser-dynamic": "^6.0.3",
+    "@angular/platform-server": "^6.0.3",
+    "@angular/router": "^6.0.3",
     "angular-draggable": "^1.0.1",
     "angular-in-memory-web-api": "^0.5.1",
     "bootstrap": "^3.3.6",
@@ -42,12 +43,13 @@
     "ng2-image-gallery": "0.3.17",
     "ngx-popper": "^1.8.6",
     "reflect-metadata": "^0.1.10",
-    "rxjs": "^5.5.5",
+    "rxjs": "^6.2.0",
+    "save-dev": "^2.0.0",
     "web-animations-js": "^2.3.1",
-    "zone.js": "^0.8.17"
+    "zone.js": "^0.8.26"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "^5.1.0",
+    "@angular/compiler-cli": "^6.0.3",
     "@types/arcgis-js-api": "^4.7.0",
     "@types/core-js": "^0.9.43",
     "@types/dojo": "^1.9.40",
@@ -74,8 +76,8 @@
     "rimraf": "^2.6.1",
     "style-loader": "^0.13.2",
     "ts-helpers": "^1.1.2",
-    "ts-loader": "^1.2.1",
-    "typescript": "2.5.1",
+    "ts-loader": "^2.3.7",
+    "typescript": "^2.8.4",
     "webpack": "^2.7.0"
   }
 }

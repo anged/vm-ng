@@ -23,14 +23,14 @@ import { FeatureQueryService } from './query/feature-query.service';
 import { PointAddRemoveService } from './query/point-add-remove.service';
 import { TextHighlightPipe } from './pipes/text-highlight.pipe';
 import { ScaleAndLogoComponent, BasemapToggle, CreditsCompponent, CompassComponent, SidebarComponent, SidebarKindergartensComponent, MaintenanceComponent } from './map-widgets';
-import { ProjectsGalleryComponent } from './gallery/projects-gallery.component';
-import { Ng2GalleryCompontent } from './gallery/ng2-gallery.component';
+//import { ProjectsGalleryComponent } from './gallery/projects-gallery.component';
+//import { Ng2GalleryCompontent } from './gallery/ng2-gallery.component';
 import { Routing } from './app.routing';
+import { MaterialModule } from './material.module';
 
-import { Ng2ImageGalleryModule } from 'ng2-image-gallery';
+//import { Ng2ImageGalleryModule } from 'ng2-image-gallery';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'hammerjs';
-import { MaterialModule } from '@angular/material';
 import { NgxPopperModule } from 'ngx-popper';
 
 @NgModule({
@@ -46,7 +46,7 @@ import { NgxPopperModule } from 'ngx-popper';
     MenuModule,
     //3rd party imports
     MaterialModule,
-    Ng2ImageGalleryModule,
+    //Ng2ImageGalleryModule,
     NgxPopperModule
   ],
   declarations: [
@@ -65,8 +65,8 @@ import { NgxPopperModule } from 'ngx-popper';
     CompassComponent,
     SidebarComponent,
     SidebarKindergartensComponent,
-    ProjectsGalleryComponent,
-    Ng2GalleryCompontent,
+    //ProjectsGalleryComponent,
+    //Ng2GalleryCompontent,
     CommonWidgetsComponent,
     SearchKindergartensComponent,
     MaintenanceComponent

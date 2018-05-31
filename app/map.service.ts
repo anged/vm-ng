@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/dom/ajax';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-import { Subject } from 'rxjs/Subject';
+import { Observable ,  Subject } from 'rxjs';
 
 import Map = require("esri/Map");
 import Graphic = require("esri/Graphic");

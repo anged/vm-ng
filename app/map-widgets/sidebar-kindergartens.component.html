@@ -62,14 +62,14 @@
     </div>
     <form ngNativeValidate *ngIf="dataStore" (ngSubmit)="onSubmitAnalyze(form)" #form="ngForm"  class="kGartens-form" (change)="isFiltered()">
       <div class="input-group">
-        <md-checkbox
+        <mat-checkbox
           #bufferCheckbox
           [(ngModel)]="analyzeParams.hasVacancy"
           (change)="isFiltered()"
           [ngModelOptions]="{standalone: true}"
           >
           Yra laisvų vietų
-        </md-checkbox>
+        </mat-checkbox>
 
       </div>
 
@@ -84,13 +84,13 @@
         Rašykite sveikais skaičiais arba naudokite , simbolį
       </div>
 
-      <md-accordion>
-        <md-expansion-panel>
-          <md-expansion-panel-header>
-            <md-panel-title>
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
               Išplėstiniai filtrai
-            </md-panel-title>
-          </md-expansion-panel-header>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
           <div class="form-group">
             <div class="input-field col s12">
@@ -128,8 +128,8 @@
             </div>
           </div>
 
-        </md-expansion-panel>
-      </md-accordion>
+        </mat-expansion-panel>
+      </mat-accordion>
 
       <div class="filter-gartens-button" (click)="filterGartens()">
         Filtruoti įstaigas

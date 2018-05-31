@@ -2,11 +2,7 @@ import { Injectable } from '@angular/core';
 //import { Http, Response } from '@angular/http';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/dom/ajax';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-import { Subject } from 'rxjs/Subject';
+import { Observable,  Subject } from 'rxjs';
 
 import { MapOptions } from '../../options';
 import { MapService } from '../../map.service';

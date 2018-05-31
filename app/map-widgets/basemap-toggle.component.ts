@@ -47,11 +47,11 @@ import { MapWidgetsService } from './map-widgets.service';
   template: `
       <div id="basemap-button" class="box-shadow">
         <form>
-        <md-select placeholder="Pagrindas" [(ngModel)]="selectedValue" name="basemap" (ngModelChange)="toggleBasemap(selectedValue)">
-          <md-option *ngFor="let base of basemaps" [value]="base.id">
+        <mat-select placeholder="Pagrindas" [(ngModel)]="selectedValue" name="basemap" (ngModelChange)="toggleBasemap(selectedValue)">
+          <mat-option *ngFor="let base of basemaps" [value]="base.id">
             {{base.name}}
-          </md-option>
-        </md-select>
+          </mat-option>
+        </mat-select>
         </form>
       </div>
     `
@@ -75,6 +75,6 @@ export class BasemapToggle implements OnInit {
   ngOnInit() {
     this.selectedValue = this.mapWidgetsService.returnActiveBasemap();
     this.mapWidgetsService.filterBasemap( this.mapWidgetsService.returnActiveBasemap(), this.view);
-    
+
   }
 }

@@ -11,7 +11,7 @@ import { PopupTemplates } from '../services/identify/popup-templates';
 
 import on = require("dojo/on");
 import Point = require("esri/geometry/Point");
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import all = require("dojo/promise/all");
 
 

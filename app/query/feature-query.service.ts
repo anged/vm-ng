@@ -6,7 +6,7 @@ import { IdentifyService } from '../services/identify/identify.service';
 import { PointAddRemoveService } from '../query/point-add-remove.service';
 import { ProjectsListService } from '../projects-list/projects-list.service';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class FeatureQueryService {
