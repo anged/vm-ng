@@ -20,7 +20,6 @@ import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
 import Bundle = require("dojo/i18n!esri/nls/common");
 import all = require("dojo/promise/all");
-import StreamLayer = require("esri/layers/StreamLayer");
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
 
 import { FeatureQueryService } from '../../query/feature-query.service';
@@ -224,9 +223,9 @@ export class MapDefaultComponent implements OnInit {
     }, (error) => { console.error(error); });
   }
 
-  ngOnInit() {
+  ngOnInit() { 
     //add snapshot url and pass path name ta Incetable map service
-    const snapshotUrl = this.activatedRoute.snapshot.url["0"];
+    const snapshotUrl = this.activatedRoute.snapshot.url['0'];
     let basemaps: any[] = [];
     let themeGroupLayer: any;
 
@@ -265,8 +264,6 @@ export class MapDefaultComponent implements OnInit {
     });
 
     this.map.basemap = this._mapService.customBasemaps(basemaps);
-
-    console.log(this.map)
 
     this._mapService.updateMap(this.map);
 
@@ -308,6 +305,6 @@ export class MapDefaultComponent implements OnInit {
 
       //init view and get projects on vie stationary property changes
       this.initView(view);
-    }, err => {console.log(`www.maps.vilnius.lt View error ${err}`)});
+    }, err => {});
   }
 }

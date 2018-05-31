@@ -14,13 +14,12 @@ import { ProjectsListComponent } from '../../projects-list/projects-list.compone
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
 import { CreditsCompponent } from '../../map-widgets/credits.component';
 import { ProjectsGalleryComponent } from '../../gallery/projects-gallery.component';
-import { MaintenanceComponent } from './map-widgets/maintenance.component';
+import { MaintenanceComponent } from '../../map-widgets/maintenance.component';
 
 import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
 import Bundle = require("dojo/i18n!esri/nls/common");
 import all = require("dojo/promise/all");
-import StreamLayer = require("esri/layers/StreamLayer");
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
 
 import { FeatureQueryService } from '../../query/feature-query.service';
@@ -155,7 +154,7 @@ export class MapKindergartensComponent implements OnInit {
 
   dataStore: any;
 
-  maintenanceOn: false;
+  maintenanceOn = false;
 
   constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService, private renderer2: Renderer2) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
@@ -385,8 +384,8 @@ export class MapKindergartensComponent implements OnInit {
       .then(features => {
         let fullData = {};
         const values = Array.from(features.results);
-        const isShown = false;
-        values.forEach((value) => {
+        let isShown = false;
+        values.forEach((value: any) => {
           if ((values && (value.graphic.layer.id !== 'feature-area'))) {
             if (!isShown) {
               isShown = true;

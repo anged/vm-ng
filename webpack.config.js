@@ -43,38 +43,27 @@ plugins.push(
     ? {
         test: /\.css$/,
         //loader: "style-loader!css-loader",
-        loader: ExtractTextPlugin.extract("style-loader", "css-loader") ,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: "css-loader",
+          publicPath: "/dist"
+        }) ,
         options: {
           minimize: true || {/* CSSNano Options */}
         }
     }
     : {
         test: /\.css$/,
-        loader: ("style-loader!css-loader")
+        use: [
+          "style-loader",
+          "css-loader"
+        ]
     };
 
 module.exports = {
     entry: {
-        main: [
-            './app/main.ts' // entry point for your application code
-        ],
-        vendor: [
-            // put your third party libs here
-            "core-js",
-            "reflect-metadata", // order is important here
-            "rxjs",
-            "zone.js",
-            '@angular/core',
-            '@angular/common',
-            "@angular/compiler",
-            "@angular/core",
-            "@angular/http",
-            "@angular/platform-browser",
-            "@angular/platform-browser-dynamic",
-            "@angular/router"//,
-            //"@angular/material",
-            //"ng2-image-gallery"
-        ]
+        main: './app/main.ts', // entry point for your application code
+        vendor: '/app/vendor.ts'
     },
     output: {
         filename: 'dist/[name].bundle.js',
@@ -82,14 +71,16 @@ module.exports = {
         libraryTarget: "amd"
     },
     resolve: {
-        extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js']
+        extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.tsx?$/,
-                loader: 'ts-loader',
-                exclude: ''
+                use: [
+                  'ts-loader'
+                ]//,
+                //exclude: ''
             },
             // css
             styles

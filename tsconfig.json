@@ -3,6 +3,7 @@
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
+    "outDir": "dist",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -12,12 +13,16 @@
     "lib": [
       "es2016",
       "dom"
-    ]
+    ],
+    "experimentalDecorators": true,
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true
   },
-  "angularCompilerOptions": {
-    "preserveWhitespaces": false
-  },
+  "include": [
+    "./app/**/*"
+  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "!node_modules/@types"
   ]
 }
