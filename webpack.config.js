@@ -63,7 +63,7 @@ plugins.push(
 module.exports = {
     entry: {
         main: './app/main.ts', // entry point for your application code
-        vendor: '/app/vendor.ts'
+        vendor: './app/vendor.ts'
     },
     output: {
         filename: 'dist/[name].bundle.js',
