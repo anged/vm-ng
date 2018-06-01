@@ -5,7 +5,8 @@ import { enableProdMode } from '@angular/core';
 import { environment } from '../environments/environment';
 import { AppModule } from './app.module';
 
-if (environment.production) {
+//if (environment.production) {
+if (process.env.NODE_ENV === 'production') {
   require("./styles/page.css");
   require("./styles/main.css");
   require("./styles/normalize.css");
