@@ -62,7 +62,13 @@ module.exports = {
         filename: '[name].[hash].css'
       }),
       new UglifyJsPlugin({
-        sourceMap: false
+        sourceMap: true,
+        uglifyOptions: {
+          output: {
+           comments: false,
+           beautify: false
+         }
+       }
       }),
       new webpack.DefinePlugin({
          'process.env.NODE_ENV': JSON.stringify('production')
