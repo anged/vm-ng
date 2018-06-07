@@ -173,7 +173,7 @@ export const MapOptions: any = {
       layers: {
         miestoTvarkymas: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-          "http://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Miesto_tvarkymas/MapServer",
+          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Miesto_tvarkymas/MapServer",
           name: "Miesto tvarkymas:", // dynamicLayers group name
           isGroupService: true
         }

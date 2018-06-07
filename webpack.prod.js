@@ -1,38 +1,9 @@
 
 const webpack = require("webpack");
-//const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-
-var plugins = [
-    new webpack.NoEmitOnErrorsPlugin(),
-    new MiniCssExtractPlugin('dist/style.css'),
-    // new HtmlWebpackPlugin({  // Also generate a test.html
-    //   filename: 'test.html',
-    //   template: 'index.html'
-    // })
-    new UglifyJsPlugin({
-      sourceMap: true
-    }),
-    new webpack.DefinePlugin({
-       'process.env.NODE_ENV': JSON.stringify('production')
-     })
-]
-
-const styles = {
-  test: /\.css$/,
-  use: [
-    MiniCssExtractPlugin.loader,
-    "css-loader"
-  ]
-};
-
-const minimizer = [
-  new UglifyJsPlugin({
-    sourceMap: true
-  })
-];
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = {
     entry: {
@@ -40,7 +11,7 @@ module.exports = {
         vendor: './app/vendor.ts'
     },
     output: {
-        filename: '[name].bundle.js',
+        filename: '[name].bundle.[chunkhash].js',
         publicPath: '/',
         libraryTarget: "amd"
     },
@@ -48,17 +19,18 @@ module.exports = {
         extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
     },
     optimization: {
+        noEmitOnErrors: false,
         splitChunks: {
             cacheGroups: {
               vendor: {
-                chunks: 'initial',
-                name: 'dist/vendor',
                 test: 'vendor',
+                name: 'vendor',
+                chunks: 'initial',
                 enforce: true
               }
             }
-        }//,
-        //minimizer
+        },
+        minimizer:  [new OptimizeCSSAssetsPlugin({})]
     },
     module: {
         rules: [
@@ -68,11 +40,34 @@ module.exports = {
                   'ts-loader'
                 ]
             },
-            // css
-            styles
+            {
+              test: /\.html$/,
+              use: {
+                loader: 'html-loader',
+                options: { minimize: false } // curently not minimizing with html loader
+              }
+            },
+            {
+              test: /\.css$/,
+              use: [MiniCssExtractPlugin.loader, "css-loader"]
+            }
         ]
     },
-    plugins: plugins,
+    plugins: [
+      new HtmlWebpackPlugin({  // Also generate a test.html
+        filename: 'index.html',
+        template: 'index-production.html'
+      }),
+      new MiniCssExtractPlugin({
+        filename: '[name].[hash].css'
+      }),
+      new UglifyJsPlugin({
+        sourceMap: false
+      }),
+      new webpack.DefinePlugin({
+         'process.env.NODE_ENV': JSON.stringify('production')
+       })
+    ],
     externals: [
         function (context, request, callback) {
             if (/^dojo/.test(request) ||
@@ -86,5 +81,5 @@ module.exports = {
             callback();
         }
     ],
-    devtool:  'source-map'
+    devtool:  'none'
 };

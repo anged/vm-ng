@@ -42,7 +42,7 @@ export class MapDefaultComponent implements OnInit {
   queryUrlSubscription: Subscription;
 
   queryParams: any;
-  maintenanceOn: false;
+  maintenanceOn = false;
 
   map: any;
   view: any;

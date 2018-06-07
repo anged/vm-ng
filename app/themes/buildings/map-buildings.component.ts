@@ -134,7 +134,7 @@ export class MapBuildingsComponent implements OnInit {
 
   sidebarTitle: string;
 
-  maintenanceOn: false;
+  maintenanceOn = false;
 
   constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService, private renderer2: Renderer2) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
