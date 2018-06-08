@@ -38,7 +38,8 @@ export class MenuLegendItvComponent implements OnInit, OnDestroy {
 
   subscription: Subscription;
   //layerlists checkbox status (on or off)
-  status: boolean = true;
+  //status is Subject<boolean>
+  status: any = true;
 
   constructor(private _mapService: MapService) { }
 
@@ -50,6 +51,7 @@ export class MenuLegendItvComponent implements OnInit, OnDestroy {
     let view = this._mapService.getView();
     let map = this._mapService.returnMap();
     this.subscription = this._mapService.layersStatus.subscribe(status => {
+      console.log(status)
       this.status = status;
     });
   }

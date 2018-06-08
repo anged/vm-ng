@@ -176,25 +176,22 @@ identifyAttributesByID(id) {
 //list item identify
 identifyAttributes(e: any) {
   let query = this.projectsListService.Query();
-
   let number: number = 0;
   //first graphics unique id
   let uniqueId: number;
-
   //add padding to point feature and get featureset attributes
   let pxWidth = this.view.extent.width / this.view.width;
   let padding = 10 * pxWidth;
   //let padding = 0;
   let qGeom;
-
   //TODO remove old graphic if exists
   this.view.graphics.items = [];
-  query.geometry = e.mapPoint;
+  const geometry = e.mapPoint;
   qGeom = new Extent({
-    "xmin": query.geometry.x - padding,
-    "ymin": query.geometry.y - padding,
-    "xmax": query.geometry.x + padding,
-    "ymax": query.geometry.y + padding,
+    "xmin": geometry.x - padding,
+    "ymin": geometry.y - padding,
+    "xmax": geometry.x + padding,
+    "ymax": geometry.y + padding,
     "spatialReference": this.view.extent.spatialReference
   });
   // use the extent for the query geometry
@@ -235,7 +232,9 @@ initPopup(results: any, pointXY) {
   let pt = new Point({
     x: pointXY[0],
     y: pointXY[1],
-    spatialReference: 3346
+    spatialReference: {
+      "wkid": 3346
+    }
   });
   this.openPopUp(results, pt);
 }
