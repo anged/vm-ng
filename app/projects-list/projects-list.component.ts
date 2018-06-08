@@ -261,7 +261,9 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     let pt = new Point({
       x: pointXY[0],
       y: pointXY[1],
-      spatialReference: 3346
+      spatialReference: {
+        "wkid": 3346
+      }
     });
     this.openPopUp(results, pt);
   }
@@ -377,8 +379,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   //count total activated filter number bind property to badge
   countActivatedFilter() {
-    //check if native Objects.values exists
-    Object.values = Object.values || (object => Object.keys(object).map(key => object[key]));
+    //Objects.values exists as we using es2017 lib (tsconfig.json)
     this.activatedFiltersNumber = Object.values(this.activeYear).reduce((acc, cur, i) => { !cur ? acc += 1 : acc; return acc; }, 0) + Object.values(this.activeTheme).reduce((acc, cur, i) => { !cur ? acc += 1 : acc; return acc; }, 0);
   }
 

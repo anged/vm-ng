@@ -16,7 +16,6 @@ import { CreditsCompponent } from '../../map-widgets/credits.component';
 
 import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
-import Bundle = require("dojo/i18n!esri/nls/common");
 import all = require("dojo/promise/all");
 import StreamLayer = require("esri/layers/StreamLayer");
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
@@ -165,8 +164,8 @@ export class MapBuildingsComponent implements OnInit {
   shareToggle(e) {
     //get visible and checked layers ids
     const ids: any = this.mapDefaultService.getVisibleLayersIds(this.view);
-    const visibleLayersIds: number[] = ids.identificationsIds;
-    const checkedLayersIds: number[] = ids.visibilityIds;
+    const visibleLayersIds = ids.identificationsIds;
+    const checkedLayersIds = ids.visibilityIds;
     //check if there is any visible layers that can be identied in allLayers group
     let identify = ids.identificationsIds.allLayers.length <= 1 ? "" : "allLayers";
     //console.log("ids", ids)
@@ -186,8 +185,9 @@ export class MapBuildingsComponent implements OnInit {
     //highlight selected input
     if (this.shareContainerActive) {
       setTimeout(() => {
-        if (document.getElementById("url-link")) {
-          document.getElementById("url-link").select();
+        const shareURL = document.getElementById("url-link") as HTMLInputElement;
+        if (shareURL) {
+          shareURL.select();
         }
       }, 20);
     }
@@ -261,7 +261,7 @@ export class MapBuildingsComponent implements OnInit {
       const suspended = this._mapService.getSuspendedIdentitication();
       //store all deffered objects of identify task in def array
       let def = [];
-      let ids: any = this.mapDefaultService.getVisibleLayersIds(view);
+      let ids = this.mapDefaultService.getVisibleLayersIds(view);
       let visibleLayersIds: number[] = ids.identificationsIds;
       view.popup.dockEnabled = false;
       view.popup.dockOptions = {
@@ -290,7 +290,7 @@ export class MapBuildingsComponent implements OnInit {
           if (item.layer.id === "bufferLayers") {
             identifyParams.layerIds = [0];
           } else {
-            identifyParams.layerIds = visibleLayersIds[item.layer.id];
+            identifyParams.layerIds = [visibleLayersIds[item.layer.id]];
           }
 
           let defferedList = this.identify.identify(item.layer.url).execute(identifyParams).then((response) => {
@@ -385,7 +385,6 @@ export class MapBuildingsComponent implements OnInit {
 
     this.mobile = this._mapService.mobilecheck();
     this._mapService.isMobileDevice(this.mobile);
-    //console.dir(Bundle);
 
     // create the map
     this.map = this._mapService.initMap(MapOptions.mapOptions);

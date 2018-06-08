@@ -14,7 +14,6 @@ import { MaintenanceComponent } from './map-widgets/maintenance.component';
 
 import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
-import Bundle = require("dojo/i18n!esri/nls/common");
 import all = require("dojo/promise/all");
 
 import { FeatureQueryService } from './query/feature-query.service';
@@ -60,7 +59,7 @@ export class MapComponent implements OnInit, OnDestroy {
   //main projects layer
   projectsDynamicLayer: any;
 
-  maintenanceOn: false;
+  maintenanceOn = false;
 
   constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
@@ -105,8 +104,9 @@ export class MapComponent implements OnInit, OnDestroy {
     //highlight selected input
     if (this.shareContainerActive) {
       setTimeout(() => {
-        if (document.getElementById("url-link")) {
-          document.getElementById("url-link").select();
+        const shareURL = document.getElementById("url-link") as HTMLInputElement;
+        if (shareURL) {
+          shareURL.select();
         }
       }, 20);
     }
@@ -262,7 +262,6 @@ export class MapComponent implements OnInit, OnDestroy {
     let basemaps: any[] = [];
     this.mobile = this._mapService.mobilecheck();
     this._mapService.isMobileDevice(this.mobile);
-    //console.dir(Bundle);
     //get full list on init
     this.projectsService.getAllProjectsQueryData(this.itvFeatureUrl);
 

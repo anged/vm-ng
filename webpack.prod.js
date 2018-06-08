@@ -59,7 +59,7 @@ module.exports = {
         template: 'index-production.html'
       }),
       new MiniCssExtractPlugin({
-        filename: '[name].[hash].css'
+        filename: '[name].[contenthash].css'
       }),
       new UglifyJsPlugin({
         sourceMap: true,

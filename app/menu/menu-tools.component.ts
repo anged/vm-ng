@@ -263,10 +263,12 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
     let area = geometryEngine.planarArea(polygon, "square-kilometers");
     if (area < 0) {
       // simplify the polygon if needed and calculate the area again
-      let simplifiedPolygon = geometryEngine.simplify(polygon);
-      if (simplifiedPolygon) {
-        area = geometryEngine.planarArea(simplifiedPolygon, "square-kilometers");
-      }
+      // let simplifiedPolygon = geometryEngine.simplify(polygon);
+      // if (simplifiedPolygon) {
+      //   console.log(simplifiedPolygon, polygon)
+      //   area = geometryEngine.planarArea(simplifiedPolygon, "square-kilometers");
+      // }
+      area = - area;
     }
     // start displaying the area of the polygon
     this.labelAreas(polygon, area, ended);
@@ -332,7 +334,7 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
   }
 
   //Label text
-  labelLinesAndPoints(geometryType: string, points, geometry = undefined, ended) {
+  labelLinesAndPoints(geometryType: string, points, geometry = undefined, ended=false) {
     //this.calculatedUnits
     const endString = ended ? "" : " (užbaigti dvigubu paspaudimu)";
     let text: string;

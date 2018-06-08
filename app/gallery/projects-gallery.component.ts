@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 export class ProjectsGalleryComponent implements OnInit, OnDestroy {
   //  @ViewChild('galleryDom') galleryDom: ElementRef;
   //elementRef;
-  gallery: = []; 
+  gallery: any = [];
   subscription: Subscription;
 
   constructor(myElement: ElementRef, private projectsListService: ProjectsListService) {

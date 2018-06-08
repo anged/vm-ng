@@ -17,7 +17,6 @@ import { MaintenanceComponent } from '../../map-widgets/maintenance.component';
 
 import watchUtils = require("esri/core/watchUtils");
 import on = require("dojo/on");
-import Bundle = require("dojo/i18n!esri/nls/common");
 import all = require("dojo/promise/all");
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
 
@@ -106,8 +105,9 @@ export class MapDefaultComponent implements OnInit {
     //highlight selected input
     if (this.shareContainerActive) {
       setTimeout(() => {
-        if (document.getElementById("url-link")) {
-          document.getElementById("url-link").select();
+        const shareURL = document.getElementById("url-link") as HTMLInputElement;
+        if (shareURL) {
+          shareURL.select();
         }
       }, 20);
     }
@@ -178,7 +178,7 @@ export class MapDefaultComponent implements OnInit {
           if (item.layer.id === "bufferLayers") {
             identifyParams.layerIds = [0];
           } else {
-            identifyParams.layerIds = visibleLayersIds[item.layer.id];
+            identifyParams.layerIds = [visibleLayersIds[item.layer.id]];
           }
 
           let defferedList = this.identify.identify(item.layer.url).execute(identifyParams).then((response) => {
@@ -230,7 +230,6 @@ export class MapDefaultComponent implements OnInit {
 
     this.mobile = this._mapService.mobilecheck();
     this._mapService.isMobileDevice(this.mobile);
-    //console.dir(Bundle);
 
     // create the map
     this.map = this._mapService.initMap(MapOptions.mapOptions);

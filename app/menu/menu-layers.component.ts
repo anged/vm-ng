@@ -50,6 +50,6 @@ export class MenuLayersComponent implements OnInit {
       listWidget.on('trigger-action', (event) => {
         this.mapService.updateOpacity(event);
       });
-    }
+    });
   }
 }

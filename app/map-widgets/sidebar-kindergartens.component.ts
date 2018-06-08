@@ -6,7 +6,7 @@ import { MapOptions } from '../options';
 import { SearchKindergartensComponent } from './search-kindergartens.component';
 import { SearchService } from '../search/search.service';
 import { MapWidgetsService } from './map-widgets.service';
-import { MapService } from '../map.service';
+import { MapService, DataStore } from '../map.service';
 import { SelectorsService } from '../selectors/selectors.service';
 import { MenuToolsService } from '../menu/menu-tools.service';
 import { Symbols } from '../menu/symbols';
@@ -72,7 +72,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     bufferSize: 2
   };
 
-  dataStore: any;
+  dataStore: DataStore;
 
   //filters data
   dataAge: any[];
@@ -148,7 +148,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     this.filtersOn = false;
     this.filteredGartens = this.dataStore.mainInfo;
     this.analyzeParams = {
-      eldership: '',
+      eldership: null,
       groupByAge: '',
       groupByLang: '',
       hasVacancy: false,
@@ -266,11 +266,6 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     //console.log('Size change', buffer, this.analyzeParams)
   }
 
-  selectBuildingsByType() {
-    this.selectionByTypeState = !this.selectionByTypeState;
-    this.mapWidgetsService.selectBuildingsByType(this.sidebarContent.TIPINIS_PR, this.selectionByTypeState);
-  }
-
   openSidaberGroup(name: string) {
     switch (name) {
       case 'info':
@@ -286,11 +281,6 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
         break;
       default:
         this.sidebarInfoState = 's-close';
-    }
-
-    //diselect buildigns by type if their are selected
-    if (this.selectionByTypeState) {
-      this.selectBuildingsByType();
     }
   }
 
