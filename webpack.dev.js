@@ -1,5 +1,6 @@
 
 const webpack = require("webpack");
+const helpers = require('./helpers');
 //const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -12,7 +13,12 @@ console.log('PRODUCTION: ', PRODUCTION );
 var plugins = [
   new webpack.DefinePlugin({
      'process.env.NODE_ENV': JSON.stringify('development')
-   })
+   }),
+   new webpack.ContextReplacementPlugin(
+     /angular(\\|\/)core(\\|\/)@angular|fesm5/,
+     helpers.root('./app'),
+     {}
+   )
 ]
 
 

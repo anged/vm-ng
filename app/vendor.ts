@@ -1,7 +1,7 @@
-import 'core-js';
+//import 'core-js';
 import 'reflect-metadata';
 import 'rxjs';
-import 'zone.js';
+//import 'zone.js';
 import '@angular/core';
 import '@angular/common';
 import '@angular/compiler';

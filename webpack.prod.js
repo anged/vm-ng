@@ -1,5 +1,6 @@
 
 const webpack = require("webpack");
+const helpers = require('./helpers');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
@@ -72,7 +73,12 @@ module.exports = {
       }),
       new webpack.DefinePlugin({
          'process.env.NODE_ENV': JSON.stringify('production')
-       })
+      }),
+      new webpack.ContextReplacementPlugin(
+        /angular(\\|\/)core(\\|\/)@angular|fesm5/,
+        helpers.root('./app'),
+        {}
+      )
     ],
     externals: [
         function (context, request, callback) {
