@@ -5,8 +5,10 @@ import { MapOptions } from '../options';
 import Print = require('esri/widgets/Print');
 import Graphic = require('esri/Graphic');
 import Polygon = require('esri/geometry/Polygon');
+import Point = require('esri/geometry/Point');
 import GeometryService = require('esri/tasks/GeometryService');
 import SpatialReference = require('esri/geometry/SpatialReference');
+import TextSymbol = require('esri/symbols/TextSymbol');
 
 @Injectable()
 export class MenuToolsService {
@@ -44,7 +46,7 @@ export class MenuToolsService {
           size: 10,
           family: "sans-serif"
         }
-      }
+      } as any as TextSymbol
     });
   }
 
@@ -55,7 +57,7 @@ export class MenuToolsService {
         x: points[0],
         y: points[1],
         spatialReference: view.spatialReference
-      },
+      } as Point,
       symbol: {
         type: "text",
         color: "white",
@@ -68,7 +70,7 @@ export class MenuToolsService {
           size: 10,
           family: "sans-serif"
         }
-      }
+      } as any as TextSymbol
     });
   }
 

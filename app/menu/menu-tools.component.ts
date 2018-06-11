@@ -27,7 +27,7 @@ import { forOwn } from 'lodash';
   templateUrl: './app/menu/menu-tools.component.html',
   providers: [MenuToolsService]
 })
-
+ 
 export class MenuToolsComponent implements OnInit, AfterViewInit {
   @Input() viewTools: any;
   //set  toolsActive to false in parent component and get back menu wrapper for mobile

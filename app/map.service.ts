@@ -13,6 +13,8 @@ import SimpleLineSymbol = require("esri/symbols/SimpleLineSymbol");
 import SimpleFillSymbol = require("esri/symbols/SimpleFillSymbol");
 import Extent = require("esri/geometry/Extent");
 import Color = require("esri/Color");
+import Renderer = require("esri/renderers/Renderer");
+import Collection = require("esri/core/Collection");
 
 import MapView = require("esri/views/MapView");
 import GroupLayer = require("esri/layers/GroupLayer");
@@ -362,7 +364,7 @@ export class MapService {
       renderer: {
         type: 'simple',  // autocasts as new SimpleRenderer()
         symbol: this.initAutocastSymbol(symbolType)
-      }
+      } as any as Renderer
     });
   }
 
@@ -738,7 +740,7 @@ export class MapService {
           open: true,
           view: view
         }
-      ]
+      ] as any as Collection
     });
   }
 
@@ -1033,5 +1035,4 @@ export class MapService {
       }
     });
   }
-
 }
