@@ -26,9 +26,9 @@ import { PointAddRemoveService } from '../../query/point-add-remove.service';
 
 import { Subscription } from 'rxjs';
 
-import { findKey } from 'lodash';
-import { pick } from 'lodash';
-import { forIn } from 'lodash';
+import { findKey } from 'lodash-es/findKey';
+import { pick } from 'lodash-es/pick';
+import { forIn } from 'lodash-es/forIn';
 
 @Component({
   selector: 'esri-map-default',
@@ -249,12 +249,12 @@ export class MapDefaultComponent implements OnInit {
         this.mapWidgetsService.setActiveBasemap(basemap.id);
         const visibleBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id);
         basemaps.push(visibleBaseMap);
-        visibleBaseMap.then(() => {}, err => {
+        visibleBaseMap.then(() => { }, err => {
           this.maintenanceOn = true;
         });
       } else {
         const hiddenBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id, false);
-        hiddenBaseMap.then(() => {}, err => {
+        hiddenBaseMap.then(() => { }, err => {
           this.maintenanceOn = true;
         });
         basemaps.push(hiddenBaseMap);
@@ -271,8 +271,8 @@ export class MapDefaultComponent implements OnInit {
       let themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
 
       forIn(themeLayers, (layer, key) => {
-         const response = this._mapService.fetchRequest(layer.dynimacLayerUrls)
-         this._mapService.pickMainThemeLayers(response, layer, key, this.queryParams);
+        const response = this._mapService.fetchRequest(layer.dynimacLayerUrls)
+        this._mapService.pickMainThemeLayers(response, layer, key, this.queryParams);
       });
       //set raster layers
       const rasterLayers = this._mapService.getRasterLayers();
@@ -303,6 +303,6 @@ export class MapDefaultComponent implements OnInit {
 
       //init view and get projects on vie stationary property changes
       this.initView(view);
-    }, err => {});
+    }, err => { });
   }
 }

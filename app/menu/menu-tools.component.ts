@@ -15,7 +15,7 @@ import BufferParameters = require('esri/tasks/support/BufferParameters');
 import SpatialReference = require('esri/geometry/SpatialReference');
 
 
-import { forOwn } from 'lodash';
+import { forOwn } from 'lodash-es/forOwn';
 
 @Component({
   selector: 'menu-tools',
@@ -27,7 +27,7 @@ import { forOwn } from 'lodash';
   templateUrl: './app/menu/menu-tools.component.html',
   providers: [MenuToolsService]
 })
- 
+
 export class MenuToolsComponent implements OnInit, AfterViewInit {
   @Input() viewTools: any;
   //set  toolsActive to false in parent component and get back menu wrapper for mobile

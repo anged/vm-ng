@@ -26,7 +26,14 @@ import { ScaleAndLogoComponent, BasemapToggle, CreditsCompponent, CompassCompone
 //import { ProjectsGalleryComponent } from './gallery/projects-gallery.component';
 //import { Ng2GalleryCompontent } from './gallery/ng2-gallery.component';
 import { Routing } from './app.routing';
-import { MaterialModule } from './material.module';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatSelectModule} from '@angular/material/select';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatIconModule} from '@angular/material/icon';
 
 //import { Ng2ImageGalleryModule } from 'ng2-image-gallery';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -45,7 +52,8 @@ import { NgxPopperModule } from 'ngx-popper';
     //Appliaction custom modules
     MenuModule,
     //3rd party imports
-    MaterialModule,
+    MatExpansionModule, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatRadioModule,
+    MatSelectModule, MatBadgeModule, MatIconModule,
     //Ng2ImageGalleryModule,
     NgxPopperModule
   ],
