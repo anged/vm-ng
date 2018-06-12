@@ -15,7 +15,7 @@ import BufferParameters = require('esri/tasks/support/BufferParameters');
 import SpatialReference = require('esri/geometry/SpatialReference');
 
 
-import { forOwn } from 'lodash-es/forOwn';
+import forOwn from 'lodash-es/forOwn';
 
 @Component({
   selector: 'menu-tools',

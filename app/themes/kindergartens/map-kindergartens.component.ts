@@ -26,9 +26,9 @@ import { PointAddRemoveService } from '../../query/point-add-remove.service';
 
 import { Subscription } from 'rxjs';
 
-import { findKey } from 'lodash-es/findKey';
-import { pick } from 'lodash-es/pick';
-import { forIn } from 'lodash-es/forIn';
+import findKey from 'lodash-es/findKey';
+import pick from 'lodash-es/pick';
+import forIn from 'lodash-es/forIn';
 
 @Component({
   selector: 'esri-map-buildings',
