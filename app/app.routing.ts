@@ -9,6 +9,7 @@ const MAP_ROUTS: Routes = [
   { path: 'projektai', component: MapComponent },
   { path: 'pastatai', component: MapBuildingsComponent },
   { path: 'darzeliai', component: MapKindergartensComponent },
+  { path: 'lazy', loadChildren: './lazy.module#LazyModule' },
   //add page not found component
   { path: '**', component: MapDefaultComponent }
   // ,
