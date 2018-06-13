@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MapComponent } from './map.component';
@@ -9,7 +9,6 @@ import { AppComponent } from './app.component';
 import { CommonWidgetsComponent } from './common-widgets.component';
 import { SearchKindergartensComponent } from './map-widgets/search-kindergartens.component';
 import { MenuModule } from './menu/menu.module';
-import { ShareModule } from './share.module';
 import { MapService } from './map.service';
 import { MapDefaultService } from './themes/default/map-default.service';
 import { ProjectsListService } from './projects-list/projects-list.service';
@@ -43,56 +42,84 @@ import { NgxPopperModule } from 'ngx-popper';
 
 @NgModule({
   imports: [
-    BrowserModule,
-    // FormsModule,
-    // // HttpModule,
-    // // JsonpModule,
-    // HttpClientModule,
-    Routing,
-    ShareModule,
-    BrowserAnimationsModule,
-    // //Appliaction custom modules
-    // MenuModule,
-    // //3rd party imports
-    // MatExpansionModule, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatRadioModule,
-    // MatSelectModule, MatBadgeModule, MatIconModule,
-    // //Ng2ImageGalleryModule,
-    // NgxPopperModule
+    CommonModule,
+    FormsModule,
+    // HttpModule,
+    // JsonpModule,
+    HttpClientModule,
+    //Routing,
+    //BrowserAnimationsModule,
+    //Appliaction custom modules
+    MenuModule,
+    //3rd party imports
+    MatExpansionModule, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatRadioModule,
+    MatSelectModule, MatBadgeModule, MatIconModule,
+    //Ng2ImageGalleryModule,
+    NgxPopperModule
   ],
   declarations: [
-    AppComponent,
-    // MapComponent,
-    // MapDefaultComponent,
-    // //MapBuildingsComponent,
-    // MapKindergartensComponent,
-    // ThemesComponent,
-    // ProjectsListComponent,
-    // AutoCompleteComponent,
-    // TextHighlightPipe,
-    // ScaleAndLogoComponent,
-    // BasemapToggle,
-    // CreditsCompponent,
-    // CompassComponent,
-    // SidebarComponent,
-    // SidebarKindergartensComponent,
-    // //ProjectsGalleryComponent,
-    // //Ng2GalleryCompontent,
-    // CommonWidgetsComponent,
-    // SearchKindergartensComponent,
-    // MaintenanceComponent
+    //AppComponent,
+    MapComponent,
+    MapDefaultComponent,
+    //MapBuildingsComponent,
+    MapKindergartensComponent,
+    ThemesComponent,
+    ProjectsListComponent,
+    AutoCompleteComponent,
+    TextHighlightPipe,
+    ScaleAndLogoComponent,
+    BasemapToggle,
+    CreditsCompponent,
+    CompassComponent,
+    SidebarComponent,
+    SidebarKindergartensComponent,
+    //ProjectsGalleryComponent,
+    //Ng2GalleryCompontent,
+    CommonWidgetsComponent,
+    SearchKindergartensComponent,
+    MaintenanceComponent
+  ],
+  exports: [
+    CommonModule,
+    FormsModule,
+    // HttpModule,
+    // JsonpModule,
+    HttpClientModule,
+    //Appliaction custom modules
+    MenuModule,
+    //3rd party imports
+    MatExpansionModule, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatRadioModule,
+    MatSelectModule, MatBadgeModule, MatIconModule,
+    //Ng2ImageGalleryModule,
+    NgxPopperModule,
+    MapKindergartensComponent,
+    ThemesComponent,
+    ProjectsListComponent,
+    AutoCompleteComponent,
+    TextHighlightPipe,
+    ScaleAndLogoComponent,
+    BasemapToggle,
+    CreditsCompponent,
+    CompassComponent,
+    SidebarComponent,
+    SidebarKindergartensComponent,
+    //ProjectsGalleryComponent,
+    //Ng2GalleryCompontent,
+    CommonWidgetsComponent,
+    SearchKindergartensComponent,
+    MaintenanceComponent
   ],
   providers: [
-    // MapService,
-    // MapDefaultService,
-    // ProjectsListService,
-    // ProjectsFilterService,
-    // SearchService,
-    // SelectorsService,
-    // MapWidgetsService,
-    // FeatureQueryService,
-    // IdentifyService,
-    // PointAddRemoveService
-  ],
-  bootstrap: [AppComponent]
+      MapService,
+      MapDefaultService,
+      ProjectsListService,
+      ProjectsFilterService,
+      SearchService,
+      SelectorsService,
+      MapWidgetsService,
+      FeatureQueryService,
+      IdentifyService,
+      PointAddRemoveService
+    ]
 })
-export class AppModule { }
+export class ShareModule { }
