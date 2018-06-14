@@ -224,7 +224,10 @@ export class MapDefaultComponent implements OnInit {
 
   ngOnInit() {
     //add snapshot url and pass path name ta Incetable map service
-    const snapshotUrl = this.activatedRoute.snapshot.url['0'];
+    //FIXME ActivatedRoute issues
+    //const snapshotUrl = this.activatedRoute.snapshot.url['0'];
+    const snapshotUrl = window.location.pathname.slice(1);
+    console.log(snapshotUrl);
     let basemaps: any[] = [];
     let themeGroupLayer: any;
 
@@ -267,7 +270,7 @@ export class MapDefaultComponent implements OnInit {
 
     if (snapshotUrl) {
       //using lodash find and pick themeLayer from options
-      let themeName = findKey(MapOptions.themes, { "id": snapshotUrl.path });
+      let themeName = findKey(MapOptions.themes, { "id": snapshotUrl });
       let themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
 
       forIn(themeLayers, (layer, key) => {

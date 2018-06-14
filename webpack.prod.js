@@ -14,7 +14,7 @@ module.exports = {
     },
     output: {
         filename: '[name].bundle.[chunkhash].js',
-        publicPath: '/',
+        publicPath: '/dist/',
         libraryTarget: "amd"
     },
     resolve: {
@@ -25,10 +25,10 @@ module.exports = {
         splitChunks: {
             cacheGroups: {
               vendor: {
+                chunks: 'all',
                 test: 'vendor',
-                name: 'vendor',
-                chunks: 'initial',
-                enforce: true
+                name: 'vendor'
+                //enforce: true
               }
             }
         },
@@ -39,7 +39,8 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 use: [
-                  'ts-loader'
+                  'ts-loader',
+                  'angular-router-loader'
                 ]
             },
             {

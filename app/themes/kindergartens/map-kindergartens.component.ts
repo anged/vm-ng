@@ -419,7 +419,9 @@ export class MapKindergartensComponent implements OnInit {
   ngOnInit() {
     document.body.classList.add('buldings-theme');
     //add snapshot url and pass path name ta Incetable map service
-    let snapshotUrl = this.activatedRoute.snapshot.url["0"];
+    //FIXME ActivatedRoute issues
+    //let snapshotUrl = this.activatedRoute.snapshot.url["0"];
+    let snapshotUrl = { path: 'darzeliai' };
     let basemaps: any[] = [];
     let themeGroupLayer: any;
 

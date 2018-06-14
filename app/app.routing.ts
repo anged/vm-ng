@@ -1,17 +1,14 @@
-import {Routes, RouterModule} from '@angular/router'
-
-import { MapDefaultComponent, MapBuildingsComponent, MapKindergartensComponent } from './themes';
-import { MapComponent } from './map.component';
+import { Routes, RouterModule } from '@angular/router'
 import { ThemesComponent } from './themes.component';
 
 const MAP_ROUTS: Routes = [
   { path: '', component: ThemesComponent },
-  { path: 'projektai', component: MapComponent },
+  { path: 'projektai', loadChildren: './themes/projects/projects.module#ProjectsModule' },
   //{ path: 'pastatai', component: MapBuildingsComponent },
-  { path: 'darzeliai', component: MapKindergartensComponent },
-  { path: 'pastatai', loadChildren: './lazy.module#LazyModule' },
+  { path: 'darzeliai', loadChildren: './themes/kindergartens/kindergartens.module#KindergartensModule' },
+  { path: 'pastatai', loadChildren: './themes/buildings/buildings.module#BuildingsModule' },
   //add page not found component
-  { path: '**', component: MapDefaultComponent }
+  { path: '**', loadChildren: './themes/default/default-theme.module#DefaultThemeModule' }
   // ,
   // { path: '',  redirectTo: '/projektai', pathMatch: 'full' }
 ];

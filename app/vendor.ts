@@ -4,7 +4,8 @@ import 'web-animations-js';
 //import 'zone.js';
 import '@angular/core';
 import '@angular/common';
-//import '@angular/compiler';
+// TODO  remove compiler when AOT will be implemented
+import '@angular/compiler';
 import '@angular/core';
 import '@angular/http';
 import '@angular/platform-browser';

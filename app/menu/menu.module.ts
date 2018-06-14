@@ -24,7 +24,7 @@ import { NgDraggableModule } from 'angular-draggable';
     MenuLayersItvComponent, MenuLayersComponent,
     MenuLegendItvComponent, MenuLegendComponent
   ],
-  exports: [MenuComponent],
+  exports: [MenuComponent, FormsModule],
   providers: [MenuService, MenuToolsService]
 })
 export class MenuModule { }
