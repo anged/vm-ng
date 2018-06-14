@@ -1,6 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { MapDefaultComponent } from '../../themes';
+import { MapDefaultComponent } from './map-default.component';
 
 const defaultThemeRoutes: Routes = [
   { path: '', component: MapDefaultComponent }

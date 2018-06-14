@@ -1,6 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
- import { MapKindergartensComponent } from '../../themes';
+ import { MapKindergartensComponent } from './map-kindergartens.component';
 
 const kindergartensRoutes: Routes = [
   { path: '', component: MapKindergartensComponent }

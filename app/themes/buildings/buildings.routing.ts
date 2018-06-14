@@ -1,6 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { MapBuildingsComponent } from '../../themes';
+import { MapBuildingsComponent } from './map-buildings.component';
 
 const buildingsRoutes: Routes = [
   { path: '', component: MapBuildingsComponent }

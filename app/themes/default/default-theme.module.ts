@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { MapDefaultComponent } from '../../themes';
+import { MapDefaultComponent } from './map-default.component';
 import { ShareModule } from '../../share.module';
 import { DefaultThemeRouting } from './default-theme.routing';
 

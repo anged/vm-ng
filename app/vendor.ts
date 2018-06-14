@@ -24,6 +24,6 @@ import '@angular/router';
 
 
 //using lodash-es instead, added to main bundle
-//import 'lodash';
+import 'lodash-es';
 import 'reflect-metadata';
 import 'rxjs';

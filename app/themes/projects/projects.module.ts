@@ -1,11 +1,8 @@
 import { NgModule } from '@angular/core';
 
-import { MapProjectsComponent } from '../../themes';
+import { MapProjectsComponent } from './map-projects.component';
 import { ShareModule } from '../../share.module';
 import { ProjectsRouting } from './projects.routing';
-import { ProjectsListComponent } from '../../projects-list/projects-list.component';
-import { AutoCompleteComponent } from '../../autocomplete/autocomplete.component';
-import { TextHighlightPipe } from '../../pipes/text-highlight.pipe';
 
 @NgModule({
   imports: [
@@ -13,10 +10,7 @@ import { TextHighlightPipe } from '../../pipes/text-highlight.pipe';
     ProjectsRouting
   ],
   declarations: [
-    MapProjectsComponent,
-    ProjectsListComponent,
-    AutoCompleteComponent,
-    TextHighlightPipe
+    MapProjectsComponent
   ]
 })
 export class ProjectsModule { }

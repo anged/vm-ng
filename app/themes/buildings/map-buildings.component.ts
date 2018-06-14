@@ -424,8 +424,8 @@ export class MapBuildingsComponent implements OnInit {
 
     if (snapshotUrl) {
       //using lodash find and pick themeLayer from options
-      let themeName = findKey(MapOptions.themes, { "id": snapshotUrl.path });
-      let themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
+      const themeName = findKey(MapOptions.themes, { "id": snapshotUrl.path });
+      const themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
 
       //all theme layers will be added to common group layer
       const mainGroupLayer = this._mapService.initGroupLayer(themeName + 'group', 'Pastatai', 'show');
