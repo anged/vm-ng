@@ -227,7 +227,6 @@ export class MapDefaultComponent implements OnInit {
     //FIXME ActivatedRoute issues
     //const snapshotUrl = this.activatedRoute.snapshot.url['0'];
     const snapshotUrl = window.location.pathname.slice(1);
-    console.log(snapshotUrl);
     let basemaps: any[] = [];
     let themeGroupLayer: any;
 
