@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 //import { FormsModule } from '@angular/forms';
 import { CommonWidgetsComponent } from './common-widgets.component';
 import { MenuModule } from './menu/menu.module';
@@ -16,11 +14,6 @@ import { IdentifyService } from './services/identify/identify.service';
 import { FeatureQueryService } from './query/feature-query.service';
 import { PointAddRemoveService } from './query/point-add-remove.service';
 import { ScaleAndLogoComponent, BasemapToggle, CreditsCompponent, CompassComponent, SidebarComponent, MaintenanceComponent } from './map-widgets';
-import { SidebarKindergartensComponent } from './map-widgets';
-import { SearchKindergartensComponent } from './map-widgets/search-kindergartens.component';
-import { ProjectsListComponent } from './projects-list/projects-list.component';
-import { AutoCompleteComponent } from './autocomplete/autocomplete.component';
-import { TextHighlightPipe } from './pipes/text-highlight.pipe';
 //import { ProjectsGalleryComponent } from './gallery/projects-gallery.component';
 //import { Ng2GalleryCompontent } from './gallery/ng2-gallery.component';
 import {MatSelectModule} from '@angular/material/select';
@@ -38,8 +31,6 @@ import { NgxPopperModule } from 'ngx-popper';
     MatSelectModule,
     //Ng2ImageGalleryModule,
     NgxPopperModule,
-    MatExpansionModule,
-    MatCheckboxModule
   ],
   declarations: [
     ScaleAndLogoComponent,
@@ -50,12 +41,7 @@ import { NgxPopperModule } from 'ngx-popper';
     //ProjectsGalleryComponent,
     //Ng2GalleryCompontent,
     CommonWidgetsComponent,
-    MaintenanceComponent,
-    SidebarKindergartensComponent,
-    SearchKindergartensComponent,
-    ProjectsListComponent,
-    AutoCompleteComponent,
-    TextHighlightPipe
+    MaintenanceComponent
 
   ],
   exports: [
@@ -69,12 +55,7 @@ import { NgxPopperModule } from 'ngx-popper';
     CompassComponent,
     SidebarComponent,
     CommonWidgetsComponent,
-    MaintenanceComponent,
-    SidebarKindergartensComponent,
-    SearchKindergartensComponent,
-    ProjectsListComponent,
-    AutoCompleteComponent,
-    TextHighlightPipe
+    MaintenanceComponent
   ],
   providers: [
       MapService,

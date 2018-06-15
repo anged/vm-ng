@@ -14,14 +14,14 @@ module.exports = {
     },
     output: {
         filename: '[name].bundle.[chunkhash].js',
-        publicPath: '/dist/',
+        publicPath: '/',
         libraryTarget: "amd"
     },
     resolve: {
         extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
     },
     optimization: {
-        noEmitOnErrors: false,
+        noEmitOnErrors: true, //default
         splitChunks: {
             cacheGroups: {
               vendor: {
