@@ -11,19 +11,10 @@ import '@angular/http';
 import '@angular/platform-browser';
 import '@angular/platform-browser-dynamic';
 import '@angular/router';
-//import '@angular/material';
-//import material modules
-// import '@angular/material/expansion';
-// import '@angular/material/checkbox';
-// import '@angular/material/form-field';
-// import '@angular/material/input';
-// import '@angular/material/radio';
-// import '@angular/material/select';
-// import '@angular/material/badge';
-// import '@angular/material/icon';
-
-
 //using lodash-es instead, added to main bundle
-import 'lodash-es';
+import 'lodash-es/findKey';
+import 'lodash-es/pick';
+import 'lodash-es/forIn';
+import 'lodash-es/forOwn';
 import 'reflect-metadata';
 import 'rxjs';
