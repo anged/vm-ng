@@ -474,6 +474,9 @@ li.list-active {
 #gallery-container {
   margin-top:10px;
 }
+.baguetteBox-button, .baguetteBox-button:focus, .baguetteBox-button:hover {
+  background-color: rgba(255, 255, 255, 0) !important;
+}
 /*TOOLS*/
 #tools-print {
   background: #E9E9E9;

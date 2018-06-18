@@ -3,7 +3,7 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'ng2-gallery',
+  selector: 'ng-gallery',
   styles: [`
     #gallery-ng-projects  {
       width: 378px;
@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs';
   `
 })
 
-export class Ng2GalleryCompontent implements OnInit, OnDestroy {
+export class NgGalleryCompontent implements OnInit, OnDestroy {
   @Input() gallery: any;
   @Input() subscription: Subscription;
 
