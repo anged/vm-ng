@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild } from '@ang
 import { ActivatedRoute } from "@angular/router";
 
 import { MapService } from '../../map.service';
-import { MapDefaultService } from '../../themes/default/map-default.service';
 import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
 import { MapWidgetsService } from '../../map-widgets/map-widgets.service';
+import { ShareButtonService } from '../../services/share-button.service';
 import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
@@ -61,7 +61,7 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
 
   maintenanceOn = false;
 
-  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService) {
+  constructor(private _mapService: MapService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private shareButtonService: ShareButtonService) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
         //console.log("URL Parametrai", queryParam);
@@ -82,44 +82,11 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
   select(e) {
     e.target.select()
   }
+
   // toggle share container
   shareToggle(e) {
-    //get visible and checked layers ids
-    let ids: any = this._mapService.getVisibleLayersIds(this.view);
-    let visibleLayersIds: number[] = ids.identificationsIds;
-    let checkedLayersIds: number[] = ids.visibilityIds;
-
-    //get share url
-    let currentZoom: number, currentCoordinates: number[];
-    currentZoom = this.view.zoom;
-    currentCoordinates = [this.view.center.x, this.view.center.y];
-    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
-      + this.mapWidgetsService.returnActiveBasemap();
-    //console.log(this.shareUrl)
-    //console.log(window.location)
-
-    //toggle active state
     this.shareContainerActive = !this.shareContainerActive;
-
-    //highlight selected input
-    if (this.shareContainerActive) {
-      setTimeout(() => {
-        const shareURL = document.getElementById("url-link") as HTMLInputElement;
-        if (shareURL) {
-          shareURL.select();
-        }
-      }, 20);
-    }
-  }
-
-  shareCheckedLayersIds(ids: any): string {
-    let shareCheckStr: string = "";
-    Object.keys(ids).forEach(function(key) {
-      let widget = ids[key];
-      shareCheckStr += "&" + key + "=";
-      ids[key].forEach(id => shareCheckStr += id + "!");
-    });
-    return shareCheckStr;
+    this.shareUrl = this.shareButtonService.shareToggle(e, this.shareContainerActive, true);
   }
 
   onFilter(items) {
@@ -199,7 +166,7 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
       //NEW map-default.compontent approach
       //store all deffered objects of identify task in def array
       let def: Array<any> = [];
-      let ids: any = this.mapDefaultService.getVisibleLayersIds(view);
+      let ids: any = this.shareButtonService.getVisibleLayersIds(view);
       let visibleLayersIds: number[] = ids.identificationsIds;
       // view.popup.dockEnabled = false;
       // view.popup.dockOptions = {
@@ -340,10 +307,8 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
 
       //init view and get projects on vie stationary property changes
       this.initView(view);
-    });
 
-    this.activatedRoute.url.subscribe((url) => {
-      url["0"] ? this._mapService.getThemeName(url["0"].path) : "";
+      this._mapService.getThemeName('projektai');
     });
   }
 

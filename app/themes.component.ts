@@ -5,6 +5,8 @@ import { MapOptions } from './options';
 
 import domConstruct = require('dojo/dom-construct');
 
+import values from 'lodash-es/values';
+
 @Component({
   selector: 'themes-map',
   styles: [`
@@ -63,23 +65,43 @@ import domConstruct = require('dojo/dom-construct');
       <h1>Vilniaus miesto interaktyvūs žemėlapiai</h1>
       <span>Pasirinkite temą</span>
     </div>
+    <div *ngFor="let theme of themes; let i=index; let odd=odd">
+      <div *ngIf="theme.production && !theme.hide" class="col-xs-6 col-sm-3 animate themes-row">
+        <a *ngIf="!theme.url && !theme.custom" [routerLink]="[theme.id]">
+          <img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+          <p>{{theme.name}}</p>
+        </a>
+        <a *ngIf="theme.url" [href]="theme.url">
+          <img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+          <p>{{theme.name}}</p>
+        </a>
+        <a *ngIf="!theme.url && theme.custom" [href]="theme.id">
+          <img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+          <p>{{theme.name}}</p>
+        </a>
+      </div>
+    </div>
   </div>
   `
 })
 export class ThemesComponent implements OnInit {
 
-  constructor(private _mapService: MapService) { }
+  themes: any[];
+
+  constructor(private _mapService: MapService) {
+    this.themes = values(MapOptions.themes);
+  }
 
   createThemeDom() {
-    var themesObj = MapOptions.themes;
-    var count = 1;
-    for (var theme in themesObj) {
+    const themesObj = MapOptions.themes;
+    let count = 1;
+    for (let theme in themesObj) {
       if (themesObj.hasOwnProperty(theme)) {
-        var divTag, aTag, pTag, imgTag, alignClass, urlTag;
+        let divTag, aTag, pTag, imgTag, alignClass, urlTag;
         divTag = aTag = pTag = imgTag = alignClass = urlTag = null;
-        if (themesObj.hasOwnProperty(theme) && (themesObj[theme].production)&&(!themesObj[theme].hide)) {
+        if (themesObj.hasOwnProperty(theme) && (themesObj[theme].production) && (!themesObj[theme].hide)) {
           count++;
-          var countMod;
+          let countMod;
           countMod = count % 2 > 0 ? alignClass = "themes-row" : alignClass = "themes-row";
           divTag = domConstruct.create("div", { id: themesObj[theme].id, class: "col-xs-6 col-sm-3 animate " + alignClass, style: "" }, "themes-container", "last"); //AG static width in px, because we're using overflow-y: auto in main div
           urlTag = !themesObj[theme].url
@@ -98,6 +120,7 @@ export class ThemesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.createThemeDom();
+    //this.createThemeDom();
+    //console.log(this.themes);
   }
 }

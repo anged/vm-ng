@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 
 import { MapOptions } from '../options';
 import { MapService } from '../map.service';
-import { MapDefaultService } from '../themes/default/map-default.service';
+import { ShareButtonService } from '../services/share-button.service';
 import { MenuService } from './menu.service';
 
 import { Subscription } from 'rxjs';
@@ -40,7 +40,7 @@ export class MenuComponent implements OnInit {
   }
 
   //Hash toggle, get all anchor elements
-  constructor(private mapService: MapService, private menuService: MenuService, private mapDefaultService: MapDefaultService) {
+  constructor(private mapService: MapService, private menuService: MenuService, private shareButtonService: ShareButtonService) {
     //temporary: Hash toggle, reload, new page,
     window.location.hash = '#';
   }
@@ -123,7 +123,7 @@ export class MenuComponent implements OnInit {
   }
 
   getVisibleSubLayerNumber() {
-    this.mapService.returnThemeName() === "projektai" ?  this.visibleSubLayerNumber = this.mapService.getVisibleSubLayerNumber(this.view) : this.visibleSubLayerNumber = this.mapDefaultService.getVisibleSubLayerNumber(this.view);
+    this.mapService.returnThemeName() === "projektai" ?  this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view, true) : this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view);
   }
 
   closeSubListHelp() {
@@ -154,7 +154,6 @@ export class MenuComponent implements OnInit {
     //activate mobile nav menu as well when clicking close buttons or clicking any anchor which closes menu container on desktop mode
     // let closeList = Array.from(document.getElementsByClassName('close'));
     // closeList.map(a => a.addEventListener('click', this.activateMenuBtnOnDesktopMode, false));
-    // console.log("CLOSE TAGS", closeList)
     //console.log("END");
 
     //subscribe to sub layer list button activation

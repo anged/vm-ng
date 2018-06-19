@@ -15,7 +15,6 @@ import Extent = require("esri/geometry/Extent");
 import Color = require("esri/Color");
 import Renderer = require("esri/renderers/Renderer");
 import Collection = require("esri/core/Collection");
-
 import MapView = require("esri/views/MapView");
 import GroupLayer = require("esri/layers/GroupLayer");
 import MapImageLayer = require("esri/layers/MapImageLayer");
@@ -25,18 +24,14 @@ import GraphicsLayer = require("esri/layers/GraphicsLayer");
 import Basemap = require("esri/Basemap");
 import LayerList = require("esri/widgets/LayerList");
 import on = require("dojo/on");
-
 import IdentifyTask = require("esri/tasks/IdentifyTask");
 import IdentifyParameters = require("esri/tasks/support/IdentifyParameters");
-
 import { MapOptions } from './options';
 import { PopupTemplates } from './services/identify/popup-templates';
 import { ProjectsListService } from './projects-list/projects-list.service';
-
 import QueryTask = require("esri/tasks/QueryTask");
 import Query = require("esri/tasks/support/Query");
 import RelationshipQuery = require("esri/tasks/support/RelationshipQuery");
-
 
 export interface DataStore {
   elderates: any[],
@@ -50,47 +45,31 @@ export class MapService {
   //array to identify by name selection graphic layers and remove them
   private selectedGraphicNames: string[] = [];
   private selectedGraphicCount: number = 0;
-
   //selection graphic layer array:
   private allGraphicLayers: any[] = [];
-
   private featureLayerArr: any[];
-
   private projectsObs = new Subject();
   projectsItem = this.projectsObs.asObservable();
-
   //suspend layers toggle (e.g. suspend layers while drawing with measure tools)
   suspendedIdentitication: boolean = false;
-
   private mobile: boolean = false;
-
   private themeName: string;
-
   private view: any;
-
   //visible layers
   visibleLayers: {};
-
   visibleSubLayerNumber: number = 0;
-
   private queryParams: any;
-
   map: any;
-
   //dynamic projects layer
   projectsDynamicLayer: any;
-
   // Observable  source
   private layersStatusObs = new Subject();
   // Observable item stream
   layersStatus = this.layersStatusObs.asObservable();
-
   //array of raster layers Name
   rasterLayers = [];
-
   //all layers for "allLayers"
   subDynamicLayers: any;
-
   // Observable  for kindergartens
   private kGartensObs = new Subject<DataStore>();
   // Observable item stream
@@ -109,6 +88,7 @@ export class MapService {
     //return new Map(options);
     return new Map();
   }
+
   viewMap(map: Map): MapView {
     this.view = new MapView({
       //container: this.elementRef.nativeElement.firstChild, // AG good practis
@@ -227,8 +207,6 @@ export class MapService {
       title: name
     });
   }
-
-
 
   initGraphicLayer(id: number, scale: any = {}) {
     return new GraphicsLayer({
@@ -836,102 +814,6 @@ export class MapService {
       }
     }
     return content;
-  }
-
-  getVisibleLayersIds(view) {
-    //ids will have 2 properties: 'identificationsIds' (layers to be identified) and 'visibilityIds' (all visible layers that must be checked and visible depending on mxd settings or user activated layers)
-    let ids: any = {};
-    ids["identificationsIds"] = {};
-    ids["visibilityIds"] = {};
-    let viewScale = view.scale;
-    //console.log("VIEW", view);
-    //console.log("layerViews", view.layerViews)
-    view.layerViews.items.map(item => {
-      //TODO refactor mapDefaultService and mapService, for projects theme get VisibleLayers Ids only for alllayers service
-      if (item.layer.id === "allLayers") {
-        //small fix: add layer id that doen't exist, for example 999, in order to prevent all layers identification when all lists are turned off
-        ids.identificationsIds[item.layer.id] = [999];
-        ids.visibilityIds[item.layer.id] = [999];
-        //console.log("IDS", item)
-        //do not identify layer if it is Raster
-        if ((item.visible) && (!item.layer.isRaster) && (item.layer.sublayers)) {
-          //UPDATE: identify raster layers as well
-          //if (item.visible) {
-          let subLayers = item.layer.sublayers.items;
-          //console.log("subLayer", subLayers);
-          subLayers.map((subLayer) => {
-            let minScale = subLayer.minScale;
-            let maxScale = subLayer.maxScale;
-            //add number to fit viewScale, because 0 in Esri logic means layer is not scaled
-            ((minScale === 0)) ? minScale = 99999999 : minScale;
-
-            // console.log(subLayer.minScale , viewScale , subLayer.maxScale)
-            // console.log(minScale , viewScale , maxScale)
-            //if layer is visible and in view scale
-            if (subLayer.visible) {
-              ids.visibilityIds[item.layer.id].push(subLayer.id);
-              if ((maxScale < viewScale) && (viewScale < minScale)) {
-                //check if sublayer has subsublayers
-                if (subLayer.sublayers) {
-                  //console.log("subsubLayer", subLayers);
-                  //3 layer if exist
-                  let subsublayers = subLayer.sublayers.items;
-                  subsublayers.map(subsublayer => {
-                    let subMinScale = subsublayer.minScale;
-                    let subMaxScale = subsublayer.maxScale;
-                    ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
-                    //if layer is visible and in view scale
-                    if (subsublayer.visible) {
-                      ids.visibilityIds[item.layer.id].push(subsublayer.id);
-                      if ((subMaxScale < viewScale) && (viewScale < subMinScale)) {
-                        //console.log("Sub subsubLayer", subLayers);
-
-                        if (subsublayer.sublayers) {
-                          //4 layer if exist
-                          let subsubsublayers = subsublayer.sublayers.items;
-                          subsubsublayers.map(subsubsublayer => {
-                            let subMinScale = subsubsublayer.minScale;
-                            let subMaxScale = subsubsublayer.maxScale;
-                            ((subMinScale === 0)) ? subMinScale = 99999999 : subMinScale;
-                            //if layer is visible and in view scale
-                            if (subsubsublayer.visible) {
-                              ids.visibilityIds[item.layer.id].push(subsubsublayer.id);
-                              if ((subsubsublayer.visible) && (subMaxScale < viewScale) && (viewScale < subMinScale)) {
-                                //console.log("SubSUB subsubLayer", subsubsublayers);
-                                ids.identificationsIds[item.layer.id].push(subsubsublayer.id);
-
-                              }
-                            }
-                          });
-                        } else {
-                          //push id's if it has no sublayers
-                          ids.identificationsIds[item.layer.id].push(subsublayer.id);
-                        }
-                      }
-                    }
-                  });
-                }
-                //else push id
-                else {
-                  ids.identificationsIds[item.layer.id].push(subLayer.id);
-                }
-              }
-            }
-          })
-        }
-      }
-    })
-    //console.log("FINAL IDS", ids)
-    this.visibleLayers = ids;
-    return ids;
-  }
-
-  getVisibleSubLayerNumber(view: any) {
-    let ids: any = this.getVisibleLayersIds(view);
-    //console.log("ids", ids.identificationsIds);
-    ids.identificationsIds.allLayers ? this.visibleSubLayerNumber = ids.identificationsIds.allLayers.length - 1 : this.visibleSubLayerNumber = 0;
-    //console.log("visibleSubLayerNumber", this.visibleSubLayerNumber);
-    return this.visibleSubLayerNumber;
   }
 
   //set itv theme dynamic projects layer

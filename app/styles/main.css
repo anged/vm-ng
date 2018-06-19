@@ -1885,6 +1885,7 @@ body .dijitAlignClient {
     color: #8d8e94
 }
 #basemap-button .mat-select-value-text, .mat-select-trigger {
+    padding-left: 5px;
     font-size: 13px !important;
     color: #fff;
 }

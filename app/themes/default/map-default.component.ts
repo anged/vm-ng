@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from "@angular/router";
 
 import { MapService } from '../../map.service';
@@ -7,7 +7,7 @@ import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
 import { MapWidgetsService } from '../../map-widgets/map-widgets.service';
 import { MenuService } from '../../menu/menu.service';
-
+import { ShareButtonService } from '../../services/share-button.service';
 import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
@@ -34,7 +34,7 @@ import forIn from 'lodash-es/forIn';
   selector: 'esri-map-default',
   templateUrl: './app/themes/default/map-default.component.html'
 })
-export class MapDefaultComponent implements OnInit {
+export class MapDefaultComponent implements OnInit, OnDestroy {
 
   //execution of an Observable,
   subscription: Subscription;
@@ -59,98 +59,31 @@ export class MapDefaultComponent implements OnInit {
   //add subDynamicLayers sublayers meta data
   subDynamicLayerSubLayers: any;
 
-  constructor(private _mapService: MapService, private router: Router, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService) {
-    this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
-      (queryParam: any) => {
-        //navigate specific legacy map urls
-        if (queryParam['theme'] === 'teritory-planning') {
-          router.navigate(['/teritoriju-planavimas']);
-        }
-
-        return this.queryParams = queryParam;
-      }
-    );
-  }
-
-  // toggle help container
-  helpOpen(e) {
-    this.helpContainerActive = !this.helpContainerActive;
-  }
+  constructor(private _mapService: MapService, private router: Router, private mapDefaultService: MapDefaultService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService, private shareButtonService: ShareButtonService) { }
 
   select(e) {
     e.target.select();
   }
+
   // toggle share container
   shareToggle(e) {
-    //get visible and checked layers ids
-    const ids: any = this.mapDefaultService.getVisibleLayersIds(this.view);
-    const visibleLayersIds: number[] = ids.identificationsIds;
-    const checkedLayersIds: number[] = ids.visibilityIds;
-    //check if there is any visible layers that can be identied in allLayers group
-    let identify = ids.identificationsIds.allLayers.length <= 1 ? "" : "allLayers";
-    //console.log("ids", ids)
-
-    //get share url
-    let currentZoom: number, currentCoordinates: number[];
-    currentZoom = this.view.zoom;
-    currentCoordinates = [this.view.center.x, this.view.center.y];
-    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
-      + this.mapWidgetsService.returnActiveBasemap() + '&identify=' + identify;
-    //console.log(this.shareUrl)
-    //console.log(window.location)
-
-    //toggle active state
     this.shareContainerActive = !this.shareContainerActive;
-
-    //highlight selected input
-    if (this.shareContainerActive) {
-      setTimeout(() => {
-        const shareURL = document.getElementById("url-link") as HTMLInputElement;
-        if (shareURL) {
-          shareURL.select();
-        }
-      }, 20);
-    }
-  }
-
-  shareCheckedLayersIds(ids: any): string {
-    let shareCheckStr: string = "";
-    Object.keys(ids).forEach(function(key) {
-      let widget = ids[key];
-      shareCheckStr += "&" + key + "=";
-      ids[key].forEach(id => shareCheckStr += id + "!");
-    });
-    return shareCheckStr;
+    this.shareUrl = this.shareButtonService.shareToggle(e, this.shareContainerActive);
   }
 
   initView(view) {
     let urls = this.mapDefaultService.getUrls();
     let identify = this.identify.identify(urls[0]);
     let identifyParams = this.identify.identifyParams();
-    let count = 0;
     view.popup.dockOptions = {
       position: 'bottom-left'
     };
-
-    //get projects when interacting with the view
-    watchUtils.whenTrue(view, "stationary", (b) => {
-      // Get the new extent of the view only when view is stationary.
-      if (view.extent) {
-        //this.getProjects(itvFeatureUrl, view.extent, sqlStr, count);
-        count += 1;
-      }
-    });
-
-    view.on("pointer-move", (event) => {
-      //console.log("MOUSE event", event.native)
-    });
-
     view.on("click", (event) => {
       //check if layer is suspended
       const suspended = this._mapService.getSuspendedIdentitication();
       //store all deffered objects of identify task in def array
       let def = [];
-      let ids: any = this.mapDefaultService.getVisibleLayersIds(view);
+      let ids: any = this.shareButtonService.getVisibleLayersIds(view);
       let visibleLayersIds: number[] = ids.identificationsIds;
       view.popup.dockEnabled = false;
       view.popup.dockOptions = {
@@ -223,6 +156,17 @@ export class MapDefaultComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.queryUrlSubscription = this.activatedRoute.queryParams.subscribe(
+      (queryParam: any) => {
+        //navigate specific legacy map urls
+        if (queryParam['theme'] === 'teritory-planning') {
+          this.router.navigate(['/teritoriju-planavimas']);
+        }
+
+        return this.queryParams = queryParam;
+      }
+    );
+    //console.log("init");
     //add snapshot url and pass path name ta Incetable map service
     //FIXME ActivatedRoute issues
     //const snapshotUrl = this.activatedRoute.snapshot.url['0'];
@@ -306,5 +250,9 @@ export class MapDefaultComponent implements OnInit {
       //init view and get projects on vie stationary property changes
       this.initView(view);
     }, err => { });
+  }
+
+  ngOnDestroy() {
+    //console.log("Destroy map component");
   }
 }

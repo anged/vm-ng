@@ -12,6 +12,7 @@ import { SelectorsService } from './selectors/selectors.service';
 import { MapWidgetsService } from './map-widgets/map-widgets.service';
 import { IdentifyService } from './services/identify/identify.service';
 import { FeatureQueryService } from './query/feature-query.service';
+import { ShareButtonService } from './services/share-button.service';
 import { PointAddRemoveService } from './query/point-add-remove.service';
 import { ScaleAndLogoComponent, BasemapToggle, CreditsCompponent, CompassComponent, SidebarComponent, MaintenanceComponent } from './map-widgets';
 //import { ProjectsGalleryComponent } from './gallery/projects-gallery.component';
@@ -67,6 +68,7 @@ import { NgxPopperModule } from 'ngx-popper';
       MapWidgetsService,
       FeatureQueryService,
       IdentifyService,
+      ShareButtonService,
       PointAddRemoveService
     ]
 })

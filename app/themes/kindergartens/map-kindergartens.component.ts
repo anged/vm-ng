@@ -8,7 +8,7 @@ import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
 import { MapWidgetsService } from '../../map-widgets/map-widgets.service';
 import { MenuService } from '../../menu/menu.service';
-
+import { ShareButtonService } from '../../services/share-button.service';
 import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
@@ -154,14 +154,7 @@ export class MapKindergartensComponent implements OnInit {
 
   maintenanceOn = false;
 
-  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService, private renderer2: Renderer2) {
-    this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
-      (queryParam: any) => {
-        //console.log("URL Parametrai", queryParam);
-        return this.queryParams = queryParam;
-      }
-    );
-  }
+  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService, private renderer2: Renderer2, private shareButtonService: ShareButtonService) { }
 
   toggleSidebar() {
     this.sidebarState = this.sidebarState === 's-close' ? 's-open' : 's-close';
@@ -182,44 +175,8 @@ export class MapKindergartensComponent implements OnInit {
 
   // toggle share container
   shareToggle(e) {
-    //get visible and checked layers ids
-    const ids: any = this.mapDefaultService.getVisibleLayersIds(this.view);
-    const visibleLayersIds: number[] = ids.identificationsIds;
-    const checkedLayersIds: number[] = ids.visibilityIds;
-    //check if there is any visible layers that can be identied in allLayers group
-    let identify = ids.identificationsIds.allLayers.length <= 1 ? "" : "allLayers";
-
-    //get share url
-    let currentZoom: number, currentCoordinates: number[];
-    currentZoom = this.view.zoom;
-    currentCoordinates = [this.view.center.x, this.view.center.y];
-    this.shareUrl = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
-      + this.mapWidgetsService.returnActiveBasemap() + '&identify=' + identify;
-
-    //toggle active state
     this.shareContainerActive = !this.shareContainerActive;
-
-    //highlight selected input
-    if (this.shareContainerActive) {
-      setTimeout(() => {
-        const shareURL = document.getElementById("url-link") as HTMLInputElement;
-        if (shareURL) {
-          shareURL.select();
-        }
-      }, 20);
-
-    }
-
-  }
-
-  shareCheckedLayersIds(ids: any): string {
-    let shareCheckStr: string = "";
-    Object.keys(ids).forEach(function(key) {
-      let widget = ids[key];
-      shareCheckStr += "&" + key + "=";
-      ids[key].forEach(id => shareCheckStr += id + "!");
-    });
-    return shareCheckStr;
+    this.shareUrl = this.shareButtonService.shareToggle(e, this.shareContainerActive);
   }
 
   initView(view) {
@@ -282,7 +239,7 @@ export class MapKindergartensComponent implements OnInit {
       const suspended = this._mapService.getSuspendedIdentitication();
       //store all deffered objects of identify task in def array
       let def = [];
-      let ids: any = this.mapDefaultService.getVisibleLayersIds(view);
+      let ids: any = this.shareButtonService.getVisibleLayersIds(view);
       let visibleLayersIds: number[] = ids.identificationsIds;
       view.popup.dockEnabled = false;
       view.popup.dockOptions = {
@@ -417,6 +374,12 @@ export class MapKindergartensComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.queryUrlSubscription = this.activatedRoute.queryParams.subscribe(
+      (queryParam: any) => {
+        //console.log("URL Parametrai", queryParam);
+        return this.queryParams = queryParam;
+      }
+    );
     document.body.classList.add('buldings-theme');
     //add snapshot url and pass path name ta Incetable map service
     //FIXME ActivatedRoute issues

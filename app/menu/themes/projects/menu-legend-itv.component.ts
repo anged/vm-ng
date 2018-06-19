@@ -51,7 +51,6 @@ export class MenuLegendItvComponent implements OnInit, OnDestroy {
     let view = this._mapService.getView();
     let map = this._mapService.returnMap();
     this.subscription = this._mapService.layersStatus.subscribe(status => {
-      console.log(status)
       this.status = status;
     });
   }
