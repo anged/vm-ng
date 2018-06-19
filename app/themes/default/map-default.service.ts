@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
-//import { Http, Response } from '@angular/http';
-import { HttpClient } from '@angular/common/http';
-
-import { Observable, Subject } from 'rxjs';
 
 import { MapOptions } from '../../options';
 import { MapService } from '../../map.service';
-import { PopupTemplates } from '../../services/identify/popup-templates';
-
 
 @Injectable()
 export class MapDefaultService {
@@ -17,7 +11,7 @@ export class MapDefaultService {
   //url array
   urlArray: string[] = [];
 
-  constructor(private http: HttpClient, private mapService: MapService) { }
+  constructor(private mapService: MapService) { }
 
   getUrls(): string[] {
     return this.urlArray;

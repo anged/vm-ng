@@ -114,10 +114,6 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
     this.projectsService.runProjectsQuery(itvFeatureUrl, sqlStr, inputValue).then(() => {
       this.fullListChanged = this.projectsService.getAllProjects();
     });
-    //add to Subject
-    if (count === 0) {
-      this._mapService.getLisProjects(this.projectsListArr);
-    }
   }
 
   getFilteredprojects(view, sqlStr) {

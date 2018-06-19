@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { MapService } from '../map.service';
-import { MapDefaultService } from '../themes/default/map-default.service';
 import { MenuService } from './menu.service';
-import { IdentifyService } from '../services/identify/identify.service';
 import { MapOptions } from '../options';
 
 @Component({
@@ -30,9 +28,8 @@ export class MenuSubLayersComponent {
 
   constructor(
     private mapService: MapService,
-    private mapDefaultService: MapDefaultService,
-    private menuService: MenuService,
-    private identify: IdentifyService) {}
+    private menuService: MenuService
+    ) {}
 
   toggleSubState() {
     const subLayersSate = this.menuService.getSubLayersState();

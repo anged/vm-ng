@@ -27,18 +27,10 @@ import on = require("dojo/on");
 import IdentifyTask = require("esri/tasks/IdentifyTask");
 import IdentifyParameters = require("esri/tasks/support/IdentifyParameters");
 import { MapOptions } from './options';
-import { PopupTemplates } from './services/identify/popup-templates';
 import { ProjectsListService } from './projects-list/projects-list.service';
 import QueryTask = require("esri/tasks/QueryTask");
 import Query = require("esri/tasks/support/Query");
 import RelationshipQuery = require("esri/tasks/support/RelationshipQuery");
-
-export interface DataStore {
-  elderates: any[],
-  mainInfo: any[],
-  summary: any[],
-  info: any[]
-}
 
 @Injectable()
 export class MapService {
@@ -48,8 +40,6 @@ export class MapService {
   //selection graphic layer array:
   private allGraphicLayers: any[] = [];
   private featureLayerArr: any[];
-  private projectsObs = new Subject();
-  projectsItem = this.projectsObs.asObservable();
   //suspend layers toggle (e.g. suspend layers while drawing with measure tools)
   suspendedIdentitication: boolean = false;
   private mobile: boolean = false;
@@ -70,17 +60,6 @@ export class MapService {
   rasterLayers = [];
   //all layers for "allLayers"
   subDynamicLayers: any;
-  // Observable  for kindergartens
-  private kGartensObs = new Subject<DataStore>();
-  // Observable item stream
-  kGartensData = this.kGartensObs.asObservable();
-
-  dataStore: any = {
-    elderates: null,
-    mainInfo: null,
-    info: null,
-    summary: null
-  };
 
   constructor(private http: HttpClient, private projectsService: ProjectsListService) { }
 
@@ -228,22 +207,7 @@ export class MapService {
 
   initGraphic(type: string, name: String, attr: any, geom, scale: any = "", graphicLayer, size = '12px', style = 'solid') {
     return new Graphic({
-      // attributes: attr,
-      // geometry: geom,
-      // popupTemplate: {
-      //   title: this.projectsService.getPopUpTitle(attr),
-      //   //pass selection string to indentify that content is for selected graphic, so Observable must not be used
-      //   content: this.projectsService.getPopUpContent(attr, "selection")
-      // },
-      // symbol: this.initSymbol(type),
-      // layer: graphicLayer
-      ///attributes: attr,
       geometry: geom,
-      // popupTemplate: {
-      //   title: this.projectsService.getPopUpTitle(attr),
-      //   //pass selection string to indentify that content is for selected graphic, so Observable must not be used
-      //   content: this.projectsService.getPopUpContent(attr, "selection")
-      // },
       symbol: this.initSymbol(type, size, style),
       layer: graphicLayer
     });
@@ -324,9 +288,7 @@ export class MapService {
       outFields: ["*"],
       opacity,
       //definitionExpression: 'Pabaiga=2018',
-      title: 'itv-feature-layer-' + index,
-      //add popupTemplate
-      //popupTemplate: PopupTemplates.itvTemplate
+      title: 'itv-feature-layer-' + index
     });
   }
 
@@ -449,36 +411,6 @@ export class MapService {
     });
   }
 
-  //queryRelatedData of feature layer
-  queryRelationship(featureLayer, queryString = '', relationsID) {
-    const queryTask = this.addQueryTask(featureLayer.url + '/0');
-    //console.log(arguments);
-    const relationshipQuery = new RelationshipQuery();
-    relationshipQuery.relationshipId = 0;
-    relationshipQuery.outFields = ["*"];
-    relationshipQuery.objectIds = [relationsID];
-    relationshipQuery.returnGeometry = false;
-    //relationshipQuery.definitionExpression = 'GARDEN_ID=' + relationsID;
-    queryTask.executeRelationshipQuery(relationshipQuery).then((results) => {
-      //console.log('R QUERY', results[relationsID.toString()].features["0"].attributes.LABEL);
-    });
-  }
-
-  //get All Data
-  getAllQueryData(urlStr: string, name: string, outFields) {
-    let query = this.addQuery();
-    const queryTask = this.addQueryTask(urlStr);
-    //console.log(arguments);
-    //get all data
-    query.where = "1=1";
-    query.outFields = outFields;
-    query.returnGeometry = false;
-    return queryTask.execute(query).then((result) => {
-      this.dataStore[name] = result.features.map(feature => feature.attributes);
-      this.kGartensObs.next(this.dataStore);
-    }, (error) => { console.error(error); });
-  }
-
   //run query by geometry
   runQueryByGeometry(urlStr: string, geometry: any) {
     const query = this.addQuery();
@@ -493,10 +425,6 @@ export class MapService {
 
   getArrayByUniqueValue(array, valueName) {
     //return array.filter((data, index, arr) => data )
-  }
-
-  returnAllQueryData() {
-    return this.dataStore;
   }
 
   pickCustomThemeLayers(response, layer, key, queryParams, groupLayer, serviceKey, symbolType = 'simple-fill') {
@@ -642,10 +570,6 @@ export class MapService {
       let sublayer = layer.findSublayerById(parseInt(id));
       sublayer ? sublayer.visible = true : "";
     })
-  }
-
-  getLisProjects(projects): void {
-    this.projectsObs.next(projects);
   }
 
   isMobileDevice(mobile: boolean) {

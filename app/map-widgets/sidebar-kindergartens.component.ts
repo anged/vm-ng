@@ -6,7 +6,8 @@ import { MapOptions } from '../options';
 import { SearchKindergartensComponent } from './search-kindergartens.component';
 import { SearchService } from '../search/search.service';
 import { MapWidgetsService } from './map-widgets.service';
-import { MapService, DataStore } from '../map.service';
+import { MapService } from '../map.service';
+import { MapKindergartensService, DataStore } from '../themes/kindergartens/map-kindergartens.service';
 import { SelectorsService } from '../selectors/selectors.service';
 import { MenuToolsService } from '../menu/menu-tools.service';
 import { Symbols } from '../menu/symbols';
@@ -93,7 +94,14 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
   filtersOn = false;
   distance: number;
 
-  constructor(private mapWidgetsService: MapWidgetsService, private mapService: MapService, private selectorsService: SelectorsService, private searchService: SearchService, private menuToolsService: MenuToolsService) { }
+  constructor(
+    private mapWidgetsService: MapWidgetsService,
+    private mapService: MapService,
+    private selectorsService: SelectorsService,
+    private searchService: SearchService,
+    private menuToolsService: MenuToolsService,
+    private mapKindergartensService: MapKindergartensService
+  ) { }
 
   ngOnInit() {
     const map = this.mapService.returnMap();
@@ -105,7 +113,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       this.fullArea = features[0];
     })
 
-    this.subscription = this.mapService.kGartensData.subscribe(data => {
+    this.subscription = this.mapKindergartensService.kGartensData.subscribe(data => {
       //console.log('SIDEBAR STORE', data);
       if (data.elderates && data.mainInfo && data.info && data.summary) {
         this.filteredGartens = data.mainInfo;
@@ -177,7 +185,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     featureLayer.queryFeatures(query).then((results) => {
       const features = results.features[0];
       let fullData = {};
-      const dataStore = this.mapService.returnAllQueryData();
+      const dataStore = this.mapKindergartensService.returnAllQueryData();
       const mainInfo = dataStore.mainInfo.forEach(data => {
         if (data.GARDEN_ID === id) {
           Object.assign(fullData, data);

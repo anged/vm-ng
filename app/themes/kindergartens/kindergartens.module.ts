@@ -7,6 +7,7 @@ import { ShareModule } from '../../share.module';
 import { KindergartensRouting } from './kindergartens.routing';
 import { SidebarKindergartensComponent } from '../../map-widgets';
 import { SearchKindergartensComponent } from '../../map-widgets/search-kindergartens.component';
+import { MapKindergartensService } from './map-kindergartens.service';
 
 @NgModule({
   imports: [
@@ -19,6 +20,7 @@ import { SearchKindergartensComponent } from '../../map-widgets/search-kindergar
     MapKindergartensComponent,
     SidebarKindergartensComponent,
     SearchKindergartensComponent
-  ]
+  ],
+  providers: [MapKindergartensService]
 })
 export class KindergartensModule { }

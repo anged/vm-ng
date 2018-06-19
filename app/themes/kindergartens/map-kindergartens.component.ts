@@ -9,6 +9,7 @@ import { SearchService } from '../../search/search.service';
 import { MapWidgetsService } from '../../map-widgets/map-widgets.service';
 import { MenuService } from '../../menu/menu.service';
 import { ShareButtonService } from '../../services/share-button.service';
+import { MapKindergartensService } from './map-kindergartens.service';
 import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
 import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
@@ -154,7 +155,21 @@ export class MapKindergartensComponent implements OnInit {
 
   maintenanceOn = false;
 
-  constructor(private _mapService: MapService, private mapDefaultService: MapDefaultService, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private menuService: MenuService, private renderer2: Renderer2, private shareButtonService: ShareButtonService) { }
+  constructor(
+    private _mapService: MapService,
+    private mapDefaultService: MapDefaultService,
+    private projectsService: ProjectsListService,
+    private searchService: SearchService,
+    private featureService: FeatureQueryService,
+    private identify: IdentifyService,
+    private pointAddRemoveService: PointAddRemoveService,
+    private activatedRoute: ActivatedRoute,
+    private mapWidgetsService: MapWidgetsService,
+    private menuService: MenuService,
+    private renderer2: Renderer2,
+    private shareButtonService: ShareButtonService,
+    private mapKindergartensService: MapKindergartensService
+  ) { }
 
   toggleSidebar() {
     this.sidebarState = this.sidebarState === 's-close' ? 's-open' : 's-close';
@@ -210,7 +225,7 @@ export class MapKindergartensComponent implements OnInit {
           if (response.results.length > 0) {
             const result = response.results[0];
             if ((response.results[0].graphic.layer.id === 'feature-darzeliai') && (response.results[0].graphic.layer.id !== 'feature-area')) {
-              const dataStore = this._mapService.returnAllQueryData();
+              const dataStore = this.mapKindergartensService.returnAllQueryData();
               const top = (event.y + 100) < window.innerHeight ? event.y + 10 + 'px' : event.y - 30 + 'px';
               const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
               const values = response.results["0"];
@@ -348,7 +363,7 @@ export class MapKindergartensComponent implements OnInit {
               const showResult = value.graphic;
               const currentClass = `${value.graphic.attributes.REITING} klasė`;
               const currentYear = `${value.graphic.attributes.SEZONAS}-${value.graphic.attributes.SEZONAS - 1} sezonas`;
-              const dataStore = this._mapService.returnAllQueryData();
+              const dataStore = this.mapKindergartensService.returnAllQueryData();
               const mainInfo = dataStore.mainInfo.forEach(data => {
                 if (data.GARDEN_ID === value.graphic.attributes.Garden_Id) {
                   Object.assign(fullData, data);
@@ -450,10 +465,10 @@ export class MapKindergartensComponent implements OnInit {
         this._mapService.pickCustomThemeLayers(response, layer, key, this.queryParams, groupLayer, 0, 'simple-marker');
         //get main info data to dataStore
         //send each request after previous one
-        this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/4', 'elderates', ['ID', 'LABEL']).then(() => {
-          this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/5', 'mainInfo', ['GARDEN_ID', 'LABEL', 'EMAIL', 'PHONE', 'FAX', 'ELDERATE', 'ELDERATE2','ELDERATE3', 'ELDERATE4', 'SCHOOL_TYPE']).then(() => {
-            this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/6', 'info', ['DARZ_ID', 'LAN_LABEL', 'TYPE_LABEL', 'CHILDS_COUNT', 'FREE_SPACE']).then(() => {
-              this._mapService.getAllQueryData(layer.dynimacLayerUrls + '/7', 'summary', ['DARZ_ID', 'CHILDS_COUNT', 'FREE_SPACE']);
+        this.mapKindergartensService.getAllQueryData(layer.dynimacLayerUrls + '/4', 'elderates', ['ID', 'LABEL']).then(() => {
+          this.mapKindergartensService.getAllQueryData(layer.dynimacLayerUrls + '/5', 'mainInfo', ['GARDEN_ID', 'LABEL', 'EMAIL', 'PHONE', 'FAX', 'ELDERATE', 'ELDERATE2','ELDERATE3', 'ELDERATE4', 'SCHOOL_TYPE']).then(() => {
+            this.mapKindergartensService.getAllQueryData(layer.dynimacLayerUrls + '/6', 'info', ['DARZ_ID', 'LAN_LABEL', 'TYPE_LABEL', 'CHILDS_COUNT', 'FREE_SPACE']).then(() => {
+              this.mapKindergartensService.getAllQueryData(layer.dynimacLayerUrls + '/7', 'summary', ['DARZ_ID', 'CHILDS_COUNT', 'FREE_SPACE']);
             });
           });
         });

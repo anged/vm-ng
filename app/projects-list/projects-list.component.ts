@@ -7,7 +7,6 @@ import { ProjectsListService } from './projects-list.service';
 import { IdentifyService } from '../services/identify/identify.service';
 import { PointAddRemoveService } from '../query/point-add-remove.service';
 import { MapOptions } from '../options';
-import { PopupTemplates } from '../services/identify/popup-templates';
 
 import on = require("dojo/on");
 import Point = require("esri/geometry/Point");

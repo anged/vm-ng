@@ -7,7 +7,6 @@
     "url": "https://github.com/anged/vm-ng.git"
   },
   "scripts": {
-    "test": "karma start",
     "lite": "lite-server",
     "start": "concurrently \"webpack --mode development --watch --config webpack.dev.js\" \"npm run lite\" ",
     "build": "webpack --mode production --config webpack.prod.js --progress --display-error-details"
