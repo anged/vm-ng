@@ -53,11 +53,6 @@ export class MenuService {
     return this.subLayersActive;
   }
 
-  //just subscribe to current state / not using anymore
-  sentSubState() {
-    this.subLayersObs.next(this.subLayersActive);
-  }
-
   addSubList() {
     let view = this.mapService.getView();
     let map = this.mapService.returnMap();

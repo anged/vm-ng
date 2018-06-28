@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router'
 import forIn from 'lodash-es/forIn';
 
 import { ThemesComponent } from './themes.component';
+import { NotFoundComponent } from './not-found.component';
 import { MapOptions } from './options';
 
 let defaultThemesRoutes =  [];
@@ -20,11 +21,11 @@ addDefaultRoutes();
 const MAP_ROUTES: Routes = [
   { path: '', pathMatch: 'full', component: ThemesComponent },
   { path: 'projektai', pathMatch: 'full',loadChildren: './themes/projects/projects.module#ProjectsModule' },
-  { path: 'darzeliai', pathMatch: 'full', loadChildren: './themes/kindergartens/kindergartens.module#KindergartensModule' },
+  { path: 'darzeliai', loadChildren: './themes/kindergartens/kindergartens.module#KindergartensModule' },
   { path: 'pastatai', pathMatch: 'full', loadChildren: './themes/buildings/buildings.module#BuildingsModule' },
-  ...defaultThemesRoutes
+  ...defaultThemesRoutes,
   //add page not found component
-  //{ path: '**', component: NotFoundComponent }
+  { path: '**', component: NotFoundComponent }
 ];
 
 export const Routing = RouterModule.forRoot(MAP_ROUTES);

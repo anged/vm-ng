@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { MapOptions } from '../options';
 import { MapService } from '../map.service';
@@ -13,7 +13,7 @@ import watchUtils = require("esri/core/watchUtils");
   selector: 'menu-map',
   templateUrl: './app/menu/menu.component.html'
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent implements OnInit, OnDestroy {
   @Input() view: any;
   @Input() allLayerslayer: any;
 
@@ -158,6 +158,7 @@ export class MenuComponent implements OnInit {
 
     //subscribe to sub layer list button activation
     this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
+      console.log(activeState)
       this.subLayersActive = activeState;
       //get state after subscribe, if help box is closed initiate it
       if ((!this.menuService.getVisibleSubLayerNumberState()) && activeState) {
@@ -165,5 +166,9 @@ export class MenuComponent implements OnInit {
         this.getVisibleSubLayerNumber();
       }
     })
+  }
+
+  ngOnDestroy() {
+    this.subListSubscribtion.unsubscribe();
   }
 }

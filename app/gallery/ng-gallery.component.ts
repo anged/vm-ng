@@ -19,6 +19,11 @@ require('baguettebox.js/dist/baguetteBox.min.css');
       overflow: hidden;
       padding: 2px;
     }
+    @media only screen and (min-width: 1319px) {
+      .gallery-item {
+        max-width: 32%;
+      }
+    }
   `],
   template: `
     <!--Fake Gallery DOM -->

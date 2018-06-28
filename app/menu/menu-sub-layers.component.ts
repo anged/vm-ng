@@ -48,8 +48,6 @@ export class MenuSubLayersComponent {
     //open help box if it was closed
     if (this.menuService.getVisibleSubLayerNumberState()) {
       this.menuService.setVisibleSubLayerNumberState(1);
-      //init subscribe
-      this.menuService.sentSubState();
     }
 
     this.state = this.menuService.getSubState();

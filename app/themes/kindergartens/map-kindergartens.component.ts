@@ -395,6 +395,7 @@ export class MapKindergartensComponent implements OnInit {
         return this.queryParams = queryParam;
       }
     );
+    this.queryUrlSubscription.unsubscribe();
     document.body.classList.add('buldings-theme');
     //add snapshot url and pass path name ta Incetable map service
     //FIXME ActivatedRoute issues

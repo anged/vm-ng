@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, OnInit, OnDestroy, ViewChild  } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 import { MapService } from '../map.service';
 import { FeatureQueryService } from '../query/feature-query.service';
@@ -24,7 +24,6 @@ import all = require("dojo/promise/all");
 })
 
 export class ProjectsListComponent implements OnInit, OnDestroy {
-  @Input() featureLayers: any;
   @Input() map: any;
   @Input() view: any;
   @Input() projectsList: any;
@@ -187,22 +186,22 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
         //console.log('response resultsMerge 2', resultsMerge)
         //console.log('getPointCoordinates2', this.pointAddRemoveService.getPointCoordinates())
         this.pointSubscription = this.pointAddRemoveService.pointItem.subscribe(point => {
-        //console.log("POINT", point);
-        if (resultsMerge.length > 0) {
-          //let point = this.pointAddRemoveService.getPointCoordinates();
-          this.view.goTo({
-          target: point
-        }, MapOptions.animation.options);
-          //this.view.center = point;
-          //alert(point.x)
-          this.view.popup.open({
-            features: resultsMerge,
-            location: point
-          });
-          //TODO change logic
-          //unsubscribe point subscribtion after popup opens
-          setTimeout(()=>{this.pointSubscription.unsubscribe()}, 200)
-        }
+          //console.log("POINT", point);
+          if (resultsMerge.length > 0) {
+            //let point = this.pointAddRemoveService.getPointCoordinates();
+            this.view.goTo({
+              target: point
+            }, MapOptions.animation.options);
+            //this.view.center = point;
+            //alert(point.x)
+            this.view.popup.open({
+              features: resultsMerge,
+              location: point
+            });
+            //TODO change logic
+            //unsubscribe point subscribtion after popup opens
+            setTimeout(() => { this.pointSubscription.unsubscribe() }, 200)
+          }
         });
       });
 
@@ -416,7 +415,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.unsubscribe();
     this.pointSubscription.unsubscribe();
   }
 }

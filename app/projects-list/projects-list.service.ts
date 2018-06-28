@@ -5,8 +5,8 @@ import MapImageLayer = require("esri/layers/MapImageLayer");
 import QueryTask = require("esri/tasks/QueryTask");
 import Query = require("esri/tasks/support/Query");
 
-import {Subject} from 'rxjs';
-
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ProjectsListService {
@@ -18,11 +18,11 @@ export class ProjectsListService {
   //using for direct viewing on map with hitTest method as well
   mainFilterCheck: String = 'word';
 
-  private galleryObs = new Subject();
-  galleryArr = this.galleryObs.asObservable();
-
-  private fullListObs = new Subject();
-  fullListItem = this.fullListObs.asObservable();
+  private projectsSubject = new Subject<any>();
+  galleryArr = this.projectsSubject.asObservable();
+  fullListItem = this.projectsSubject.asObservable().pipe(
+      map(item => item.map(innerItem => { return { attributes: innerItem.attributes } }))
+  );
 
   getProjects() {
     return this.projectsByExtent;
@@ -97,7 +97,8 @@ export class ProjectsListService {
     query.outFields = ["*"];
     let queryTask = this.QueryTask(urlStr);
     queryTask.execute(query).then((result) => {
-      this.fullListObs.next(result.features);
+      //this.fullListObs.next(result.features);
+      this.projectsSubject.next(result.features);
       return result.features;
     }, (error) => { console.error(error); });
   }
@@ -279,7 +280,8 @@ export class ProjectsListService {
 
     //push onto subject unless we are generating content for selection graphic
     //this.galleryObs.next([]); //return to destroy compontent // bug fix
-    selection === "selection" ? "" : this.galleryObs.next(galleryImages);
+    //selection === "selection" ? "" : this.galleryObs.next(galleryImages);
+    selection === "selection" ? "" : this.projectsSubject.next(galleryImages);
 
     // return string interpolation
     return `<div class="esri-popup-renderer">

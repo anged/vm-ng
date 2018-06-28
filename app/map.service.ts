@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
+import { retry } from 'rxjs/operators';
 
 import Map = require("esri/Map");
 import Graphic = require("esri/Graphic");
@@ -346,11 +347,17 @@ export class MapService {
   //http fetch for default themes
   fetchRequest(url: string) {
     return this.http.get(url + "/layers?f=pjson")
+      .pipe(
+        retry(3)
+      )
   }
 
   //http fetch for projects themes
   fetchRequestProjects(url: string) {
     return this.http.get(url + "?f=pjson")
+      .pipe(
+        retry(3)
+      )
   }
 
   //projects theme add features to mapPoint

@@ -114,20 +114,17 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     })
 
     this.subscription = this.mapKindergartensService.kGartensData.subscribe(data => {
-      //console.log('SIDEBAR STORE', data);
-      if (data.elderates && data.mainInfo && data.info && data.summary) {
-        this.filteredGartens = data.mainInfo;
-        this.dataStore = data;
-        this.dataAge = this.selectorsService.getUniqueAttribute(data.info, 'TYPE_LABEL');
-        //console.log("UNIQUE dataAge: ", this.dataAge)
-        this.dataLang = this.selectorsService.getUniqueAttribute(data.info, 'LAN_LABEL');
-        //console.log("UNIQUE dataLang: ", this.dataLang)
-        this.dataType = this.selectorsService.getUniqueAttribute(data.mainInfo, 'SCHOOL_TYPE');
-        //console.log("UNIQUE dataType: ", this.dataType)
-        this.dataName = this.selectorsService.getUniqueAttribute(data.mainInfo, 'LABEL');
-        //console.log("UNIQUE dataName: ", this.dataName)
-        this.subscription.unsubscribe();
-      }
+      this.filteredGartens = data.mainInfo;
+      this.dataStore = data;
+      this.dataAge = this.selectorsService.getUniqueAttribute(data.info, 'TYPE_LABEL');
+      //console.log("UNIQUE dataAge: ", this.dataAge)
+      this.dataLang = this.selectorsService.getUniqueAttribute(data.info, 'LAN_LABEL');
+      //console.log("UNIQUE dataLang: ", this.dataLang)
+      this.dataType = this.selectorsService.getUniqueAttribute(data.mainInfo, 'SCHOOL_TYPE');
+      //console.log("UNIQUE dataType: ", this.dataType)
+      this.dataName = this.selectorsService.getUniqueAttribute(data.mainInfo, 'LABEL');
+      //console.log("UNIQUE dataName: ", this.dataName)
+      this.subscription.unsubscribe();
     });
   }
 

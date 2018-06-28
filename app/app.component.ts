@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
       let link = document.createElement('link');
       link.rel = 'alternate';
       link.type = 'text/json+oembed';
-      link.href = `http://vilniausplanas.lt/oembed/?url=${currentUrl}`;
+      link.href = `http://venera2/oembed?url=${currentUrl}`;
       document.head.appendChild(link);
   }
 }

@@ -37,7 +37,6 @@ import forIn from 'lodash-es/forIn';
 export class MapDefaultComponent implements OnInit, OnDestroy {
 
   //execution of an Observable,
-  subscription: Subscription;
   queryUrlSubscription: Subscription;
 
   queryParams: any;
@@ -158,14 +157,10 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.queryUrlSubscription = this.activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
-        //navigate specific legacy map urls
-        if (queryParam['theme'] === 'teritory-planning') {
-          this.router.navigate(['/teritoriju-planavimas']);
-        }
-
-        return this.queryParams = queryParam;
+        this.queryParams = queryParam;
       }
     );
+    this.queryUrlSubscription.unsubscribe();
     //console.log("init");
     //add snapshot url and pass path name ta Incetable map service
     //FIXME ActivatedRoute issues

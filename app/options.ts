@@ -343,6 +343,9 @@ export const MapOptions: any = {
   },
   maintenance: {
     msg: 'Puslapis laikinai nepasiekiamas - vykdomi priežiūros darbai. Atsiprašome už nepatogumus'
+  },
+  notFound: {
+    msg: 'Astiprašome, toks puslapis neegzistuoja'
   }
 }
 

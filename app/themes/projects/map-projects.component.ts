@@ -34,6 +34,7 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
 
   //execution of an Observable,
   subscription: Subscription;
+  httpSubscription: Subscription;
   queryUrlSubscription: Subscription;
 
   queryParams: any;
@@ -48,7 +49,6 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
   view: any;
   search: any;
   mobile: boolean;
-  featureLayers: any;
 
   helpContainerActive: boolean = false;
   shareContainerActive: boolean = false;
@@ -68,6 +68,7 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
         return this.queryParams = queryParam
       }
     );
+    this.queryUrlSubscription.unsubscribe();
   }
 
   getSqlString() {
@@ -217,7 +218,6 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
 
   addFeaturesToMap() {
     const featureLayerArr = this._mapService.addFeaturesToMap();
-    this.featureLayers = featureLayerArr;
   }
 
   ngOnInit() {
@@ -240,12 +240,12 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
         this.mapWidgetsService.setActiveBasemap(basemap.id);
         const visibleBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id);
         basemaps.push(visibleBaseMap);
-        visibleBaseMap.then(() => {}, err => {
+        visibleBaseMap.then(() => { }, err => {
           this.maintenanceOn = true;
         });
       } else {
         const hiddenBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id, false);
-        hiddenBaseMap.then(() => {}, err => {
+        hiddenBaseMap.then(() => { }, err => {
           this.maintenanceOn = true;
         });
         basemaps.push(hiddenBaseMap);
@@ -279,7 +279,6 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
       //do not initVIew on every new subscribe event
       //subscribe expression str change, when user is filtering projects-theme
       this.subscription = this.featureService.expressionItem.subscribe(sqlStr => {
-        //console.log("SUBSCRIPTION: ", sqlStr);
         this.sqlString = sqlStr;
         //get properties on filtering event passing a sql string
         this.getFilteredprojects(view, sqlStr);
@@ -310,6 +309,5 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-    this.queryUrlSubscription.unsubscribe();
   }
 }

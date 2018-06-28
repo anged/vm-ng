@@ -6,6 +6,7 @@ import { ShareModule } from './share.module';
 import { Routing } from './app.routing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ThemesComponent } from './themes.component';
+import { NotFoundComponent } from './not-found.component';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { ThemesComponent } from './themes.component';
   ],
   declarations: [
     AppComponent,
-    ThemesComponent
+    ThemesComponent,
+    NotFoundComponent
   ],
   providers: [
   ],
