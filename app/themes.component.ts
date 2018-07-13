@@ -16,16 +16,17 @@ import values from 'lodash-es/values';
       color: #dadada;
     }
     .row.themes-component h1 {
-      color: #dadada;
-      line-height: 1.4;
+			float: left;
+			width: 180px;
       padding: 8px 10px 0;
-      font-size: 14px;
-      letter-spacing: -0.4px;
-      float: left;
+			margin-top: 0;
       margin-left: 0;
-      width: 180px;
+			font-size: 14px;
+			letter-spacing: -0.4px;
       text-align: left;
       font-weight: 600;
+			color: #dadada;
+			line-height: 1.4;
     }
     .themes-page-logo {
       padding-top: 30px;

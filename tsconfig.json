@@ -21,6 +21,9 @@
       "node",
       "dojo",
       "arcgis-js-api"
-    ],
-  }
+    ]
+  },
+	"files": [
+    "app/options.ts",
+  ]
 }

@@ -6,7 +6,11 @@ esri-map .map {
   margin: 0;
   padding: 0;
   line-height: 1.6;
-  /*-webkit-overflow-scrolling: touch;*/
+	overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+html {
+	overflow: auto;
 }
 body {
     font-weight: 300;
@@ -1406,7 +1410,8 @@ label {
   background-color: #53565D;
   height: auto;
   overflow: hidden;
-  overflow-y: auto;
+	overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 #theme.sub-menu,
 #layers.sub-menu,

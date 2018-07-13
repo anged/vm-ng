@@ -23,7 +23,7 @@ export class MapKindergartensService {
   //   filter(data => data.elderates && data.mainInfo && data.info && data.summary)
   // );
   kGartensData = new Observable<any>(observer => this.kGartensObs = observer).pipe(
-    filter(data => data.elderates && data.mainInfo && data.info && data.summary) 
+    filter(data => data.elderates && data.mainInfo && data.info && data.summary)
   );
 
   dataStore: DataStore = {
