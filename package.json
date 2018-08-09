@@ -8,8 +8,8 @@
   },
   "scripts": {
     "lite": "lite-server",
-    "start": "concurrently \"tsc\" \"webpack --mode development --watch --config webpack.dev.js\" \"npm run lite\" ",
-    "build": "concurrently \"tsc\" \"webpack --mode production --config webpack.prod.js --progress --display-error-details\" "
+    "start": "concurrently \"webpack --mode development --watch --config webpack.dev.js\" \"tsc\" \"npm run lite\" ",
+    "build": "concurrently \"webpack --mode production --config webpack.prod.js --progress\" \"tsc\" "
   },
   "keywords": [
     "Angular-6",

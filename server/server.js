@@ -1,20 +1,21 @@
 const express  = require('express');
 const url = require('url');
-const op = require('../dist/options.js');
-
-const oembedUrl = 'https://maps.vilnius.lt';
+const op = require('./dist/options.js');
+const  themes = op.MapOptions.themes;
+const oembedUrl = 'https://gis.vplanas.lt/oembed/?url=https://maps1.vilnius.lt';
 const oembedTitle = 'Vilniaus miesto interaktyvūs žemėlapiai';
 const oembedDescription = 'Vilniaus miesto savivaldybės interaktyvūs žemėlapiai';
-const  themes = op.MapOptions.themes;
+const oembedImg = './app/img/vilnius_logo_o.png';
 
 const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use("/app", express.static(__dirname + '/../app'));
-app.use("/dist", express.static(__dirname + '/../dist'));
+app.use("/app", express.static(__dirname + '/./app'));
+app.use("/dist", express.static(__dirname + '/./dist'));
+app.use("/arcgis_js_api", express.static(__dirname + '/./arcgis_js_api'));
 
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
   const pathname = url.parse(req.url, parseQueryString=false).pathname;
 	if (pathname.slice(1)) {
 		for (theme in themes) {
@@ -23,7 +24,8 @@ app.get('*', (req, res) => {
 				res.render('index.ejs', {
 					oembedUrl: oembedUrl + req.url,
 					oembedDescription: `${themes[theme].description} `,
-					oembedTitle: `${themes[theme].name} / ${oembedTitle}`
+					oembedTitle: `${themes[theme].name} / ${oembedTitle}`,
+					oembedImg: themes[theme].imgUrl
 				 });
 			}
 
@@ -33,10 +35,14 @@ app.get('*', (req, res) => {
 		res.render('index.ejs', {
 			oembedUrl: oembedUrl + req.url,
 			oembedDescription,
-			oembedTitle
+			oembedTitle: oembedTitle,
+			oembedImg
 		 });
 	}
 
+	//redirect on error to home page
+	res.redirect('/');
+
 });
 
-app.listen(80);
+app.listen(process.env.PORT);

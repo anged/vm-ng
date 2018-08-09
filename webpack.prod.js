@@ -14,7 +14,8 @@ module.exports = {
     },
     output: {
         filename: '[name].bundle.[chunkhash].js',
-        publicPath: '/',
+				// path is /dist/ insetad of /, as for production will be using expressjs
+        publicPath: '/dist/',
         libraryTarget: "amd"
     },
     resolve: {
