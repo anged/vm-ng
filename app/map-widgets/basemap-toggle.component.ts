@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { MapWidgetsService } from './map-widgets.service';
+import { BasemapsService } from './basemaps.service';
 
 @Component({
   selector: 'basemap-toggle',
@@ -64,17 +64,17 @@ export class BasemapToggle implements OnInit {
 
   basemaps: any[];
 
-  constructor(private mapWidgetsService: MapWidgetsService) {
-    this.basemaps = this.mapWidgetsService.returnBasemaps();
+  constructor(private basemapsService: BasemapsService) {
+    this.basemaps = this.basemapsService.returnBasemaps();
   }
 
   toggleBasemap(id: string) {
-    this.mapWidgetsService.toggleBasemap(id, this.view);
+    this.basemapsService.toggleBasemap(id, this.view);
   }
 
   ngOnInit() {
-    this.selectedValue = this.mapWidgetsService.returnActiveBasemap();
-    this.mapWidgetsService.filterBasemap( this.mapWidgetsService.returnActiveBasemap(), this.view);
+    this.selectedValue = this.basemapsService.returnActiveBasemap();
+    this.basemapsService.filterBasemap( this.basemapsService.returnActiveBasemap(), this.view);
 
   }
 }

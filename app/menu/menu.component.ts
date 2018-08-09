@@ -52,7 +52,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     let el = document.getElementById('menu-top');
     //activation on mobile devices
     if (this.mobileActive) {
-      setTimeout(() => { el.className += " menu-active" }, 200);
+      el.className += " menu-active";
     } else {
       el.classList.remove("menu-active");
     }
@@ -64,11 +64,10 @@ export class MenuComponent implements OnInit, OnDestroy {
     let el = document.getElementById('menu-top');
     //activation on mobile devices
     if (this.mobileActive) {
-      setTimeout(() => { el.className += " menu-active" }, 200);
+      el.className += " menu-active";
     } else {
       el.classList.remove("menu-active");
     }
-    //console.log("TAGS", this.mobileActive)
   }
 
   hash(e) {
@@ -158,7 +157,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     //subscribe to sub layer list button activation
     this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
-      console.log(activeState)
+      //console.log(activeState)
       this.subLayersActive = activeState;
       //get state after subscribe, if help box is closed initiate it
       if ((!this.menuService.getVisibleSubLayerNumberState()) && activeState) {

@@ -1,4 +1,5 @@
 export const MapOptions: any = {
+	defaultTitle: 'Vilniaus miesto interaktyvūs žemėlapiai',
   mapOptions: {
     basemap: 'dark-gray',
     extent: {

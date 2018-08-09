@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MapService } from '../map.service';
-import { MapWidgetsService } from '../map-widgets/map-widgets.service';
+import { BasemapsService } from '../map-widgets/basemaps.service';
 
 @Injectable()
 export class ShareButtonService {
@@ -8,7 +8,7 @@ export class ShareButtonService {
   visibleLayers: any = {};
   visibleSubLayerNumber: number = 0;
 
-  constructor(private mapService: MapService, private mapWidgetsService: MapWidgetsService) { }
+  constructor(private mapService: MapService, private basemapsService: BasemapsService) { }
 
   shareToggle(e, shareContainerActive, isProjectsTheme=false) {
     //get visible and checked layers ids
@@ -29,7 +29,7 @@ export class ShareButtonService {
     currentZoom = view.zoom;
     currentCoordinates = [view.center.x, view.center.y];
     const shareUrlStr = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
-      + this.mapWidgetsService.returnActiveBasemap() + '&identify=' + identify;
+      + this.basemapsService.returnActiveBasemap() + '&identify=' + identify;
     //highlight selected input
     if (shareContainerActive) {
       setTimeout(() => {

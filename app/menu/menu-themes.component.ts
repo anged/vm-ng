@@ -4,16 +4,34 @@ import { MapOptions } from '../options';
 
 import  domConstruct = require ('dojo/dom-construct');
 
+import values from 'lodash-es/values';
+
 @Component({
     selector: 'menu-themes',
-    template : `
-      <div>
+    template: `
+      <div class="menu-header">
         <p>Pasirinkite temą:</p>
         <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
+				<div *ngFor="let theme of themes; let i=index; let odd=odd">
+					<div *ngIf="theme.production && !theme.hide" class="sub-theme" [class.align-left]="!odd" [class.align-right]="odd" [class.current-theme]="theme.id===currentThemeName">
+						<a *ngIf="!theme.url && !theme.custom" routerLink="/{{theme.id}}">
+							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+						</a>
+						<a *ngIf="theme.url" [href]="theme.url">
+							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+						</a>
+						<a *ngIf="!theme.url && theme.custom" [href]="theme.id">
+							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+						</a>
+						<p>{{theme.name}}</p>
+					</div>
+				</div>
       </div>
     `
 })
 export class MenuThemesComponent  implements OnInit {
+	themes: any[];
+	currentThemeName: string;
 
   _getUrlQueryName(name, url='') {
     if (!url) url = window.location.href;
@@ -85,8 +103,8 @@ export class MenuThemesComponent  implements OnInit {
   }
 
   ngOnInit() {
-    //create theme menu elements
-    this.createThemeDom();
-    setTimeout(()=>{this.currenthemeLabel();},100)
+		this.themes = values(MapOptions.themes);
+		this.currentThemeName = window.location.pathname.slice(1);
+		//console.log('Current theme', this.currentThemeName);
   }
 }

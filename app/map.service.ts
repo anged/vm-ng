@@ -689,7 +689,7 @@ export class MapService {
     return new Basemap({
       baseLayers: layersArray,
       title: "Pagrindo žemėlapiai",
-      id: "customBasempa"
+      id: "customBasemap"
     });
   }
 

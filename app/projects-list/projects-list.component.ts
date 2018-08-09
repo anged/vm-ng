@@ -415,6 +415,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.pointSubscription.unsubscribe();
+    if (this.pointSubscription) {
+			this.pointSubscription.unsubscribe();
+		}
   }
 }

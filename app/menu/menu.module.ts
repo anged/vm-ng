@@ -1,6 +1,7 @@
 import { NgModule }      from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule }        from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { MenuService }  from './menu.service';
 import { MenuToolsService }  from './menu-tools.service';
@@ -13,6 +14,7 @@ import { NgDraggableModule } from 'angular-draggable';
   imports: [
     CommonModule,
     FormsModule,
+		RouterModule,
     //3rd party declarations
     NgDraggableModule
   ],

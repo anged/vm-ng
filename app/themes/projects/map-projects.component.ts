@@ -4,7 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { MapService } from '../../map.service';
 import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
-import { MapWidgetsService } from '../../map-widgets/map-widgets.service';
+import { BasemapsService } from '../../map-widgets/basemaps.service';
 import { ShareButtonService } from '../../services/share-button.service';
 import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
@@ -61,7 +61,7 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
 
   maintenanceOn = false;
 
-  constructor(private _mapService: MapService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private mapWidgetsService: MapWidgetsService, private shareButtonService: ShareButtonService) {
+  constructor(private _mapService: MapService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private basemapsService: BasemapsService, private shareButtonService: ShareButtonService) {
     this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
         //console.log("URL Parametrai", queryParam);
@@ -138,11 +138,6 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
         this.getProjects(itvFeatureUrl, view.extent, sqlStr, count);
         count += 1;
       }
-    });
-
-    //console.log("VIEW", view.on)
-    view.on("pointer-move", (event) => {
-      //console.log("MOUSE event", event.native)
     });
 
     view.on("click", (event) => {
@@ -234,10 +229,10 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
     this.view = this._mapService.viewMap(this.map);
 
     //add  basemap layer
-    this.mapWidgetsService.returnBasemaps().forEach(basemap => {
+    this.basemapsService.returnBasemaps().forEach(basemap => {
       const baseMapRestEndpoint = MapOptions.mapOptions.staticServices[basemap.serviceName];
       if (this.queryParams.basemap === basemap.id) {
-        this.mapWidgetsService.setActiveBasemap(basemap.id);
+        this.basemapsService.setActiveBasemap(basemap.id);
         const visibleBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id);
         basemaps.push(visibleBaseMap);
         visibleBaseMap.then(() => { }, err => {
@@ -308,6 +303,8 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

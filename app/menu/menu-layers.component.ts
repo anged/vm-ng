@@ -8,9 +8,11 @@ import watchUtils = require("esri/core/watchUtils");
   selector: 'menu-layers',
   template: `
       <div>
-        <p>Temos sluoksniai:</p>
-        <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
-        <div id="layer-list" class="inner">
+        <div class="menu-header">
+					<p>Temos sluoksniai:</p>
+        	<a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
+				</div>
+				<div id="layer-list" class="inner">
         </div>
         <div id="sub-layers-list">
           <menu-sub-layers>

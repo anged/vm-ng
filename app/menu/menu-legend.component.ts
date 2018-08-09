@@ -9,9 +9,11 @@ import  Legend = require ('esri/widgets/Legend');
     selector: 'menu-legend',
     template: `
       <div>
-        <p>Sutartiniai ženklai:</p>
-        <a (click)=closeToggle() class="button close animate" title="Uždaryti">✕</a>
-        <div id="legend-list" class="inner">
+				<div class="menu-header">
+        	<p>Sutartiniai ženklai:</p>
+        	<a (click)=closeToggle() class="button close animate" title="Uždaryti">✕</a>
+				</div>
+				<div id="legend-list" class="inner">
         </div>
       </div>
     `

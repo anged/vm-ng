@@ -6,7 +6,7 @@ import { MapService } from '../../map.service';
 import { MapDefaultService } from '../default/map-default.service';
 import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
-import { MapWidgetsService } from '../../map-widgets/map-widgets.service';
+import { BasemapsService } from '../../map-widgets/basemaps.service';
 import { MenuService } from '../../menu/menu.service';
 import { ShareButtonService } from '../../services/share-button.service';
 import { MapKindergartensService } from './map-kindergartens.service';
@@ -164,7 +164,7 @@ export class MapKindergartensComponent implements OnInit {
     private identify: IdentifyService,
     private pointAddRemoveService: PointAddRemoveService,
     private activatedRoute: ActivatedRoute,
-    private mapWidgetsService: MapWidgetsService,
+    private basemapsService: BasemapsService,
     private menuService: MenuService,
     private renderer2: Renderer2,
     private shareButtonService: ShareButtonService,
@@ -422,10 +422,10 @@ export class MapKindergartensComponent implements OnInit {
 
     //add  basemap layer
     //TODO refactor
-    this.mapWidgetsService.returnBasemaps().forEach(basemap => {
+    this.basemapsService.returnBasemaps().forEach(basemap => {
       const baseMapRestEndpoint = MapOptions.mapOptions.staticServices[basemap.serviceName];
       if (this.queryParams.basemap === basemap.id) {
-        this.mapWidgetsService.setActiveBasemap(basemap.id);
+        this.basemapsService.setActiveBasemap(basemap.id);
         const visibleBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id);
         basemaps.push(visibleBaseMap);
         visibleBaseMap.then(() => {}, err => {
@@ -497,8 +497,6 @@ export class MapKindergartensComponent implements OnInit {
       view.ui.add(this.search, {
         position: "top-left",
         index: 2
-      });
-      this.search.on("search-start", (event) => {
       });
 
       //init view and get projects on vie stationary property changes

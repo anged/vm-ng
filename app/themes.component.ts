@@ -16,6 +16,7 @@ import values from 'lodash-es/values';
       color: #dadada;
     }
     .row.themes-component h1 {
+			display: none;
 			float: left;
 			width: 180px;
       padding: 8px 10px 0;
@@ -29,25 +30,26 @@ import values from 'lodash-es/values';
 			line-height: 1.4;
     }
     .themes-page-logo {
-      padding-top: 30px;
-      padding-bottom: 30px;
-      background: #464646;
-      margin-bottom: 0;
-      min-height: 110px;
+			padding-top: 15px;
+	    padding-bottom: 30px;
+	    background: #464646;
+	    margin-bottom: 0;
+	    min-height: 110px;
     }
     .themes-page-logo span {
       text-transform: uppercase;
       letter-spacing: 3px;
       word-spacing: 6px;
       font-size: 14px;
-      font-weight: 400;
+      font-size: 14px;
+      font-weight: 800;
       position: relative;
-      top: 15px;
+      top: 5px;
+			color: #fff;
     }
     .row.themes-component .themes-page-logo img  {
-      float: left;
-      margin-left: 20px;
-      width: 60px;
+      margin: 0 auto;
+      width: 90px;
     }
     .row.themes-component {
       margin: 0;
@@ -58,11 +60,24 @@ import values from 'lodash-es/values';
       position: fixed;
       overflow-x: auto;
     }
+		@media only screen and (min-width: 480px) {
+			.row.themes-component h1 {
+				display: none;
+			}
+			.row.themes-component .themes-page-logo img  {
+				float: left;
+				margin-left: 20px;
+	      width: 90px;
+	    }
+			.themes-page-logo span {
+	      top: 25px;
+			}
+		}
   `],
   template: `
   <div class="row themes-component" id="themes-container">
     <div class="themes-page-logo">
-      <img src="./app/img/vilnius_logo_r.png" border="0">
+      <img src="./app/img/vilnius_logo.png" alt="Vilniaus miesto interaktyvūs žemėlapiai" border="0">
       <h1>Vilniaus miesto interaktyvūs žemėlapiai</h1>
       <span>Pasirinkite temą</span>
     </div>
@@ -89,9 +104,7 @@ export class ThemesComponent implements OnInit {
 
   themes: any[];
 
-  constructor(private _mapService: MapService) {
-    this.themes = values(MapOptions.themes);
-  }
+  constructor(private _mapService: MapService) {}
 
   createThemeDom() {
     const themesObj = MapOptions.themes;
@@ -121,6 +134,7 @@ export class ThemesComponent implements OnInit {
   }
 
   ngOnInit() {
+		this.themes = values(MapOptions.themes);
     //this.createThemeDom();
     //console.log(this.themes);
   }
