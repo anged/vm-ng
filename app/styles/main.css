@@ -69,6 +69,20 @@ ul li {
   display: block;
   padding: 10px 15px;
 }
+#theme h2 {
+	width: 100%;
+	display: inline-block;
+  margin-top: 0;
+	margin-bottom: 30px;
+	padding-top: 30px;
+	color: #e4e4e4;
+	line-height: 1.6;
+	font-size: 16px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
 .dark .esri-view-surface {
   background: #505050
 }
@@ -676,6 +690,9 @@ label.label-style.active:after {
   font-size: 0.8em;
   color: red;
 }
+.filters-container label.label-style.active:after {
+  padding-left: 5px;
+}
  input[type=checkbox]:not(:checked) + .label-style {
     /*border: 2px solid #f8f8f8;*/
 }
@@ -1255,6 +1272,7 @@ label {
   font-size: 20px;
 }
 .sub-layers-container #close-filter svg {
+	  display: block;
     fill: #fff;
     width: 15px;
     height: 15px;
@@ -2302,6 +2320,11 @@ ul > li .esri-layer-list__item-title {
     top: 30px;
     right: 168px;
   }
+	#theme h2 {
+		margin-bottom: 15px;
+		padding-top: 15px;
+		font-size: 12px;
+	}
   #theme .sub-theme {
     width: 49%;
   }
@@ -2378,10 +2401,13 @@ ul > li .esri-layer-list__item-title {
     padding: 8px 10px;
   }
   #theme .sub-theme p {
-      font-size: 14px;
+      font-size: 13px;
       line-height: 22px;
       margin-top: 5px;
       margin-bottom: 10px;
+			/* fixes for tablets */
+			height: 20px;
+			overflow: hidden;
   }
   .esri-ui-inner-container {
       position: absolute;
@@ -2785,7 +2811,6 @@ ul > li .esri-layer-list__item-title {
     font-size: 14px;
     letter-spacing: 0;
     color: #DADCE2;
-    margin: 0 0 10px;
   }
   #theme.sub-menu, #layers.sub-menu, #legend.sub-menu, #tools.sub-menu, #open-data.sub-menu {
     margin-left: 0;

@@ -87,6 +87,7 @@ export const MapOptions: any = {
     advertise: {
       url: "https://maps.vilnius.lt/maps_vilnius/?theme=ad",
       production: true, //if theme is ready for production
+			legacy: true, // legacy dojo app
       custom: true, // true if theme funcionality is custom
       name: "Reklamos leidimai", //theme name
       id: "leidimai", //theme id class and theme URL query name
@@ -96,6 +97,7 @@ export const MapOptions: any = {
     schools: {
       url: "https://maps.vilnius.lt/maps_vilnius/?theme=schools",
       production: true, //if theme is ready for production
+			legacy: true, // legacy dojo app
       custom: true,
       name: "Švietimas", //theme name
       //id: "schools", //theme id class and theme URL query name
@@ -199,23 +201,6 @@ export const MapOptions: any = {
         }
       }
     },
-    publicOffices: {
-      //url: "https://maps.vilnius.lt/maps_vilnius/?theme=public-offices",
-      production: false, //if theme is ready for production
-      name: "Viešos įstaigos", //theme name
-      //id: "public-offices", //theme id class and theme URL query name
-      id: "viesosios-istaigos", //theme id class and theme URL query name
-      imgUrl: "./app/img/tvarkymas.png", //image URL
-      imgAlt: "Viešos įstaigos", // image alt attribute
-      layers: {
-        viesosIstaigos: { // layer unique name //
-          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-          "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Viesos_istaigos/MapServer",
-          opacity: 0.6,
-          name: "Viešos įstaigos" // dynamicLayers group name
-        }
-      }
-    },
     cyclingTracks: {
       //url: "https://maps.vilnius.lt/maps_vilnius/?theme=cycling-tracks",
       production: true, //if theme is ready for production
@@ -310,15 +295,6 @@ export const MapOptions: any = {
         }
       }
     },
-    legacyMap: {
-      production: false, //if theme is ready for production
-      custom: true, // true if theme funcionality is custom
-      name: "Senoji žemėlapio versija", //theme name
-      id: "legacy", //theme id class and theme URL query name
-      imgUrl: "/app/img/old_version.png", //image URL
-      imgAlt: "Senoji versija", // image alt attribute
-      url: "http://www.vilnius.lt/vmap/t1.php" // external url if required, if not - gets internal url depending on id property
-    },
     emptyTeam: {
       //url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
       production: true, //if theme is ready for production
@@ -328,7 +304,84 @@ export const MapOptions: any = {
       id: "empty", //theme id class and theme URL query name
       imgUrl: "./app/img/civiline-sauga.png", //image URL
       imgAlt: "Tuščia tema" // image alt attribute
-    }
+    },
+		tracks: {
+			url: "https://vilniuskojoms.lt",
+			production: true, //if theme is ready for production
+			external: true, // external application
+			custom: true, // true if theme funcionality is custom
+			name: "Vilnius kojoms", //theme name
+			id: "vilnius-kojoms", //theme id class and theme URL query name
+			imgUrl: "./app/img/ptakai.png", //image URL
+			imgAlt: "Vilnius kojoms" // image alt attribute
+    },
+		vilnius3dExternal: {
+			url: "https://atviras.vplanas.lt/portal/apps/webappviewer3d/index.html?id=49e0fb95c0ed45d6ae1c5533176f63f3",
+			production: true, //if theme is ready for production
+			external: true, // external application
+			custom: true, // true if theme funcionality is custom
+			name: "3D Vilnius", //theme name
+			id: "vilnius-3d", //theme id class and theme URL query name
+			imgUrl: "./app/img/vilnius3d.png", //image URL
+			imgAlt: "Vilniaus 3D modelis" // image alt attribute
+		},
+		bpCompareExternal: {
+			url: "https://atviras.vplanas.lt/portal/apps/webappviewer3d/index.html?id=49e0fb95c0ed45d6ae1c5533176f63f3",
+			production: true, //if theme is ready for production
+			external: true, // external application
+			custom: true, // true if theme funcionality is custom
+			name: "BP palyginimas", //theme name
+			id: "bp-palyginimas", //theme id class and theme URL query name
+			imgUrl: "./app/img/bp.png", //image URL
+			imgAlt: "Bendrojo plano palyginimas" // image alt attribute
+		},
+		treesExternal: {
+			url: "https://vplanas.maps.arcgis.com/apps/Editor/index.html?appid=f99ff842f8d94967aba4e35baa07fe05",
+			production: true, //if theme is ready for production
+			external: true, // external application
+			custom: true, // true if theme funcionality is custom
+			name: "Apsodinkime Vilnių", //theme name
+			id: "apsodinkime-vilniu", //theme id class and theme URL query name
+			imgUrl: "./app/img/trees.png", //image URL
+			imgAlt: "Apsodinkime Vilnių kartu" // image alt attribute
+		},
+		openDataExternal: {
+			url: "http://gis.opendata.lt/",
+			production: true, //if theme is ready for production
+			external: true, // external application
+			custom: true, // true if theme funcionality is custom
+			name: "Vilniaus atviri duomenys", //theme name
+			id: "open-data", //theme id class and theme URL query name
+			imgUrl: "./app/img/od.png", //image URL
+			imgAlt: "Vilniaus atviri duomenys" // image alt attribute
+		},
+		publicOffices: {
+			//url: "https://maps.vilnius.lt/maps_vilnius/?theme=public-offices",
+			production: false, //if theme is ready for production
+			name: "Viešos įstaigos", //theme name
+			//id: "public-offices", //theme id class and theme URL query name
+			id: "viesosios-istaigos", //theme id class and theme URL query name
+			imgUrl: "./app/img/tvarkymas.png", //image URL
+			imgAlt: "Viešos įstaigos", // image alt attribute
+			layers: {
+				viesosIstaigos: { // layer unique name //
+					dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+					"https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Viesos_istaigos/MapServer",
+					opacity: 0.6,
+					name: "Viešos įstaigos" // dynamicLayers group name
+				}
+			}
+		},
+		legacyMap: {
+			production: false, //if theme is ready for production
+			custom: true, // true if theme funcionality is custom
+			name: "Senoji žemėlapio versija", //theme name
+			id: "legacy", //theme id class and theme URL query name
+			imgUrl: "/app/img/old_version.png", //image URL
+			imgAlt: "Senoji versija", // image alt attribute
+			url: "http://www.vilnius.lt/vmap/t1.php" // external url if required, if not - gets internal url depending on id property
+		}
+
   },
   animation: {
     options: {

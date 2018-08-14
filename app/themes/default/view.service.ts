@@ -26,7 +26,7 @@ export class ViewService {
   createThemeLayers(snapshotUrl: string, queryParams) {
     const rasterLayers = this.mapService.getRasterLayers();
     //create theme main layers grouped
-    const themeGroupLayer = this.mapService.initGroupLayer("theme-group", "Main theme layers", "show");
+    //const themeGroupLayer = this.mapService.initGroupLayer("theme-group", "Main theme layers", "show");
 
     //using lodash find and pick themeLayer from options
     let themeName = findKey(MapOptions.themes, { "id": snapshotUrl });

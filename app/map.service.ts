@@ -164,7 +164,8 @@ export class MapService {
       id: id,
       opacity,
       title,
-      sublayers
+      sublayers,
+			listMode: 'show'
     });
   }
 
@@ -395,7 +396,6 @@ export class MapService {
   pickMainThemeLayers(response, layer, key, queryParams, popupEnabled = true, groupLayer: any = false) {
     response.subscribe(json => {
       //add dyn layers
-      //console.log("snapshotUrl", snapshotUrl.path);
       let sublayersArray = this.getSubDynamicLayerSubLayers(json.layers);
       let dynamicLayer = this.initDynamicLayer(layer.dynimacLayerUrls, key, layer.name, layer.opacity, sublayersArray, popupEnabled)
       //for Layerlist 4.4 API bug fix
@@ -595,7 +595,7 @@ export class MapService {
   //createOperationalItems()
 
   initLayerListWidget() {
-    const listWidget = new LayerList({
+  	const listWidget = new LayerList({
       container: "layer-list",
       view: this.view,
       listItemCreatedFunction: this.updateListItem

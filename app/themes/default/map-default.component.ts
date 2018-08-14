@@ -126,6 +126,7 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
     };
 
     this.view.then((view) => {
+			//console.log('%c VIEW', 'color: red; font-size: 20px', view);
       this.viewService.createSubLayers(this.queryParams);
       //if query paremeteters are defined get zoom and center
       this._mapService.centerZoom(view, this.queryParams);

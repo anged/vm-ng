@@ -12,8 +12,10 @@ import values from 'lodash-es/values';
       <div class="menu-header">
         <p>Pasirinkite temą:</p>
         <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
+
+				<h2>Pagrindinės temos</h2>
 				<div *ngFor="let theme of themes; let i=index; let odd=odd">
-					<div *ngIf="theme.production && !theme.hide" class="sub-theme" [class.align-left]="!odd" [class.align-right]="odd" [class.current-theme]="theme.id===currentThemeName">
+					<div *ngIf="theme.production && !theme.hide  && !theme.external && !theme.custom" class="sub-theme" [class.align-left]="!odd" [class.align-right]="odd" [class.current-theme]="theme.id===currentThemeName">
 						<a *ngIf="!theme.url && !theme.custom" routerLink="/{{theme.id}}">
 							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
 						</a>
@@ -21,6 +23,32 @@ import values from 'lodash-es/values';
 							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
 						</a>
 						<a *ngIf="!theme.url && theme.custom" [href]="theme.id">
+							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+						</a>
+						<p>{{theme.name}}</p>
+					</div>
+				</div>
+
+				<h2>Papildomo funkcionalumo temos</h2>
+				<div *ngFor="let theme of themes; let i=index; let odd=odd">
+					<div *ngIf="theme.production && !theme.hide && !theme.external && theme.custom" class="sub-theme" [class.align-left]="!odd" [class.align-right]="odd" [class.current-theme]="theme.id===currentThemeName">
+						<a *ngIf="!theme.url && !theme.custom" routerLink="/{{theme.id}}">
+							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+						</a>
+						<a *ngIf="theme.url" [href]="theme.url">
+							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+						</a>
+						<a *ngIf="!theme.url && theme.custom" [href]="theme.id">
+							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+						</a>
+						<p>{{theme.name}}</p>
+					</div>
+				</div>
+
+				<h2>3 šalių aplikacijos</h2>
+				<div *ngFor="let theme of themes; let i=index; let odd=odd">
+					<div *ngIf="theme.production && !theme.hide && theme.external" class="sub-theme" [class.align-left]="!odd" [class.align-right]="odd" [class.current-theme]="theme.id===currentThemeName">
+						<a *ngIf="theme.url" rel="noopener noreferrer" target="_blank" [href]="theme.url">
 							<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
 						</a>
 						<p>{{theme.name}}</p>

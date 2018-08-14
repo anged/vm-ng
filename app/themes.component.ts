@@ -10,6 +10,15 @@ import values from 'lodash-es/values';
 @Component({
   selector: 'themes-map',
   styles: [`
+		h2 {
+			width: 100%;
+	    display: inline-block;
+	    padding: 40px 30px 40px;
+			margin-bottom: 0;
+			font-size: 28px;
+	    line-height: 1.6;
+	    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+		}
     .row.themes-component {
       margin: 0;
       text-align: center;
@@ -81,17 +90,32 @@ import values from 'lodash-es/values';
       <h1>Vilniaus miesto interaktyvūs žemėlapiai</h1>
       <span>Pasirinkite temą</span>
     </div>
+		<h2>Pagrindinės temos</h2>
     <div *ngFor="let theme of themes; let i=index; let odd=odd">
-      <div *ngIf="theme.production && !theme.hide" class="col-xs-6 col-sm-3 animate themes-row">
+      <div *ngIf="theme.production && !theme.hide  && !theme.external && !theme.custom" class="col-xs-6 col-sm-3 animate themes-row">
         <a *ngIf="!theme.url && !theme.custom" [routerLink]="[theme.id]">
           <img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
           <p>{{theme.name}}</p>
         </a>
+      </div>
+    </div>
+		<h2>Papildomo funkcionalumo temos</h2>
+    <div *ngFor="let theme of themes; let i=index; let odd=odd">
+      <div *ngIf="theme.production && !theme.hide && !theme.external && theme.custom" class="col-xs-6 col-sm-3 animate themes-row">
         <a *ngIf="theme.url" [href]="theme.url">
           <img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
           <p>{{theme.name}}</p>
         </a>
         <a *ngIf="!theme.url && theme.custom" [href]="theme.id">
+          <img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+          <p>{{theme.name}}</p>
+        </a>
+      </div>
+    </div>
+		<h2>3 šalių aplikacijos</h2>
+    <div *ngFor="let theme of themes; let i=index; let odd=odd">
+      <div *ngIf="theme.production && !theme.hide && theme.external" class="col-xs-6 col-sm-3 animate themes-row">
+        <a *ngIf="theme.url" rel="noopener noreferrer" target="_blank" [href]="theme.url">
           <img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
           <p>{{theme.name}}</p>
         </a>
