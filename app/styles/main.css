@@ -589,7 +589,7 @@ li.list-active {
 .esri-print,
 #measure-container .measure,
 #extract-container .measure {
-    position: relative;
+    position: absolute;
     padding: 12px 15px;
     overflow-y: auto;
     width: 300px;
@@ -1724,7 +1724,6 @@ ul > li .esri-layer-list__item-title,
 #tools.sub-menu {
     overflow: inherit;
     overflow-y: visible;
-		z-index: 6;
 }
 #open-data .inner, #legend .inner, #layers .inner {
 	width: 100%;
@@ -2903,7 +2902,7 @@ ul > li .esri-layer-list__item-title {
 	  z-index: 7;
 	}
 	.module:target {
-    z-index: 0;
+    z-index: 6;
 	}
   #top-menu, #building-help {
     display: block;
