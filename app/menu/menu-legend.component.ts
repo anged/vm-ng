@@ -1,51 +1,41 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 
-import { MapService } from '../map.service';
-import { MapOptions } from '../options';
-
-import  Legend = require ('esri/widgets/Legend');
+import { MenuService } from './menu.service';
 
 @Component({
-    selector: 'menu-legend',
-    template: `
-      <div>
-				<div class="menu-header">
-        	<p>Sutartiniai ženklai:</p>
-        	<a (click)=closeToggle() class="button close animate" title="Uždaryti">✕</a>
-				</div>
-				<div id="legend-list" class="inner">
-        </div>
-      </div>
+  selector: 'menu-legend',
+  template: `
+		<div class="menu-header">
+    	<p>Sutartiniai ženklai:</p>
+    	<a (click)=closeToggle() class="button close animate" title="Uždaryti">✕</a>
+		</div>
+		<perfect-scrollbar>
+			<div id="legend-list" #legend class="inner menu-nav-content"></div>
+		</perfect-scrollbar>
     `
 })
-export class MenuLegendComponent  implements OnInit, OnDestroy {
+export class MenuLegendComponent implements OnInit, OnDestroy {
+	@ViewChild('legend') legend: ElementRef;
+	legendWidget: any;
 
-  @Input() viewLegend: any;
+  constructor(private menuService: MenuService) {}
 
-  constructor(private _mapService: MapService) {}
+	initLegend() {
+	  return this.menuService.fetchLegend(this.legend.nativeElement);
+	}
 
-  initLegend() {
-    return this.fetchLegend();
-  }
+	closeToggle() {
+	  window.location.hash = "#";
+	}
 
-  closeToggle() {
-    window.location.hash = "#";
-  }
+	ngOnInit() {
+	  this.legendWidget = this.initLegend();
+	  console.log('LEGEND', 	this.legendWidget)
+	}
 
-  //fetchLegend after subscribtion
-  fetchLegend() {
-    return new Legend({
-        view: this.viewLegend,
-        container: "legend-list"
-    });
-  }
-
-  ngOnInit() {
-    this.initLegend();
-  }
-
-  ngOnDestroy() {
-    //this.subscription.unsubscribe();
-  }
+	ngOnDestroy() {
+		console.log('Destroy Legend');
+		this.legendWidget.destroy();
+	}
 
 }

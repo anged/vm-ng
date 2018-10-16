@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Subject } from 'rxjs';
-import { retry } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { retry, shareReplay } from 'rxjs/operators';
 
 import Map = require("esri/Map");
 import Graphic = require("esri/Graphic");
@@ -35,42 +35,61 @@ import RelationshipQuery = require("esri/tasks/support/RelationshipQuery");
 
 @Injectable()
 export class MapService {
-  //array to identify by name selection graphic layers and remove them
-  private selectedGraphicNames: string[] = [];
-  private selectedGraphicCount: number = 0;
   //selection graphic layer array:
   private allGraphicLayers: any[] = [];
   private featureLayerArr: any[];
+
   //suspend layers toggle (e.g. suspend layers while drawing with measure tools)
   suspendedIdentitication: boolean = false;
-  private mobile: boolean = false;
-  private themeName: string;
   private view: any;
+
   //visible layers
   visibleLayers: {};
   visibleSubLayerNumber: number = 0;
   private queryParams: any;
   map: any;
+
   //dynamic projects layer
   projectsDynamicLayer: any;
+
   // Observable  source
   private layersStatusObs = new Subject();
   // Observable item stream
   layersStatus = this.layersStatusObs.asObservable();
+
   //array of raster layers Name
   rasterLayers = [];
   //all layers for "allLayers"
   subDynamicLayers: any;
 
+	// cching sublayer request
+	sublayersJsonCache$: Observable<any>
+
+	// cache every layer that has been initated duaring apps lifecycle
+	// use layers for themeServiceUrl
+	private cacheLayers = [];
+
+	// progress bar loader
+	progressBar: any;
+
   constructor(private http: HttpClient, private projectsService: ProjectsListService) { }
+
+	setProgressBar(bar): void {
+		this.progressBar = bar;
+	}
+
+	getProgressBar() {
+		return this.progressBar;
+	}
 
   initMap(options: Object): Map {
     //return new Map(options);
-    return new Map();
+    this.map = new Map();
+		return this.map;
   }
 
   viewMap(map: Map): MapView {
-    this.view = new MapView({
+    const  view = new MapView({
       //container: this.elementRef.nativeElement.firstChild, // AG good practis
       container: 'map',
       constraints: {
@@ -92,8 +111,26 @@ export class MapService {
       zoom: 1,
       extent: MapOptions.mapOptions.extent
     });
-    return this.view;
+		this.watchLayers(view);
+		this.view = view;
+    return view;
   }
+
+	watchLayers(view) {
+		view.on("layerview-create", (event) => {
+			/**
+			 * check if layer was cached:
+			 * @prop {boolean} isInCache checfk if any value is cached,
+			 * cache only unqique layer
+			 * using some() instead of filter for efficiency
+			 */
+			const isInCache = this.cacheLayers.some(layer => layer.id === event.layer.id);
+			if (isInCache) {
+			} else {
+				this.cacheLayers.push(event.layer);
+			}
+		});
+	}
 
   returnQueryParams() {
     return this.queryParams;
@@ -275,11 +312,11 @@ export class MapService {
     }
   }
 
-  initTiledLayer(layer: string, name: string, visible: boolean = true): TileLayer {
-    return new TileLayer({
+  initTiledLayer(layer: string, name: string, visible = true): TileLayer {
+		return new TileLayer({
       url: layer,
       id: name,
-      visible: visible
+      visible
     });
   }
 
@@ -316,10 +353,10 @@ export class MapService {
       case 'simple-marker':
         symbol = {
           type,  // autocasts as new SimpleMarkerSymbol()
-          color: [181, 14, 18, 0],
+          color: [181, 14, 18, 0.01],
           outline: {
             style: "dash-dot",
-            color: [181, 14, 18, 0]
+            color: [181, 14, 18, 0.01]
           }
         };
         break;
@@ -334,10 +371,10 @@ export class MapService {
       case 'simple-fill':
         symbol = {
           type,
-          color: [255, 255, 255, 0],
+          color: [255, 255, 255, 0.01],
           outline: {  // autocasts as new SimpleLineSymbol()
             width: 1,
-            color: [181, 14, 18, 0]
+            color: [181, 14, 18, 0.01]
           }
         };
         break;
@@ -351,6 +388,19 @@ export class MapService {
       .pipe(
         retry(3)
       )
+  }
+
+  //http fetch for all sublayers and cache http request wioth shareReplay operator
+  fetchSublayersRequest(url: string) {
+		if (!this.sublayersJsonCache$) {
+			this.sublayersJsonCache$ = this.http.get(url + "/layers?f=pjson")
+	      .pipe(
+	        //retry(3),
+					shareReplay(1)
+	      );
+			return this.sublayersJsonCache$;
+		}
+		return this.sublayersJsonCache$;
   }
 
   //http fetch for projects themes
@@ -374,48 +424,90 @@ export class MapService {
   }
 
   addToMap(response, queryParams) {
-    response.subscribe(json => {
-      //console.log("json", json);
-      //jus create sub Layers array for allLayers
-      const sublayersArray = this.getSubDynamicLayerSubLayers(json.layers);
+		/**
+		 * check if layer is was cached:
+		 * @prop {array} cachedLayers - single value array
+		 * @prop {number} isInCache - 0 or 1
+		 */
+		const cachedLayers = this.cacheLayers.filter(layer => layer.id === 'allLayers');
+		const isInCache = cachedLayers.length;
 
-      //create layer and empty the sublayers object if this.queryParams allayers prop is not set
-      let subLayers = [];
-      if (queryParams.allLayers && (queryParams.identify === "allLayers")) {
-        subLayers = sublayersArray;
-      };
-      const layer = this.initSubAllDynamicLayers(MapOptions.mapOptions.staticServices.commonMaps, "allLayers", "Visų temų sluoksniai", 0.8, subLayers);
-      this.map.add(layer);
+		if (!isInCache) {
+			response.subscribe(json => {
+				//jus create sub Layers array for allLayers
+				const sublayersArray = this.getSubDynamicLayerSubLayers(json.layers, true);
 
-      //check other url params if exists
-      //activate layer defined in url query params
-      this.activateLayersVisibility(this.view, queryParams, this.map);
-    });
+				//create layer and empty the sublayers object if this.queryParams allayers prop is not set
+				let subLayers = [];
+				if (queryParams.allLayers && (queryParams.identify === "allLayers")) {
+					subLayers = sublayersArray;
+				};
+				const layer = this.initSubAllDynamicLayers(MapOptions.mapOptions.staticServices.commonMaps, "allLayers", "Visų temų sluoksniai", 0.8, subLayers);
+				this.map.add(layer);
+				//check other url params if exists
+				//activate layer defined in url query params
+				this.activateLayersVisibility(this.view, queryParams, this.map);
+			});
+		} else {
+			this.map.add(cachedLayers[0]);
+
+			//check other url params if exists
+			//activate layer defined in url query params
+			this.activateLayersVisibility(this.view, queryParams, this.map);
+		}
+
   }
 
-  pickMainThemeLayers(response, layer, key, queryParams, popupEnabled = true, groupLayer: any = false) {
-    response.subscribe(json => {
-      //add dyn layers
-      let sublayersArray = this.getSubDynamicLayerSubLayers(json.layers);
-      let dynamicLayer = this.initDynamicLayer(layer.dynimacLayerUrls, key, layer.name, layer.opacity, sublayersArray, popupEnabled)
-      //for Layerlist 4.4 API bug fix
-      if (groupLayer) {
-        groupLayer.add(dynamicLayer);
-      } else {
-        this.map.add(dynamicLayer);
-      }
 
-      //check other url params if exists
-      //activate layer defined in url query params
-      this.activateLayersVisibility(this.view, queryParams, this.map);
+	/**
+	 * init specific theme layers
+	 * @param {number} groupLayer = create group layer for custom themes
+	 */
+  pickMainThemeLayers(layer, key, queryParams, popupEnabled = true, groupLayer: any = false) {
+		/**
+		 * check if layer is was cached:
+		 * @prop {array} cachedLayers - single value array
+		 * @prop {number} isInCache - 0 or 1
+		 */
+		const cachedLayers = this.cacheLayers.filter(layer => layer.id === key);
+		const isInCache = cachedLayers.length;
+		if (!isInCache) {
+			const response = this.fetchRequest(layer.dynimacLayerUrls);
+			response.subscribe((json: any) => {
+				//add dyn layers
+				let sublayersArray = this.getSubDynamicLayerSubLayers(json.layers);
+				let dynamicLayer = this.initDynamicLayer(layer.dynimacLayerUrls, key, layer.name, layer.opacity, sublayersArray, popupEnabled)
+				//for Layerlist 4.4 API bug fix
+				if (groupLayer) {
+					groupLayer.add(dynamicLayer);
+				} else {
+					this.map.add(dynamicLayer);
+				}
 
-      //check for type raster and push to array
-      json.layers.forEach((layer) => {
-        if (layer.type === "Raster Layer") {
-          this.rasterLayers.push(layer.name);
-        }
-      })
-    });
+				//check other url params if exists
+				//activate layer defined in url query params
+				this.activateLayersVisibility(this.view, queryParams, this.map);
+
+				//check for type raster and push to array
+				json.layers.forEach((layer) => {
+					if (layer.type === "Raster Layer") {
+						this.rasterLayers.push(layer.name);
+					}
+				})
+			});
+		} else {
+			console.log("GROUP pickMainThemeLayers", groupLayer);
+			if (groupLayer) {
+				groupLayer.add(cachedLayers[0]);
+			} else {
+				this.map.add(cachedLayers[0]);
+			}
+
+			//check other url params if exists
+			//activate layer defined in url query params
+			this.activateLayersVisibility(this.view, queryParams, this.map);
+		}
+
   }
 
   //run query by geometry
@@ -532,6 +624,7 @@ export class MapService {
 
   //on map component OnInit center and zoom based on URL query params
   centerZoom(view: any, params: any) {
+	console.log('view', view)
     let point: any;
     point = [params.x ? parseFloat(params.x) : view.center.x, params.y ? parseFloat(params.y) : view.center.y];
     //setTimeout(() => {
@@ -545,8 +638,16 @@ export class MapService {
         "wkid": 3346
       }
     });
+
     view.center = point;
   }
+
+	// center Map on Compass clicking
+	// init only once
+	centerMapWithCompass() {
+		this.centerZoom(this.view, { x: 581205.6135, y: 6064062.25 });
+	}
+
 
   //on map component OnInit read checked layers params (if exists) and activate  visible layers
   activateLayersVisibility(view: any, params: any, map: any) {
@@ -579,10 +680,6 @@ export class MapService {
     })
   }
 
-  isMobileDevice(mobile: boolean) {
-    this.mobile = mobile;
-  }
-
   //mobile check
   mobilecheck() {
     var check = false;
@@ -594,12 +691,14 @@ export class MapService {
 
   //createOperationalItems()
 
-  initLayerListWidget() {
+  initLayerListWidget(view, container: HTMLElement) {
   	const listWidget = new LayerList({
-      container: "layer-list",
-      view: this.view,
+      //container: "layer-list",
+      container,
+      view,
       listItemCreatedFunction: this.updateListItem
     });
+		console.log('listWidget 2', listWidget)
     return listWidget;
   }
 
@@ -607,6 +706,7 @@ export class MapService {
   updateListItem(listItem) {
     listItem.item.open = true;
     if (listItem.item.parent == null) {
+			console.log('list ITEM', listItem);
       listItem.item.actionsSections = [
         [],
         [{
@@ -638,18 +738,20 @@ export class MapService {
 
   initSubLayerListWidget(view, map) {
     let subLayer = map.findLayerById("allLayers");
+		console.log('LAYERLIST')
     return new LayerList({
       container: "sub-layers-content-list",
       view: view,
+			listItemCreatedFunction: this.updateListItem
       //operationalItems: this.getOperationalItems(subLayer)
-      operationalItems: [
-        {
-          layer: subLayer,
-          actionsOpen: true,
-          open: true,
-          view: view
-        }
-      ] as any as Collection
+      // operationalItems: [
+      //   {
+      //     layer: subLayer,
+      //     actionsOpen: true,
+      //     open: true,
+      //     view: view
+      //   }
+      // ] as any as Collection
     });
   }
 
@@ -693,15 +795,6 @@ export class MapService {
     });
   }
 
-  //get URL theme name from ActivatedRoute
-  getThemeName(name) {
-    this.themeName = name;
-  }
-
-  returnThemeName() {
-    return this.themeName;
-  }
-
   //validate ArcGis date string
   isValidDate(dateStr, reg) {
     return dateStr.match(reg) !== null;
@@ -719,7 +812,7 @@ export class MapService {
     for (let resultAtr in attributes) {
       if (attributes.hasOwnProperty(resultAtr)) {
         //console.log(resultAtr);
-        if (!(resultAtr == "OBJECTID" || resultAtr == "layerName" || resultAtr == "SHAPE" || resultAtr == "SHAPE.area" || resultAtr == "Shape.area" || resultAtr == "SHAPE.STArea()" || resultAtr == "Shape" || resultAtr == "SHAPE.len" || resultAtr == "Shape.len" || resultAtr == "SHAPE.STLength()" || resultAtr == "SHAPE.fid" ||
+        if (!(resultAtr == "OBJECTID" || resultAtr == "layerName" || resultAtr == "SHAPE" || resultAtr == "SHAPE.area" || resultAtr == "OID" || resultAtr == "Shape.area" || resultAtr == "SHAPE.STArea()" || resultAtr == "Shape" || resultAtr == "SHAPE.len" || resultAtr == "Shape.len" || resultAtr == "SHAPE.STLength()" || resultAtr == "SHAPE.fid" ||
           resultAtr == "Class value" || resultAtr == "Pixel Value" || resultAtr == "Count_" //TEMP check for raster properties
         )) { //add layers attributes that you do not want to show
           //AG check for date string
@@ -762,8 +855,13 @@ export class MapService {
     this.layersStatusObs.next(isChecked);
   };
 
-  //layerlist 4.4 API bug fix, return sublayers array,TODO remove fix in 4.5 API
-  getSubDynamicLayerSubLayers(layers: Array<any>) {
+  /**
+	 * Layerlist 4.4 API bug fix, return sublayers array,TODO remove fix in 4.5 AP
+	 * @param {string} isSublayer - cache sublayers of all layers widget
+	 * initiate only once
+	 */
+
+  getSubDynamicLayerSubLayers(layers: Array<any>, isSublayer = false) {
     let sublayers = [];
     layers.forEach(item => {
       if (item.parentLayer) {
@@ -819,7 +917,12 @@ export class MapService {
       return sublayer;
     });
     //console.log("sublayers", sublayers);
-    this.subDynamicLayers = sublayers;
+
+		//if sublayer add layers for all layers layerlist feature
+		if (isSublayer) {
+			this.subDynamicLayers = sublayers;
+		}
+
     return sublayers;
   }
 

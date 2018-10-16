@@ -143,6 +143,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     this.removeSelectionLayers();
 
     //TODO remove old graphic if exists
+		console.log('VIEW Graphics', this.view.graphics)
     this.view.graphics.items = [];
     query.where = "UNIKALUS_NR=" + project.attributes.UNIKALUS_NR;
     query.outFields = ["*"];

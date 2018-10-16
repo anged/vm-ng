@@ -53,6 +53,7 @@
 </ng-template>
 
 <ng-template #infoTemplate>
+	<perfect-scrollbar>
   <div class="sidebar-container" *ngIf="dataStore else loading">
     <div class="main-s-content">
       <p>
@@ -152,4 +153,5 @@
     </div>
 
   </div>
+</perfect-scrollbar>
 </ng-template>

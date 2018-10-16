@@ -14,23 +14,27 @@ export class ShareButtonService {
     //get visible and checked layers ids
     const view = this.mapService.getView();
     const ids: any = !isProjectsTheme ? this.getVisibleLayersIds(view) :  this.getVisibleLayersIds(view, true);
-    const visibleLayersIds = ids.identificationsIds;
+		const visibleLayersIds = ids.identificationsIds;
     const checkedLayersIds = ids.visibilityIds;
+
     //check if there is any visible layers that can be identied in allLayers group
     let identify: string;
-    if (!isProjectsTheme) {
+
+		// TODO  use Observable as we need allLayers property
+    if (!isProjectsTheme && ids.identificationsIds.allLayers) {
       identify = ids.identificationsIds.allLayers.length <= 1 ? '' : 'allLayers';
     } else {
       identify = '';
     }
-    //console.log("ids", ids)
+
     //get share url
     let currentZoom: number, currentCoordinates: number[];
     currentZoom = view.zoom;
     currentCoordinates = [view.center.x, view.center.y];
     const shareUrlStr = window.location.origin + window.location.pathname + '?zoom=' + currentZoom + '&x=' + currentCoordinates[0] + '&y=' + currentCoordinates[1] + this.shareCheckedLayersIds(checkedLayersIds) + '&basemap='
       + this.basemapsService.returnActiveBasemap() + '&identify=' + identify;
-    //highlight selected input
+
+		//highlight selected input
     if (shareContainerActive) {
       setTimeout(() => {
         const shareURL = document.getElementById("url-link") as HTMLInputElement;

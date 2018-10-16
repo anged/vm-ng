@@ -30,7 +30,7 @@ export class MenuToolsService {
     });
   }
 
-  createAreaLabelGraphic(geometry, area, ended) {
+  createAreaLabelGraphic(geometry, area, ended, units = 'km²') {
     const endString = ended ? "" : " (užbaigti dvigubu paspaudimu)";
     return new Graphic({
       geometry: geometry.centroid,
@@ -39,7 +39,7 @@ export class MenuToolsService {
         color: "white",
         haloColor: "black",
         haloSize: "1px",
-        text: area.toFixed(4) + " km²" + endString,
+        text: `${area.toFixed(4)} ${units} ${endString}`,
         xoffset: 3,
         yoffset: 3,
         font: { // autocast as Font

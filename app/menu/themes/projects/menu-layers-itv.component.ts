@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MapOptions } from '../../../options';
@@ -28,7 +28,7 @@ import { MapOptions } from '../../../options';
       </div>
     `
 })
-export class MenuLayersItvComponent implements OnInit {
+export class MenuLayersItvComponent implements OnInit, OnDestroy {
   name: string;
   isChecked: boolean = true;
 
@@ -50,11 +50,16 @@ export class MenuLayersItvComponent implements OnInit {
   }
 
   ngOnInit() {
+		console.log('ITV layers on');
     //add temp delay to get layers chnage to Observable
     setTimeout(() => {
       this.name = MapOptions.themes.itvTheme.name;
     }, 400)
 
   }
+
+	ngOnDestroy() {
+		console.log('Destroy Layers itv')
+	}
 
 }

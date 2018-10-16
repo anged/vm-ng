@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import Search = require("esri/widgets/Search");
 import Locator = require("esri/tasks/Locator");
 import PictureMarkerSymbol = require("esri/symbols/PictureMarkerSymbol");
-import SimpleRenderer = require("esri/renderers/SimpleRenderer");
 import Collection = require("esri/core/Collection");
+
+import { MapOptions } from '../options';
 
 @Injectable()
 export class SearchService {
@@ -15,9 +16,12 @@ export class SearchService {
     return this.gartensSearchWidget;
   }
 
-  defaultSearchWidget(view: Object, url = "https://zemelapiai.vplanas.lt/arcgis/rest/services/Lokatoriai/PAIESKA_COMPOSITE/GeocodeServer") {
+  defaultSearchWidget(view: Object, url = MapOptions.search.locator) {
     return new Search({
       view: view,
+			includeDefaultSources: false,
+			allPlaceholder: 'Vietos paieška',
+			locationEnabled: false,
       sources: [{
         locator: new Locator({ url: url }),
         singleLineFieldName: "SingleLine", //AG name of 'Single Line Address Field:'
@@ -52,6 +56,9 @@ export class SearchService {
       autoSelect: false, //autoselect to false, selection will be based on only button click event
       view,
       container,
+			includeDefaultSources: false,
+			allPlaceholder: "Adreso paieška",
+			locationEnabled: false,
       sources: [{
         locator: new Locator({ url: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Lokatoriai/PAIESKA_COMPOSITE/GeocodeServer" }),
         singleLineFieldName: "SingleLine", //AG name of 'Single Line Address Field:'

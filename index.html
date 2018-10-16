@@ -7,14 +7,16 @@
     <meta name="description" content="Vilniaus miesto savivaldybės interaktyvūs žemėlapiai">
     <link rel="shortcut icon" type="image/ico" href="/app/img/favicon.ico">
     <base href="/">
-    <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-maps-bootstrap.min-v0.3.css">
-    <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-maps-arcgis-4.x.min-v0.3.css">
-    <link rel="stylesheet" href="arcgis_js_api/library/4.5/esri/css/main.css">
-    <link href="app/styles/indigo-pink.css" rel="stylesheet">
-    <link rel="stylesheet" href="app/fonts/font-awesome.min.css">
-    <link rel="stylesheet" href="app/styles/page.css">
-    <link rel="stylesheet" href="app/styles/main.css">
-    <link rel="stylesheet" href="app/styles/normalize.css">
+		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-maps-bootstrap.min-v0.3.css">
+		<link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-maps-arcgis-4.x.min-v0.3.css">
+		<link rel="stylesheet" href="arcgis_js_api/library/4.5/esri/css/main.css">
+		<link href="app/styles/indigo-pink.css" rel="stylesheet">
+		<link rel="stylesheet" href="app/fonts/font-awesome.min.css">
+		<link rel="stylesheet" href="app/styles/page.css">
+		<link rel="stylesheet" href="app/styles/main.css">
+		<link rel="stylesheet" href="app/styles/normalize.css">
     <!-- Configure and load ESRI libraries -->
     <script >
       window.dojoConfig = {
@@ -31,7 +33,7 @@
 		<!-- Development -->
     <script src="https://js.arcgis.com/4.5/"></script>
 		<!-- Production -->
-    <!-- <script src="arcgis_js_api/library/4.5/init.js"></script> -->
+    <!-- <script src="arcgis_js_api/library/4.9/init.js"></script> -->
     <!-- Load webpack bundles-->
     <script async >
       require(["/dist/vendor.bundle.js", "/dist/main.bundle.js"], function (vendor, main) {});
@@ -41,7 +43,7 @@
   <!-- Display the application -->
   <body class="calcite">
 
-      <vilnius-maps>
+    <vilnius-maps>
         <div id="loading-gif">
           <div class="showbox">
             <div class="loader">

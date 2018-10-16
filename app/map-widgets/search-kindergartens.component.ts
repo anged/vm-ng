@@ -12,6 +12,10 @@ import on = require("dojo/on");
     <div #searchWidgetDOM id="gartens-search-widget" class="gartens-search"></div>
   `,
   styles: [`
+		.gartens-search.esri-search {
+			position: relative;
+			z-index: 3;
+		}
     .gartens-search .esri-widget-button,
     .gartens-search .esri-search .esri-search__container .esri-widget-button {
       display: none;

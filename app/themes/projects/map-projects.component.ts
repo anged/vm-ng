@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 
 import { MapService } from '../../map.service';
+import { MenuService } from '../../menu/menu.service';
+import { MetaService } from '../../services/meta.service';
 import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
 import { BasemapsService } from '../../map-widgets/basemaps.service';
@@ -61,22 +63,34 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
 
   maintenanceOn = false;
 
-  constructor(private _mapService: MapService, private elementRef: ElementRef, private projectsService: ProjectsListService, private searchService: SearchService, private featureService: FeatureQueryService, private identify: IdentifyService, private pointAddRemoveService: PointAddRemoveService, private activatedRoute: ActivatedRoute, private basemapsService: BasemapsService, private shareButtonService: ShareButtonService) {
-    this.queryUrlSubscription = activatedRoute.queryParams.subscribe(
-      (queryParam: any) => {
-        //console.log("URL Parametrai", queryParam);
-        return this.queryParams = queryParam
-      }
-    );
-    this.queryUrlSubscription.unsubscribe();
-  }
+	//dojo on map click event handler
+  identifyEvent: any;
+
+	//other dojo event handlers
+	searchEvent: any;
+	watchU: any;
+
+  constructor(
+		private _mapService: MapService,
+		private menuService: MenuService,
+		private metaService: MetaService,
+		private elementRef: ElementRef,
+		private projectsService: ProjectsListService,
+		private searchService: SearchService,
+		private featureService: FeatureQueryService,
+		private identify: IdentifyService,
+		private pointAddRemoveService: PointAddRemoveService,
+		private activatedRoute: ActivatedRoute,
+		private renderer2: Renderer2,
+		private basemapsService: BasemapsService,
+		private shareButtonService: ShareButtonService) {}
 
   getSqlString() {
     return this.sqlString;
   }
 
   // toggle help container
-  helpOpen(e) {
+  helpOpen() {
     this.helpContainerActive = !this.helpContainerActive;
   }
 
@@ -93,8 +107,6 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
   onFilter(items) {
     //first item  of items array (items[0]) is filteredList, second input value
     this.autocompleteValue = this.projectsService.filterAutoComplete(items[1]);
-    //console.log(this.fullListChanged);
-    //console.log(this.autocompleteValue);
 
     //getprojects when writing in autocomplet box as well
     this.getProjects(this.itvFeatureUrl, this.view.extent, this.sqlString);
@@ -130,7 +142,7 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
     let count = 0;
 
     //get projects when interacting with the view
-    watchUtils.whenTrue(view, "stationary", (b) => {
+    this.watchU = watchUtils.whenTrue(view, "stationary", (b) => {
       let sqlStr = this.getSqlString();
       // Get the new extent of the view only when view is stationary.
       if (view.extent) {
@@ -140,20 +152,16 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
       }
     });
 
-    view.on("click", (event) => {
+		console.log('watchU',  this.watchU);
+
+    this.identifyEvent = view.on("click", (event) => {
       //remove selection graphics layer if exist
       this.pointAddRemoveService.removeSelectionLayers();
       //deactivate list selection
       this.projectsListComponent.activateList();
 
-      //if mobile identify with query
-      if (this.mobile) {
-        //this.pointAddRemoveService.identifyItem(this.map, view, this.featureLayers, event);
-      } else {
-        //else identify with hitTest method
-        //find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
-        this._mapService.removeSelectionLayers(this.map);
-      }
+      // find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
+      this._mapService.removeSelectionLayers(this.map);
 
       //NEW map-default.compontent approach
       //store all deffered objects of identify task in def array
@@ -212,44 +220,37 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
   }
 
   addFeaturesToMap() {
-    const featureLayerArr = this._mapService.addFeaturesToMap();
+    this._mapService.addFeaturesToMap();
   }
 
+	setActiveBasemap(view, basemap: string) {
+		//toggle basemap
+		this.basemapsService.toggleBasemap(basemap, view);
+	}
+
   ngOnInit() {
-    //console.log("LOADING");
-    let basemaps: any[] = [];
-    this.mobile = this._mapService.mobilecheck();
-    this._mapService.isMobileDevice(this.mobile);
-    //get full list on init
+		// add basic meta data
+		this.metaService.setMetaData();
+
+		this.queryUrlSubscription = this.activatedRoute.queryParams.subscribe(
+      (queryParam: any) => {
+        return this.queryParams = queryParam;
+      }
+    );
+    this.queryUrlSubscription.unsubscribe();
+
     this.projectsService.getAllProjectsQueryData(this.itvFeatureUrl);
 
-    // create the map
-    this.map = this._mapService.initMap(MapOptions.mapOptions);
-    //create view
-    this.view = this._mapService.viewMap(this.map);
+		// return the map
+		this.map = this._mapService.returnMap();
 
-    //add  basemap layer
-    this.basemapsService.returnBasemaps().forEach(basemap => {
-      const baseMapRestEndpoint = MapOptions.mapOptions.staticServices[basemap.serviceName];
-      if (this.queryParams.basemap === basemap.id) {
-        this.basemapsService.setActiveBasemap(basemap.id);
-        const visibleBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id);
-        basemaps.push(visibleBaseMap);
-        visibleBaseMap.then(() => { }, err => {
-          this.maintenanceOn = true;
-        });
-      } else {
-        const hiddenBaseMap = this._mapService.initTiledLayer(baseMapRestEndpoint, basemap.id, false);
-        hiddenBaseMap.then(() => { }, err => {
-          this.maintenanceOn = true;
-        });
-        basemaps.push(hiddenBaseMap);
-      }
-    });
+		// return view
+		this.view = this._mapService.getView();
 
-    this.map.basemap = this._mapService.customBasemaps(basemaps);
-
-    this._mapService.updateMap(this.map);
+		// set active basemaps based on url query params
+		if (this.queryParams.basemap) {
+			this.setActiveBasemap(this.view, this.queryParams.basemap);
+		}
 
     //add all projects mapImageLayer
     this.projectsDynamicLayer = this._mapService.initDynamicLayerITV(MapOptions.themes.itvTheme.layers.mapLayer, "itv-projects", "Investiciniai projektai", 1);
@@ -264,9 +265,9 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
     //count feature layers, init and add feature layers to map
     this.addFeaturesToMap();
 
-    //add allLayers sublist layers
-    // let subDynamicLayers = this._mapService.initDynamicLayerITV("https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer", "allLayers", "Visų temų sluoksniai", 0.8);
-    // this.map.add(subDynamicLayers);
+		this.renderer2.addClass(document.body, 'map-col');
+		this.renderer2.addClass(document.body, 'map-projects');
+
 
     this.view.then((view) => {
       //if query paremeteters defined zoom and center
@@ -285,12 +286,11 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
         position: "top-left",
         index: 2
       });
-      this.search.on("search-start", (event) => {
-        //console.log("SEARCH event", this.search);
-        //console.log("SEARCH event", event);
+
+      this.searchEvent = this.search.on("search-start", () => {
         this.projectsListComponent.selectFilterByExtention();
-        //setTimeout(()=>{this.view.zoom = 6},500);
       });
+
       //check other url params if exists
       //activate layer defined in url query params
       this._mapService.activateLayersVisibility(view, this.queryParams, this.map);
@@ -298,7 +298,6 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
       //init view and get projects on vie stationary property changes
       this.initView(view);
 
-      this._mapService.getThemeName('projektai');
     });
   }
 
@@ -306,5 +305,32 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+
+		const subLayersSate = this.menuService.getSubLayersState();
+		if (subLayersSate) {
+			this.menuService.removeSublayersLayer();
+		}
+
+		// close popup
+		if (this.view.popup.visible) {
+			this.view.popup.close();
+		}
+
+		// dojo remove event handlers
+		this.identifyEvent.remove();
+		this.watchU.remove();
+		this.searchEvent.remove();
+
+
+		//remove theme layers, exclude allLayers (JS API performance BUG)
+		this.map.removeAll();
+
+		// clear and destroy search widget and sear data
+		this.search.clear();
+		this.search.destroy();
+
+		this.renderer2.removeClass(document.body, 'map-col');
+		this.renderer2.removeClass(document.body, 'map-projects');
   }
+
 }

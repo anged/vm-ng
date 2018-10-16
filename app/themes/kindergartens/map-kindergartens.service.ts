@@ -50,6 +50,7 @@ export class MapKindergartensService {
   }
 
   returnAllQueryData() {
+		console.log(this.dataStore)
     return this.dataStore;
   }
 

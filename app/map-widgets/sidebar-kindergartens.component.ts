@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, ElementRef, ViewChild, TemplateRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, ElementRef, ViewChild, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { Chart } from 'chart.js';
 
@@ -17,6 +17,7 @@ import Graphic = require('esri/Graphic');
 import geometryEngine = require('esri/geometry/geometryEngine');
 import BufferParameters = require('esri/tasks/support/BufferParameters');
 import Polygon = require('esri/geometry/Polygon');
+import FeatureSet = require('esri/tasks/support/FeatureSet');
 
 @Component({
   selector: 'sidebar-kindergartens',
@@ -43,7 +44,8 @@ import Polygon = require('esri/geometry/Polygon');
       transition('s-open => s-close', animate('100ms ease-in')),
       transition('s-close => s-open', animate('100ms ease-out'))
     ])
-  ]
+  ],
+	//changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class SidebarKindergartensComponent implements OnInit, OnChanges {
@@ -124,6 +126,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       //console.log("UNIQUE dataType: ", this.dataType)
       this.dataName = this.selectorsService.getUniqueAttribute(data.mainInfo, 'LABEL');
       //console.log("UNIQUE dataName: ", this.dataName)
+			console.log(7, this.dataStore )
       this.subscription.unsubscribe();
     });
   }
@@ -181,11 +184,11 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     query.where = `GARDEN_ID=${id}`;
     featureLayer.queryFeatures(query).then((results) => {
       const features = results.features[0];
-      let fullData = {};
+      let fullData = null;
       const dataStore = this.mapKindergartensService.returnAllQueryData();
       const mainInfo = dataStore.mainInfo.forEach(data => {
         if (data.GARDEN_ID === id) {
-          Object.assign(fullData, data);
+          fullData = Object.assign({}, data);
           //console.log('selection item', data)
         }
       });
@@ -233,7 +236,8 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       search.autoSelect = true;
       search.search().then((e) => {
         const searchGeometry = e.results["0"].results["0"].feature.geometry;
-        this.mapService.runQueryByGeometry('https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/2', searchGeometry).then((result) => {
+        this.mapService.runQueryByGeometry('https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/2', searchGeometry).then((result: FeatureSet) => {
+					console.log('result', result)
           //assign elderates' name
           this.analyzeParams.eldership = result.features["0"].attributes.NR;
           const idsGartens = this.mapWidgetsService.filterKindergartents(this.dataStore, this.analyzeParams);
@@ -241,7 +245,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
           this.createBuffer(this.analyzeParams, e.results["0"].results["0"].feature).then(buffer => {
             //console.log('Buffer', buffer);
             //console.log('this.fullArea', this.fullArea);
-            this.createQuery(buffer, "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/0", idsGartens).then(filteredIds => {
+            this.createQuery(buffer, "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/0", idsGartens).then((filteredIds: any[]) => {
               this.filteredGartens = this.dataStore.mainInfo.filter(data => filteredIds.includes(data.GARDEN_ID));
               this.mapWidgetsService.selectKindergartens(filteredIds, this.selectionByFilterState, buffer);
 
@@ -384,10 +388,12 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
+		console.log(4)
     if (this.dataStore && this.sidebarContent) {
       this.groups = this.dataStore.info.filter(data => data.DARZ_ID === this.sidebarContent.GARDEN_ID);
       //console.log('groups', this.groups);
       this.selectedGartenId = this.sidebarContent.GARDEN_ID;
+			console.log(4, this.groups)
     } else {
       this.selectedGartenId = null;
     }

@@ -6,7 +6,7 @@ import QueryTask = require("esri/tasks/QueryTask");
 import Query = require("esri/tasks/support/Query");
 
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 
 @Injectable()
 export class ProjectsListService {
@@ -18,10 +18,12 @@ export class ProjectsListService {
   //using for direct viewing on map with hitTest method as well
   mainFilterCheck: String = 'word';
 
+	// FIXME remove subject, change to Osbervable or remove multiple conncection to Subject
   private projectsSubject = new Subject<any>();
   galleryArr = this.projectsSubject.asObservable();
   fullListItem = this.projectsSubject.asObservable().pipe(
-      map(item => item.map(innerItem => { return { attributes: innerItem.attributes } }))
+      map(item => item.map(innerItem => { return { attributes: innerItem.attributes } })),
+			first()
   );
 
   getProjects() {

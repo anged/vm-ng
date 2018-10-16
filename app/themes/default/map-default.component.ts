@@ -2,12 +2,13 @@ import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild } from '@ang
 import { ActivatedRoute, Params, Router } from "@angular/router";
 
 import { MapService } from '../../map.service';
+import { MenuService }  from '../../menu/menu.service';
 import { MetaService } from '../../services/meta.service';
 import { MapDefaultService } from './map-default.service';
 import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
 import { BasemapsService } from '../../map-widgets/basemaps.service';
-import { ViewService } from '../../themes/default/view.service';
+import { ViewService } from './view.service';
 import { ShareButtonService } from '../../services/share-button.service';
 import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
@@ -35,8 +36,8 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
   //execution of an Observable,
   queryUrlSubscription: Subscription;
 
-	//dojo on map click event handler
-	identifyEvent: any;
+  //dojo on map click event handler
+  identifyEvent: any;
 
   queryParams: any;
   maintenanceOn = false;
@@ -56,8 +57,11 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
   //add subDynamicLayers sublayers meta data
   subDynamicLayerSubLayers: any;
 
+	mobileActive = true;
+
   constructor(
     private _mapService: MapService,
+		private menuService: MenuService,
     private metaService: MetaService,
     private router: Router,
     private mapDefaultService: MapDefaultService,
@@ -82,24 +86,15 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
     this.shareUrl = this.shareButtonService.shareToggle(e, this.shareContainerActive);
   }
 
-  initBasemaps(map, view, queryParams) {
-    //initiate basemaps
-    const basemaps = this.basemapsService.initBasemaps(map, view, queryParams);
-
-    //check for errors and add maintenance mode if neccessary
-    basemaps.forEach((basemap) => {
-      basemap
-        .then(
-        () => { },
-        err => {
-          this.maintenanceOn = true;
-        });
-    });
+  setActiveBasemap(view, basemap: string) {
+    //toggle basemap
+    this.basemapsService.toggleBasemap(basemap, view);
   }
 
   ngOnInit() {
-		//add basic meta data
-		this.metaService.setMetaData();
+    // add basic meta data
+    this.metaService.setMetaData();
+
     this.queryUrlSubscription = this.activatedRoute.queryParams.subscribe(
       (queryParam: any) => {
         this.queryParams = queryParam;
@@ -107,27 +102,30 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
     );
     this.queryUrlSubscription.unsubscribe();
     //console.log("init");
-    //add snapshot url and pass path name ta Incetable map service
-    //FIXME ActivatedRoute issues
-    //const snapshotUrl = this.router.url.slice(1);
+    // add snapshot url and pass path name ta Incetable map service
+    // FIXME ActivatedRoute issues
+    // const snapshotUrl = this.router.url.slice(1);
     const snapshotUrl = window.location.pathname.slice(1);
 
-    // create the map
-    this.map = this._mapService.initMap(MapOptions.mapOptions);
-    //create view
-    this.view = this._mapService.viewMap(this.map);
+    // return the map
+    this.map = this._mapService.returnMap();
 
-    //initiate basemaps
-    this.initBasemaps(this.map, this.view, this.queryParams);
+    // return view
+    this.view = this._mapService.getView();
 
-    //create theme layersStatus
+    // set active basemaps based on url query params
+		if (this.queryParams.basemap) {
+		  this.setActiveBasemap(this.view, this.queryParams.basemap);
+		}
+
+    // create theme layersStatus
     if (snapshotUrl) {
       this.viewService.createThemeLayers(snapshotUrl, this.queryParams);
     };
-
     this.view.then((view) => {
-			//console.log('%c VIEW', 'color: red; font-size: 20px', view);
-      this.viewService.createSubLayers(this.queryParams);
+      //console.log('%c VIEW', 'color: red; font-size: 20px', view);
+      this.viewService.createSubLayers(this.queryParams, this.map);
+
       //if query paremeteters are defined get zoom and center
       this._mapService.centerZoom(view, this.queryParams);
 
@@ -144,9 +142,30 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    //console.log("Destroy map component");
-		// dojo on remove event handler
-		this.identifyEvent.remove();
+		//clearInterval(window.timer);
+    console.log("Destroy map component");
+
+		// remove sublayers layers cache and close sidebar if iniatialised
+		// TODO change to router chage subscriptiopn on map-view
+		const subLayersSate = this.menuService.getSubLayersState();
+		if (subLayersSate) {
+			this.menuService.removeSublayersLayer();
+		}
+
+		// close popup
+		if (this.view.popup.visible) {
+			this.view.popup.close();
+		}
+
+    // dojo on remove event handler
+    this.identifyEvent.remove();
+
+		//remove theme layers, exclude allLayers (JS API performance BUG)
 		this.map.removeAll();
+
+		// clear and destroy search widget and sear data
+		this.search.clear();
+		this.search.destroy();
+
   }
 }

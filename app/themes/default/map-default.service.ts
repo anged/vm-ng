@@ -80,7 +80,8 @@ export class MapDefaultService {
     for (let resultAtr in attributes) {
       if (attributes.hasOwnProperty(resultAtr)) {
         //Filter specific string values
-        if (!(resultAtr.toLowerCase() == "objectid" || resultAtr == "layerName" || resultAtr.match(/shape/i) || resultAtr == "Class value" || resultAtr == "Pixel Value" || resultAtr.match(/count/i) //TEMP check for raster and other str properties, use match case insensitive where possible
+        if (!(resultAtr.toLowerCase() == "objectid" || resultAtr == "layerName" || resultAtr.match(/shape/i) || resultAtr == "Class value" || resultAtr == "Pixel Value" || resultAtr.match(/count/i) ||  resultAtr == "OBJECTID" || resultAtr == "layerName" || resultAtr == "SHAPE" || resultAtr == "SHAPE.area" || resultAtr == "OID" || resultAtr == "Shape.area" || resultAtr == "SHAPE.STArea()" || resultAtr == "Shape" || resultAtr == "SHAPE.len" || resultAtr == "Shape.len" || resultAtr == "SHAPE.STLength()" || resultAtr == "SHAPE.fid" ||
+          resultAtr == "Class value" || resultAtr == "Pixel Value" || resultAtr == "Count_" //TEMP check for raster and other str properties, use match case insensitive where possible
         )) { //add layers attributes that you do not want to show
           //AG check for date string
           if (this.isValidDate(attributes[resultAtr], reg)) {

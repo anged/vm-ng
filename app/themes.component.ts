@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MapService } from './map.service';
 import { MapOptions } from './options';
+import { themesTransition } from './animations/themes-transition'
 
 import domConstruct = require('dojo/dom-construct');
 
@@ -9,6 +10,7 @@ import values from 'lodash-es/values';
 
 @Component({
   selector: 'themes-map',
+	animations:  [themesTransition],
   styles: [`
 		h2 {
 			width: 100%;
@@ -17,6 +19,9 @@ import values from 'lodash-es/values';
 			margin-bottom: 0;
 			font-size: 28px;
 	    line-height: 1.6;
+		}
+		.border-line {
+			width: 100%;
 	    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 		}
     .row.themes-component {
@@ -84,13 +89,14 @@ import values from 'lodash-es/values';
 		}
   `],
   template: `
-  <div class="row themes-component" id="themes-container">
+  <div class="row themes-component" id="themes-container" @themesTransition>
     <div class="themes-page-logo">
-      <img src="./app/img/vilnius_logo.png" alt="Vilniaus miesto interaktyvūs žemėlapiai" border="0">
+      <img src="./app/img/vilnius_logo.png" alt="Vilniaus miesto interaktyvūs žemėlapiai" class="anim-trigger" border="0">
       <h1>Vilniaus miesto interaktyvūs žemėlapiai</h1>
-      <span>Pasirinkite temą</span>
+      <span class="anim-trigger">Pasirinkite temą</span>
     </div>
-		<h2>Pagrindinės temos</h2>
+		<h2 class="anim-trigger">Pagrindinės temos</h2>
+		<div class="border-line line-animation"></div>
     <div *ngFor="let theme of themes; let i=index; let odd=odd">
       <div *ngIf="theme.production && !theme.hide  && !theme.external && !theme.custom" class="col-xs-6 col-sm-3 animate themes-row">
         <a *ngIf="!theme.url && !theme.custom" [routerLink]="[theme.id]">
@@ -100,19 +106,25 @@ import values from 'lodash-es/values';
       </div>
     </div>
 		<h2>Papildomo funkcionalumo temos</h2>
+		<div class="border-line"></div>
     <div *ngFor="let theme of themes; let i=index; let odd=odd">
       <div *ngIf="theme.production && !theme.hide && !theme.external && theme.custom" class="col-xs-6 col-sm-3 animate themes-row">
-        <a *ngIf="theme.url" [href]="theme.url">
+        <a *ngIf="!theme.url && !theme.custom" routerLink="/{{theme.id}}">
           <img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
           <p>{{theme.name}}</p>
         </a>
-        <a *ngIf="!theme.url && theme.custom" [href]="theme.id">
-          <img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
-          <p>{{theme.name}}</p>
-        </a>
+				<a *ngIf="theme.url" [href]="theme.url">
+					<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+					<p>{{theme.name}}</p>
+				</a>
+				<a *ngIf="!theme.url && theme.custom" routerLink="/{{theme.id}}">
+					<img [src]="theme.imgUrl" [alt]="theme.imgAlt"/>
+					<p>{{theme.name}}</p>
+				</a>
       </div>
     </div>
-		<h2>3 šalių aplikacijos</h2>
+		<h2>Kiti žemėlapiai</h2>
+		<div class="border-line"></div>
     <div *ngFor="let theme of themes; let i=index; let odd=odd">
       <div *ngIf="theme.production && !theme.hide && theme.external" class="col-xs-6 col-sm-3 animate themes-row">
         <a *ngIf="theme.url" rel="noopener noreferrer" target="_blank" [href]="theme.url">
@@ -159,7 +171,5 @@ export class ThemesComponent implements OnInit {
 
   ngOnInit() {
 		this.themes = values(MapOptions.themes);
-    //this.createThemeDom();
-    //console.log(this.themes);
   }
 }

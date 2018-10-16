@@ -1,8 +1,7 @@
 <div>
   <p>Pasirinkite įrankį:</p>
   <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
-  <div id="tools-measure"></div>
-  <div id="tools-print">
+  <div id="tools-container">
     <button id="print-button" (click)="printActive = !printActive" [class.active]="printActive">
     <span class="svg-print">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
@@ -21,6 +20,8 @@
     </svg>
     </span>
     Matuoti / Analizuoti</button>
+
+		<extract-3d></extract-3d>
   </div>
 
   <div id="tools-opacity" style="display: none">
@@ -28,6 +29,7 @@
     <div id="tools-opacity-widget"></div>
   </div>
 </div>
+
 <div id="print-container">
   <div id="print-menu" class="print" [class.print-active]="printActive" draggable="true">
     <span id="close-print" (click)="printActive = !printActive" [class.print-active]="printActive">
@@ -48,6 +50,7 @@
     </span>
   </div>
 </div>
+
 <div id="measure-container" class="measure-tool buffer-tool">
   <div id="measure-menu" class="measure" [class.measure-active]="measureActive" draggable="true">
     <span id="close-measure" (click)="closeMeasure()" [class.measure-active]="measureActive">

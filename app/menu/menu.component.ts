@@ -1,11 +1,13 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 import { MapOptions } from '../options';
 import { MapService } from '../map.service';
 import { ShareButtonService } from '../services/share-button.service';
 import { MenuService } from './menu.service';
-
-import { Subscription } from 'rxjs';
 
 import watchUtils = require("esri/core/watchUtils");
 
@@ -34,19 +36,27 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   options = MapOptions;
 
+  // check if route changes completely, because we using hash attribute for menu navigation
+  // using for progressBar
+  route: string;
+
   //Listen to tools component close event
   onClose(event: boolean) {
     this.toolsActive = event;
   }
 
   //Hash toggle, get all anchor elements
-  constructor(private mapService: MapService, private menuService: MenuService, private shareButtonService: ShareButtonService) {
+  constructor(
+    private el: ElementRef,
+    private mapService: MapService,
+    private router: Router,
+    private menuService: MenuService, private shareButtonService: ShareButtonService) {
     //temporary: Hash toggle, reload, new page,
     window.location.hash = '#';
   }
 
   //activate mobile nav menu
-  activateMenuBtn(e) {
+  activateMenuBtn() {
     this.mobileActive = !this.mobileActive;
     window.location.hash = '#';
     let el = document.getElementById('menu-top');
@@ -122,7 +132,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   getVisibleSubLayerNumber() {
-    this.mapService.returnThemeName() === "projektai" ?  this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view, true) : this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view);
+    //this.mapService.returnThemeName() === "projektai" ?  this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view, true) : this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view);
+    this.themeName === "projektai" ? this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view, true) : this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view);
   }
 
   closeSubListHelp() {
@@ -135,12 +146,23 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.route = this.router.url.slice(1).split('#')[0].split('?')[0];
+
     //load message about sublayers if they are visible on Init
     this.view.on("layerview-create", (event) => {
-      let map = this.mapService.returnMap();
-      let allLayersLayer = map.findLayerById("allLayers");
+      // refresh layer with goTo, since 4.6 API
+			// do not refresh when selecting adn creating feature selection layer
+			// custom teams usually
+			if ((event.layer.type !== 'graphics') && ( (event.layer.type === 'map-image'))) {
+				const mapView = this.mapService.getView();
+				const center = mapView.center
+				center.x += 0.001;
+				center.y += 0.001;
+				mapView.goTo(center);
+			}
+
       //get visibleSubLayerNumber when allLayers layer uis loaded
-      event.layer.id === "allLayers" ? this.getVisibleSubLayerNumber(): void(0);
+      event.layer.id === "allLayers" ? this.getVisibleSubLayerNumber() : void (0);
     });
 
     this.watchLayers();
@@ -149,7 +171,10 @@ export class MenuComponent implements OnInit, OnDestroy {
     //create array from array-like object
     this.aTagList = Array.from(document.getElementsByTagName('a'));
     this.aTagList.map(a => a.addEventListener('click', this.hash, false));
-    this.themeName = this.mapService.returnThemeName();
+
+    this.themeName = window.location.pathname.slice(1);
+
+
     //activate mobile nav menu as well when clicking close buttons or clicking any anchor which closes menu container on desktop mode
     // let closeList = Array.from(document.getElementsByClassName('close'));
     // closeList.map(a => a.addEventListener('click', this.activateMenuBtnOnDesktopMode, false));
@@ -157,7 +182,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     //subscribe to sub layer list button activation
     this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
-      //console.log(activeState)
+      console.log("STATE SUBLAYERS", activeState)
       this.subLayersActive = activeState;
       //get state after subscribe, if help box is closed initiate it
       if ((!this.menuService.getVisibleSubLayerNumberState()) && activeState) {
@@ -165,6 +190,29 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.getVisibleSubLayerNumber();
       }
     })
+
+
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd)
+      )
+      .subscribe((event) => {
+        // split # if using menuService
+        // split ? if using url query params
+        this.themeName = this.router.url.slice(1).split('#')[0].split('?')[0];
+
+        // check if route changes completely, because we using hash attribute for menu navigation
+        if (this.route !== this.themeName) {
+          this.route = this.themeName;
+        }
+
+        console.log('Active Route', this.themeName, this.router.url, event);
+
+      });
+  }
+
+  ngOnChanges() {
+    console.log('MENU', this.themeName)
   }
 
   ngOnDestroy() {

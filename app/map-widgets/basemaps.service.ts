@@ -6,8 +6,8 @@ import { MapService } from '../map.service';
 
 @Injectable()
 export class BasemapsService {
-  //DEFAULT basemap
-  activeBasemap: string = "base-dark";
+  // DEFAULT basemap
+  activeBasemap = "base-dark";
 
   constructor(private mapService: MapService) { }
 
@@ -28,9 +28,10 @@ export class BasemapsService {
     return this.activeBasemap;
   }
 
-	//iniatiate basemaps
-	initBasemaps(map, view, queryParams) {
-		//add  basemap layer
+	// iniatiate basemaps
+	initBasemaps(map, queryParams = { basemap: null }) {
+		console.log('map queryParams', map, queryParams)
+		// add  basemap layer
 		const basemaps = [];
 
 		BASEMAPS.forEach(basemap => {
@@ -43,14 +44,14 @@ export class BasemapsService {
 				const hiddenBaseMap = this.mapService.initTiledLayer(baseMapRestEndpoint, basemap.id, false);
 				basemaps.push(hiddenBaseMap);
 			}
-
 		});
 		map.basemap = this.mapService.customBasemaps(basemaps);
+		// update map instance
 		this.mapService.updateMap(map);
 		return basemaps;
 	}
 
-  //add current basemap visibilty
+  // add current basemap visibilty
   filterBasemap(activeBasemMapId: string, view: any) {
     view.map.basemap.baseLayers.items.map((item) => {
       if (item.id === activeBasemMapId) {
@@ -60,7 +61,7 @@ export class BasemapsService {
           : document.getElementsByClassName("container-fluid")[0].classList.remove("dark");
       } else {
         item.visible = false;
-        //if active base map is basemapEngineeringUrl, add  another  basemap as well ("base-dark" for example)
+        // if active base map is basemapEngineeringUrl, add  another  basemap as well ("base-dark" for example)
         ((this.activeBasemap === "base-en-t") && (item.id === "base-dark"))
           ? item.visible = true
           : void (0);

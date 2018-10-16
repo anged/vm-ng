@@ -103,7 +103,13 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
 
   closeMeasure() {
     this.measureActive = !this.measureActive;
-    this.restoreDefault();
+
+    if (!this.measureActive) {
+      this.restoreDefault();
+    }
+
+    console.log('CLOSE measure');
+
   }
 
   restoreDefault() {
@@ -112,11 +118,22 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
     this.checkboxChecked = false;
     this.bufferCheckbox.nativeElement.checked = false;
     this.deactivateBtn();
-    //set active tool to empty string
+    //  set active tool to empty string
     this.activeTool = "";
     this.checkBoxChange();
 
-    this.removeEventHandlers();
+    // complete 2d draw action since 4.6 complete() method is available
+    // this.draw.complete();
+    // currently using actions.complete() method
+    if (this.draw.activeAction) {
+      this.draw.activeAction.complete();
+      this.draw.activeAction = null;
+    }
+
+    console.log('draw', this.draw);
+
+    this.resetTools();
+    //this.view.graphics.removeAll();
   }
 
   //remove eventHandlers
@@ -231,7 +248,7 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
       this.deactivateBtn();
       //create buffer if create buffer checkbox checked
       //(this.checkboxChecked) ? this.createBuffer(this.analyzeParams) : void(0);
-      this.checkboxChecked && (this.createBuffer(this.analyzeParams));
+      this.checkboxChecked && (this.createBuffer(this.analyzeParams, evt));
       //set active tool to empty string
       this.activeTool = "";
     }
@@ -308,6 +325,7 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
     // event to create a graphic when user double-clicks
     // on the view or presses the "C" key
     this.eventHandlers.push(action.on("draw-complete", (evt) => {
+      console.log('COMPLETE EVENT', evt)
       this.createPolylineGraphic(evt, true);
     }));
   }
@@ -334,7 +352,7 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
   }
 
   //Label text
-  labelLinesAndPoints(geometryType: string, points, geometry = undefined, ended=false) {
+  labelLinesAndPoints(geometryType: string, points, geometry = undefined, ended = false) {
     //this.calculatedUnits
     const endString = ended ? "" : " (užbaigti dvigubu paspaudimu)";
     let text: string;
@@ -346,6 +364,7 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
 
   //Point approach
   enableCreatePoint(draw, view) {
+    // TODO add action property to component and complete() on draw toolbox close
     let action = draw.create("point");
 
     // PointDrawAction.cursor-update
@@ -385,13 +404,6 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
     this.labelLinesAndPoints("point", [point.x, point.y], point);
   }
 
-  //submit form() // not using at the moment, using NgModel analyzeParams object instead
-  onSubmitAnalyze(form: NgForm) {
-    // console.log("NG Form ", form);
-    // console.log("Form obj ", this.analyzeParams);
-    this.createBuffer(this.analyzeParams)
-  }
-
   //create buffer inputs data
   createInputsData(view) {
     const rasterLayers = this.mapService.getRasterLayers();
@@ -411,9 +423,11 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
     return themeLayerInputs.reverse();
   }
 
-  createBuffer(options: any) {
+  createBuffer(options: any, evt) {
+    console.log('evt', evt)
     //add required options for buffer execution
     let parameters = new BufferParameters();
+    let geometry = this.drawGeometry.geometry;
     parameters.distances = [options.bufferSize];
     parameters.unit = options.chosenUnit === "m" ? "meters" : "kilometers";
     parameters.geodesic = true;
@@ -421,7 +435,19 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
     parameters.bufferSpatialReference = this.view.spatialReference;
     //parameters.spatialReference = new SpatialReference({wkid: 2600});
     parameters.outSpatialReference = this.view.spatialReference;
-    parameters.geometries = [this.drawGeometry.geometry];
+    // if event csomes from point buffer it has coordinates,
+    // to avoid mouse hover changes use last events' coordinates (same as point creation)
+    if (evt.coordinates) {
+      const finalGeometry = Object.create(geometry);
+      // mutate finalGeometry
+      geometry = Object.assign(finalGeometry, {
+        x: evt.coordinates[0],
+        y: evt.coordinates[1]
+      }
+      );
+    }
+
+    parameters.geometries = [geometry];
     this.geometryService.buffer(parameters).then((results) => {
       const polyline = new Graphic({
         geometry: results[0],

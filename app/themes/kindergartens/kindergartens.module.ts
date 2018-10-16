@@ -8,6 +8,8 @@ import { KindergartensRouting } from './kindergartens.routing';
 import { SidebarKindergartensComponent } from '../../map-widgets';
 import { SearchKindergartensComponent } from '../../map-widgets/search-kindergartens.component';
 import { MapKindergartensService } from './map-kindergartens.service';
+import { KindergartensTooltipService } from './kindergartens-tooltip.service';
+import { KindergartensLayersService } from './kindergartens-layers.service';
 
 @NgModule({
   imports: [
@@ -21,6 +23,6 @@ import { MapKindergartensService } from './map-kindergartens.service';
     SidebarKindergartensComponent,
     SearchKindergartensComponent
   ],
-  providers: [MapKindergartensService]
+  providers: [MapKindergartensService, KindergartensTooltipService, KindergartensLayersService]
 })
-export class KindergartensModule { }
+export class KindergartensModule {}

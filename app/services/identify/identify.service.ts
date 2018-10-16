@@ -12,10 +12,10 @@ import all = require("dojo/promise/all");
 @Injectable()
 export class IdentifyService {
 
-	constructor(
-		private mapService: MapService,
-		private mapDefaultService: MapDefaultService,
-		private shareButtonService: ShareButtonService) { }
+  constructor(
+    private mapService: MapService,
+    private mapDefaultService: MapDefaultService,
+    private shareButtonService: ShareButtonService) { }
 
   //identify for mapservice only
   identify(layer: any) {
@@ -28,14 +28,12 @@ export class IdentifyService {
 
   //identify dafault theme layers
   identifyLayers(view) {
-    const urls = this.mapDefaultService.getUrls();
-    const identify = this.identify(urls[0]);
     const identifyParams = this.identifyParams();
     view.popup.dockOptions = {
       position: 'bottom-left'
     };
     const mapClickEvent = on(view, "click", (event) => {
-      //check if layer is suspended
+			//check if layer is suspended
       const suspended = this.mapService.getSuspendedIdentitication();
       //store all deffered objects of identify task in def array
       let def = [];
@@ -58,11 +56,9 @@ export class IdentifyService {
 
       //foreach item execute task
       view.layerViews.items.forEach(item => {
-        //do not execute if layer is for buffer graphics
-        if ((item.layer.id !== "bufferPolygon") && (!suspended)) {
-          //asign correct  visible ids based on layer name (layerId property)
-          // layerId === item.layer.id
-
+        // do not execute if layer is for buffer graphics and if layer is GroupLayer with list mnode 'hide-children' or type is group which means it is dedicated for retrieving data to custom sidebar via feature layer hitTest method
+        // skip FeatureSelection layer as well wich is created only for Feature selection graphics
+        if ((item.layer.id !== "bufferPolygon") && (item.layer.id !== "allLayers") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group') && (item.layer.id !== 'FeatureSelection') && (item.layer.id !== 'AreaSelection') && (item.layer.popupEnabled)) {
           //if layer is buffer result, add custom visibility
           if (item.layer.id === "bufferLayers") {
             identifyParams.layerIds = [0];
@@ -94,6 +90,7 @@ export class IdentifyService {
         }
       });
 
+
       //using dojo/promise/all function that takes multiple promises and returns a new promise that is fulfilled when all promises have been resolved or one has been rejected.
       all(def).then(function(response) {
         let resultsMerge = [].concat.apply([], response.reverse()); //merger all results
@@ -109,22 +106,22 @@ export class IdentifyService {
       });
 
     }, (error) => { console.error(error); });
-		//TODO REMOVE
-		// if (!window.esriMap) {
-		// 	window.esriMap = [];
-		// 	window.mapClickEvent = {};
-		// 	window.mapClickEvent[Math.random()] = mapClickEvent
-		// 	window.mapClickEvent[Math.random()] = view
-		// 	window.mapClickEvent[Math.random()] = map
-		// 	window.esriMap.push(mapClickEvent);
-		// } else {
-		// 		window.esriMap.push(mapClickEvent);
-		// 		window.mapClickEvent[Math.random()] = mapClickEvent
-		// 		window.mapClickEvent[Math.random()] = view
-		// 		window.mapClickEvent[Math.random()] = map
-		// }
+    //TODO REMOVE
+    // if (!window.esriMap) {
+    // 	window.esriMap = [];
+    // 	window.mapClickEvent = {};
+    // 	window.mapClickEvent[Math.random()] = mapClickEvent
+    // 	window.mapClickEvent[Math.random()] = view
+    // 	window.mapClickEvent[Math.random()] = map
+    // 	window.esriMap.push(mapClickEvent);
+    // } else {
+    // 		window.esriMap.push(mapClickEvent);
+    // 		window.mapClickEvent[Math.random()] = mapClickEvent
+    // 		window.mapClickEvent[Math.random()] = view
+    // 		window.mapClickEvent[Math.random()] = map
+    // }
 
-		return mapClickEvent;
+    return mapClickEvent;
   }
 
   showItvPopupOnCLick(view: any, event: any, identify: any, identifyParams: any) {

@@ -14,7 +14,6 @@ import { MapOptions } from '../options';
             <svg class="animate" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 42 42">
             <polygon points="42,19 23,19 23,0 19,0 19,19 0,19 0,23 19,23 19,42 23,42 23,23 42,23 "></polygon>
             </svg>
-            Visų temų sluoksniai
             <!---->
           </button>
         </div>
@@ -22,7 +21,7 @@ import { MapOptions } from '../options';
     `
 })
 
-export class MenuSubLayersComponent {
+export class MenuSubLayersComponent implements OnInit {
 
   state = false;
 
@@ -41,7 +40,9 @@ export class MenuSubLayersComponent {
       const allLayerGroup = this.mapService.getAllLayers();
       const map = this.mapService.returnMap();
       const layer = map.findLayerById("allLayers");
-      layer.sublayers = allLayerGroup;
+
+      //!this.state ? layer.sublayers = allLayerGroup : '';
+			layer.sublayers.addMany(allLayerGroup);
     }
 
     this.menuService.toggleSubListState();
@@ -52,4 +53,7 @@ export class MenuSubLayersComponent {
 
     this.state = this.menuService.getSubState();
   }
+
+	ngOnInit() {
+	}
 }

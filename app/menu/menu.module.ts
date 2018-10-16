@@ -1,21 +1,36 @@
 import { NgModule }      from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule }        from '@angular/forms';
+import { FormsModule, ReactiveFormsModule }        from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { MenuService }  from './menu.service';
+//import { MenuService }  from './menu.service';
+import { ShareModule } from '../share.module';
 import { MenuToolsService }  from './menu-tools.service';
 import { MenuComponent }  from './menu.component';
-import { MenuLayersItvComponent, MenuSubLayersComponent, MenuLayersComponent, MenuLegendItvComponent, MenuLegendComponent, MenuToolsComponent, MenuThemesComponent } from '../menu';
+import {
+	MenuLayersItvComponent,
+	MenuSubLayersComponent,
+	MenuLayersComponent,
+	MenuLegendItvComponent,
+	MenuLegendComponent,
+	MenuToolsComponent,
+	MenuThemesComponent,
+	ThreeDExtractComponent,
+	ExtractContainerComponent,
+} from '../menu';
 
 import { NgDraggableModule } from 'angular-draggable';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
+		FormsModule,
+		ReactiveFormsModule,
 		RouterModule,
+		ShareModule,
     //3rd party declarations
+		PerfectScrollbarModule,
     NgDraggableModule
   ],
   declarations: [
@@ -24,9 +39,13 @@ import { NgDraggableModule } from 'angular-draggable';
     MenuToolsComponent,
     MenuSubLayersComponent,
     MenuLayersItvComponent, MenuLayersComponent,
-    MenuLegendItvComponent, MenuLegendComponent
+    MenuLegendItvComponent, MenuLegendComponent,
+		ThreeDExtractComponent,
+		ExtractContainerComponent
   ],
-  exports: [MenuComponent, FormsModule],
-  providers: [MenuService, MenuToolsService]
+  exports: [MenuComponent, MenuThemesComponent, FormsModule],
+  providers: [
+		MenuToolsService
+	]
 })
 export class MenuModule { }

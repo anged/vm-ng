@@ -14,7 +14,6 @@
       "es2017",
       "dom"
     ],
-    "experimentalDecorators": true,
     "preserveConstEnums": true,
     "suppressImplicitAnyIndexErrors": true,
     "types": [
@@ -23,7 +22,10 @@
       "arcgis-js-api"
     ]
   },
+	"include": [
+    "app/**/*"
+  ],
 	"files": [
-    "app/options.ts",
+    "app/options.ts"
   ]
 }
