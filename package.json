@@ -47,11 +47,11 @@
   },
   "devDependencies": {
     "@angular/compiler-cli": "^6.0.3",
-		"@types/arcgis-js-api": "^4.9.0",
+    "@types/arcgis-js-api": "^4.9.0",
     "@types/core-js": "^0.9.43",
     "@types/dojo": "^1.9.40",
     "@types/jasmine": "^2.5.47",
-    "@types/lodash": "^4.14.74",
+    "@types/lodash-es": "^4.17.1",
     "@types/node": "^10.1.4",
     "angular-router-loader": "^0.8.5",
     "chart.js": "^2.7.1",

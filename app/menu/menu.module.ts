@@ -1,22 +1,23 @@
-import { NgModule }      from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule }        from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 //import { MenuService }  from './menu.service';
 import { ShareModule } from '../share.module';
-import { MenuToolsService }  from './menu-tools.service';
-import { MenuComponent }  from './menu.component';
+import { MenuToolsService } from './menu-tools.service';
+import { ThreeDExtractService } from "./tools/threed-extract/threed-extract.service";
+import { MenuComponent } from './menu.component';
 import {
-	MenuLayersItvComponent,
-	MenuSubLayersComponent,
-	MenuLayersComponent,
-	MenuLegendItvComponent,
-	MenuLegendComponent,
-	MenuToolsComponent,
-	MenuThemesComponent,
-	ThreeDExtractComponent,
-	ExtractContainerComponent,
+  MenuLayersItvComponent,
+  MenuSubLayersComponent,
+  MenuLayersComponent,
+  MenuLegendItvComponent,
+  MenuLegendComponent,
+  MenuToolsComponent,
+  MenuThemesComponent,
+  ThreeDExtractComponent,
+  ExtractContainerComponent
 } from '../menu';
 
 import { NgDraggableModule } from 'angular-draggable';
@@ -25,12 +26,12 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 @NgModule({
   imports: [
     CommonModule,
-		FormsModule,
-		ReactiveFormsModule,
-		RouterModule,
-		ShareModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    ShareModule,
     //3rd party declarations
-		PerfectScrollbarModule,
+    PerfectScrollbarModule,
     NgDraggableModule
   ],
   declarations: [
@@ -40,12 +41,13 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MenuSubLayersComponent,
     MenuLayersItvComponent, MenuLayersComponent,
     MenuLegendItvComponent, MenuLegendComponent,
-		ThreeDExtractComponent,
-		ExtractContainerComponent
+    ThreeDExtractComponent,
+    ExtractContainerComponent
   ],
   exports: [MenuComponent, MenuThemesComponent, FormsModule],
   providers: [
-		MenuToolsService
-	]
+    MenuToolsService,
+    ThreeDExtractService
+  ]
 })
 export class MenuModule { }

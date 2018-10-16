@@ -14,11 +14,11 @@
 						<div>
 							<div id="draw-polygon" #polygonRef class="esri-widget-button esri-widget esri-interactive" title="Brėžti poligoną"  [ngClass]="{'active': drawActive}">
 								<button
-									mat-button matStepperNext (click)="selectDrawEl($event, 0)" class="esri-icon-polygon">
+									mat-button matStepperNext (click)="selectDrawEl()" class="esri-icon-polygon">
 									<p>Apibrėžti</p>
 								</button>
 							</div>
-							<div *ngIf="graphic" id="draw-polygon" class="esri-widget-button esri-widget esri-interactive">
+							<div *ngIf="this.extractService.graphic" id="draw-polygon" class="esri-widget-button esri-widget esri-interactive">
 								<button @leaveEnterTransition
 									mat-button (click)="resetTools()" class="esri-icon-clear esri-icon-erase">
 									<p>Valyti</p>
@@ -26,7 +26,7 @@
 							</div>
 						</div>
 
-						<div hideElement *ngIf="calculatedUnits > 15" @leaveEnterTransition class="alert alert-danger alert-margin-top" role="alert">
+						<div hideElement *ngIf="this.extractService.calculatedUnits > 15" @leaveEnterTransition class="alert alert-danger alert-margin-top" role="alert">
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
@@ -62,15 +62,15 @@
 				<mat-step [class.active-step]="stepper.selectedIndex===2">
 					<ng-template matStepLabel>Rezultatai</ng-template>
 					<div>
-						<div *ngIf="fileResultsurls.succes; else errorMsg">
+						<div *ngIf="extractService.fileResultsurls.succes; else errorMsg">
 							<div class="alert alert-success" role="alert">
 								3D ištraukos sėkmingai suformuotos
 							</div>
 							<div>Atsisiųskite ištraukas norimu formatu:</div>
-							<a [href]="fileResultsurls.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
-							<a [href]="fileResultsurls.ds" target="_blank" rel="noopener noreferrer">3DS</a>
-							<a [href]="fileResultsurls.collada" target="_blank" rel="noopener noreferrer">Collada</a>
-							<a [href]="fileResultsurls.obj" target="_blank" rel="noopener noreferrer">OBJ</a>
+							<a [href]="extractService.fileResultsurls.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+							<a [href]="extractService.fileResultsurls.ds" target="_blank" rel="noopener noreferrer">3DS</a>
+							<a [href]="extractService.fileResultsurls.collada" target="_blank" rel="noopener noreferrer">Collada</a>
+							<a [href]="extractService.fileResultsurls.obj" target="_blank" rel="noopener noreferrer">OBJ</a>
 							<!-- <button mat-button matStepperPrevious>Back</button> -->
 
 						</div>
