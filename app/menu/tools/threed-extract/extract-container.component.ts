@@ -154,6 +154,11 @@ export class ExtractContainerComponent implements OnInit {
 
     //reset eventHandler events
     this.removeEventHandlers();
+
+    //unsuspen layers
+    if (this.mapService.getSuspendedIdentitication) {
+      this.mapService.unSuspendLayersToggle();
+    }
   }
 
   //remove eventHandlers
