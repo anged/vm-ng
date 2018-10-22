@@ -1,7 +1,8 @@
 <div>
   <p>Pasirinkite įrankį:</p>
   <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
-  <div id="tools-container">
+
+	<div id="tools-container">
     <button id="print-button" (click)="printActive = !printActive" [class.active]="printActive">
     <span class="svg-print">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
@@ -13,13 +14,14 @@
     </button>
 
     <button id="measure-button" (click)="closeMeasure()" [class.active]="measureActive">
-    <span class="svg-measure">
-    <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
-      <image *ngIf="!measureActive; else svgMeasureW" xlink:href="../../app/img/svg/measure.svg" x="0" y="0" height="15px" width="15px"/>
-      <ng-template #svgMeasureW><image xlink:href="../../app/img/svg/measure-w.svg" x="0" y="0" height="15px" width="15px"/></ng-template>
-    </svg>
-    </span>
-    Matuoti / Analizuoti</button>
+	    <span class="svg-measure">
+	    <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
+	      <image *ngIf="!measureActive; else svgMeasureW" xlink:href="../../app/img/svg/measure.svg" x="0" y="0" height="15px" width="15px"/>
+	      <ng-template #svgMeasureW><image xlink:href="../../app/img/svg/measure-w.svg" x="0" y="0" height="15px" width="15px"/></ng-template>
+	    </svg>
+	    </span>
+	    Matuoti / Analizuoti
+		</button>
 
 		<extract-3d></extract-3d>
   </div>
@@ -124,16 +126,10 @@
           <div class="input-field col s12"><br />
             <div class="form-title">Perdengti su temos sluoksniu</div>
             <select required class="form-control" id="themeSelect" [(ngModel)]="analyzeParams.inputlayer" name="themeSelect" #themeSelect="ngModel">
-                  <!-- <option value="null" disabled>Pasirinkite temą</option> -->
-                  <option value="null">Pasirinkite temą</option>
-                  <option #theme *ngFor="let layer of themeLayers; index as i"  [ngValue]="i">{{layer.name}}</option>
-                </select>
-            <!-- <input
-                  [(ngModel)]="analyzeParams.inputlayer"
-                  type="text"
-                  name="inputname"
-                  required
-                  class="validate filter-input form-control ng-pristine ng-valid ng-touched" id="projects" placeholder="Pasirinkite sluoksnį"  ng-reflect-model=""> -->
+              <!-- <option value="null" disabled>Pasirinkite temą</option> -->
+              <option value="null">Pasirinkite temą</option>
+              <option #theme *ngFor="let layer of themeLayers; index as i"  [ngValue]="i">{{layer.name}}</option>
+            </select>
           </div>
 
           <div class="feature-results">
@@ -145,15 +141,6 @@
           </div>
         </div>
         <div id="measure-button">
-          <!-- <button
-            type="submit"
-            class="animate"
-            name="button"
-            #measureButton
-            [ngClass]="{'active' : measureButtonActive}"
-            disabled>
-            Analizuoti
-          </button> -->
         </div>
       </form>
 

@@ -30,7 +30,7 @@ export class ThreeDExtractService {
     collada: null,
     obj: null,
     ds: null,
-    succes: false
+    succes: null
   };
   calculatedUnits: number
   job: IPromise<any>
@@ -115,9 +115,11 @@ export class ThreeDExtractService {
   }
 
   submitExtractJob() {
-
     let params = {};
-    //this.toggleExtractBtn();
+
+    //null succes result
+    this.fileResultsurls.succes = null;
+
     this.fileResults = [];
     this.featureSet.features = [this.graphic];
     params[MapOptions.mapOptions.staticServices.extract3DGP.params.name] = this.featureSet;
@@ -142,7 +144,7 @@ export class ThreeDExtractService {
       }
 
     }).catch(function(error) {
-      console.warn('VP Warn', error)
+      console.warn('VP Warn', error);
     });
   }
 
@@ -179,7 +181,7 @@ export class ThreeDExtractService {
           }
         }).catch(function(error) {
           this.fileResultsurls.succes = false;
-          console.warn('VP File Warn', error)
+          console.warn('VP File Warn', error);
         });
       }
     })

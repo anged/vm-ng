@@ -77,6 +77,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   exports: [
 		HideElementseDirective,
     CommonModule,
+		FormsModule,
     PerfectScrollbarModule,
     MatSelectModule,
     MatProgressBarModule,

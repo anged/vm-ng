@@ -6,12 +6,9 @@ require('baguettebox.js/dist/baguetteBox.min.css');
 @Component({
   selector: 'ng-gallery',
   styles: [`
-    #gallery-ng-projects  {
-      width: 378px;
-    }
     .gallery-item {
       margin: 0;
-      max-width: 26%;
+      max-width: 33%;
       max-height: 100px;
       cursor: pointer;
       display: inline-block;

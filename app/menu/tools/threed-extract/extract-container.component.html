@@ -76,7 +76,7 @@
 						</div>
 						<button mat-button (click)="resetTools()">Užsakyti iš naujo</button>
 						<ng-template #errorMsg>
-							<div class="alert alert-danger" role="alert">
+							<div *ngIf="extractService.fileResultsurls.succes !== null" class="alert alert-danger" role="alert">
 								Nepavyko suformuoti užklausos.
 								<br>
 								Galimos priežastys:

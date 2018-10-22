@@ -508,6 +508,9 @@ li.list-active {
 #gallery-container {
   margin-top:10px;
 }
+#gallery-container .esri-popup-renderer img {
+    max-width: 100%;
+}
 .baguetteBox-button, .baguetteBox-button:focus, .baguetteBox-button:hover {
   background-color: rgba(255, 255, 255, 0) !important;
 }
@@ -2439,10 +2442,7 @@ ul > li .esri-layer-list__item-title {
     max-width: 440px;
   }
   .esri-popup--is-docked-bottom-left.esri-popup__position-container .esri-popup__main-container {
-    max-height: -moz-calc(100% - 140px);
-    max-height: -webkit-calc(100% - 140px);
-    max-height: -o-calc(100% - 140px);
-    max-height: calc(100% - 140px);
+    max-height: 100%;
     margin-bottom: 0;
   }
   .esri-ui-corner .esri-compass.esri-widget {
@@ -2683,10 +2683,7 @@ ul > li .esri-layer-list__item-title {
 }
 @media only screen and (min-width: 840px) {
   .esri-popup--is-docked-top-left.esri-popup__position-container .esri-popup__main-container, .esri-popup--is-docked-bottom-left.esri-popup__position-container .esri-popup__main-container {
-    max-height: -moz-calc(50% - 20px);
-    max-height: -webkit-calc(50% - 20px);
-    max-height: -o-calc(50% - 20px);
-    max-height: calc(50% - 20px);
+    max-height: 100%;
   }
   .top-nav.mobile-active,
   .top-nav {

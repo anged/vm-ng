@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 //import { MenuService }  from './menu.service';
@@ -26,8 +25,6 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
     RouterModule,
     ShareModule,
     //3rd party declarations
@@ -44,7 +41,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     ThreeDExtractComponent,
     ExtractContainerComponent
   ],
-  exports: [MenuComponent, MenuThemesComponent, FormsModule],
+  exports: [MenuComponent, MenuThemesComponent],
   providers: [
     MenuToolsService,
     ThreeDExtractService
