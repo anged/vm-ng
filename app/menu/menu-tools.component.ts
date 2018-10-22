@@ -6,13 +6,11 @@ import { Symbols } from './symbols';
 import { MapService } from '../map.service';
 import { MenuToolsService } from './menu-tools.service';
 
-import Print = require('esri/widgets/Print');
 import Draw = require('esri/views/2d/draw/Draw');
 import Graphic = require('esri/Graphic');
 import Polygon = require('esri/geometry/Polygon');
 import geometryEngine = require('esri/geometry/geometryEngine');
 import BufferParameters = require('esri/tasks/support/BufferParameters');
-import SpatialReference = require('esri/geometry/SpatialReference');
 
 
 import forOwn from 'lodash-es/forOwn';
@@ -29,7 +27,6 @@ import forOwn from 'lodash-es/forOwn';
 })
 
 export class MenuToolsComponent implements OnInit, AfterViewInit {
-  @Input() viewTools: any;
   //set  toolsActive to false in parent component and get back menu wrapper for mobile
   @Output() close: EventEmitter<any> = new EventEmitter();
   // @ViewChild('measureButton') measureButton: ElementRef;
@@ -37,9 +34,6 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
 
   checkboxChecked: boolean;
 
-  printWidget: any;
-
-  printActive: boolean = false;
   measureButtonActive: boolean = false;
   activeToolsState = false;
 
@@ -528,8 +522,6 @@ export class MenuToolsComponent implements OnInit, AfterViewInit {
 
     this.view = this.mapService.getView();
 
-    //init Print
-    this.printWidget = this.menuToolsService.initPrint(this.view);
 
     //add draw capabilities for temporary geometries
     this.view.then((view) => {

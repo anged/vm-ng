@@ -46,7 +46,7 @@ export class ViewService {
 
   //create sub Layers
   //TODO remove sub layers and create custom widget with layers search
-  createSubLayers(queryParams, map = null) {
+  createSubLayers(queryParams, map) {
     // check if allLayers layer  exist
     const allLayersLayer = map.findLayerById('allLayers');
     if (typeof allLayersLayer === 'undefined') {

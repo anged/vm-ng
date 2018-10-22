@@ -4,10 +4,8 @@ import { MapOptions } from '../options';
 
 import Print = require('esri/widgets/Print');
 import Graphic = require('esri/Graphic');
-import Polygon = require('esri/geometry/Polygon');
 import Point = require('esri/geometry/Point');
 import GeometryService = require('esri/tasks/GeometryService');
-import SpatialReference = require('esri/geometry/SpatialReference');
 import TextSymbol = require('esri/symbols/TextSymbol');
 
 @Injectable()

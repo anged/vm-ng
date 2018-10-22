@@ -1,24 +1,12 @@
-<div>
-  <p>Pasirinkite įrankį:</p>
-  <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
-
-	<div id="tools-container">
-    <print-map></print-map>
-
-    <button id="measure-button" (click)="closeMeasure()" [class.active]="measureActive">
-	    <span class="svg-measure">
-	    <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
-	      <image *ngIf="!measureActive; else svgMeasureW" xlink:href="../../app/img/svg/measure.svg" x="0" y="0" height="15px" width="15px"/>
-	      <ng-template #svgMeasureW><image xlink:href="../../app/img/svg/measure-w.svg" x="0" y="0" height="15px" width="15px"/></ng-template>
-	    </svg>
-	    </span>
-	    Matuoti / Analizuoti
-		</button>
-
-		<extract-3d></extract-3d>
-  </div>
-
-</div>
+<button id="measure-button" (click)="closeMeasure()" [class.active]="measureActive">
+	<span class="svg-measure">
+	<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
+		<image *ngIf="!measureActive; else svgMeasureW" xlink:href="../../app/img/svg/measure.svg" x="0" y="0" height="15px" width="15px"/>
+		<ng-template #svgMeasureW><image xlink:href="../../app/img/svg/measure-w.svg" x="0" y="0" height="15px" width="15px"/></ng-template>
+	</svg>
+	</span>
+	Matuoti / Analizuoti
+</button>
 
 <div id="measure-container" class="measure-tool buffer-tool">
   <div id="measure-menu" class="measure" [class.measure-active]="measureActive" draggable="true">

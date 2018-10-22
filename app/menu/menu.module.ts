@@ -16,7 +16,8 @@ import {
   MenuToolsComponent,
   MenuThemesComponent,
   ThreeDExtractComponent,
-  ExtractContainerComponent
+  ExtractContainerComponent,
+	PrintMapComponent
 } from '../menu';
 
 import { NgDraggableModule } from 'angular-draggable';
@@ -38,8 +39,8 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MenuSubLayersComponent,
     MenuLayersItvComponent, MenuLayersComponent,
     MenuLegendItvComponent, MenuLegendComponent,
-    ThreeDExtractComponent,
-    ExtractContainerComponent
+    ThreeDExtractComponent, ExtractContainerComponent,
+		PrintMapComponent
   ],
   exports: [MenuComponent, MenuThemesComponent],
   providers: [
