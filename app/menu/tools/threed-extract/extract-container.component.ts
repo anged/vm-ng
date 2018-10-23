@@ -44,14 +44,14 @@ export class ExtractContainerComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // set previuos step uneditabvle
+    // set previuos step uneditable
     this.subscription = this.stepper.selectionChange.subscribe((stepper) => {
       stepper.previouslySelectedStep.editable = false;
     });
 
     this.view = this.mapService.getView();
 
-    //add draw capabilities for temporary geometries
+    // add draw capabilities for temporary geometries
     this.view.then(() => {
       this.draw = this.extractService.initDraw(this.view);
       this.extractService.initGeoprocessor(this.view);
@@ -74,7 +74,6 @@ export class ExtractContainerComponent implements OnInit {
     // if button was active (after taggle becomes false) button behaves as reset button and starts to draw
     if (!this.drawActive) {
       this.resetTools();
-      //this.mapService.suspendLayersToggle();
       this.enableCreatePolygon();
       this.toggleDraw();
     } else {
