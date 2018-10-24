@@ -800,9 +800,6 @@ label.label-style.active:after {
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
 }
-.esri-search .esri-search__container .esri-search__clear-button.esri-widget-button {
-  padding: 12px 4px;
-}
 .esri-ui-top-left {
     top: 60px;
     right: 0;

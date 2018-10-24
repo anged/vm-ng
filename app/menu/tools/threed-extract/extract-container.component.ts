@@ -140,8 +140,16 @@ export class ExtractContainerComponent implements OnInit {
     const action = this.draw.activeAction as PolygonDrawAction
 
     if (!isEmpty(action)) {
+			console.log('action', action)
       action.complete();
+
+			// BUG Fix: in order to unsuspend run destroy as well
+			// BUG effects if we closing draw feature after first draw element has been added
+      action.destroy();
+
       this.draw.activeAction = null;
+			console.log('action', action, this.draw)
+			console.log('this.mapService.getSuspendedIdentitication', this.mapService.getSuspendedIdentitication())
     }
 
     this.extracDisabled = true;
@@ -150,12 +158,13 @@ export class ExtractContainerComponent implements OnInit {
     this.drawActive = false;
     this.view.graphics.removeAll();
     this.stepper.reset();
+		console.log(	this.eventHandlers)
 
     //reset eventHandler events
     this.removeEventHandlers();
 
-    //unsuspen layers
-    if (this.mapService.getSuspendedIdentitication) {
+    //unsuspend layers
+    if (this.mapService.getSuspendedIdentitication()) {
       this.mapService.unSuspendLayersToggle();
     }
   }
@@ -173,7 +182,7 @@ export class ExtractContainerComponent implements OnInit {
     this.subscription.unsubscribe();
     this.extractService.cancelJob()
     this.resetTools();
-    this.draw.destroy();
+    //this.draw.destroy();
   }
 
 }

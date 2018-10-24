@@ -76,6 +76,7 @@
 						</div>
 						<button mat-button (click)="resetTools()">Užsakyti iš naujo</button>
 						<ng-template #errorMsg>
+							<mat-spinner *ngIf="extractService.fileResultsurls.succes === null" diameter="50"></mat-spinner>
 							<div *ngIf="extractService.fileResultsurls.succes !== null" class="alert alert-danger" role="alert">
 								Nepavyko suformuoti užklausos.
 								<br>
