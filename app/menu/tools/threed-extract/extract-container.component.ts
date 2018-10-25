@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 ;
 import { MapService } from '../../../map.service';
 import { ThreeDExtractService } from "./threed-extract.service";
+import { ToolsNameService } from '../../tools-name.service';
+import { ToolsList } from '../../tools.list';
 
 import { leaveEnterTransition } from '../../../animations/leaveEnter-transition'
 
@@ -20,7 +22,7 @@ import isEmpty from 'lodash-es/isempty';
 })
 
 export class ExtractContainerComponent implements OnInit {
-  @Input('toolActive') toolActive: boolean;
+//  @Input('toolActive') toolActive: boolean;
 
   //dojo draw events handlers Array
   private eventHandlers = [];
@@ -39,8 +41,8 @@ export class ExtractContainerComponent implements OnInit {
 
   constructor(
     private mapService: MapService,
-    private extractService: ThreeDExtractService
-
+    private extractService: ThreeDExtractService,
+    private toolsNameService: ToolsNameService
   ) { }
 
   ngOnInit() {
@@ -57,10 +59,8 @@ export class ExtractContainerComponent implements OnInit {
       this.extractService.initGeoprocessor(this.view);
     });
 
-  }
-
-  toggleExtract() {
-    this.toolActive = !this.toolActive;
+    // set tool name Obs
+    this.toolsNameService.setCurentToolName(ToolsList.extract);
   }
 
   toggleDraw() {
@@ -71,12 +71,14 @@ export class ExtractContainerComponent implements OnInit {
     // order is important
     this.toggleDraw();
 
-    // if button was active (after taggle becomes false) button behaves as reset button and starts to draw
+    // if button was active (after taggle becomes false)
+    // button behaves as reset button and starts to draw
     if (!this.drawActive) {
       this.resetTools();
       this.enableCreatePolygon();
       this.toggleDraw();
     } else {
+      // TODO implement ssuspend hitTest of feature layers
       this.mapService.suspendLayersToggle();
       this.enableCreatePolygon();
     }
@@ -140,16 +142,14 @@ export class ExtractContainerComponent implements OnInit {
     const action = this.draw.activeAction as PolygonDrawAction
 
     if (!isEmpty(action)) {
-			console.log('action', action)
+      console.log('action', action)
       action.complete();
 
-			// BUG Fix: in order to unsuspend run destroy as well
-			// BUG effects if we closing draw feature after first draw element has been added
+      // BUG Fix: in order to unsuspend run destroy as well
+      // BUG effects if we closing draw feature after first draw element has been added
       action.destroy();
 
       this.draw.activeAction = null;
-			console.log('action', action, this.draw)
-			console.log('this.mapService.getSuspendedIdentitication', this.mapService.getSuspendedIdentitication())
     }
 
     this.extracDisabled = true;
@@ -158,7 +158,6 @@ export class ExtractContainerComponent implements OnInit {
     this.drawActive = false;
     this.view.graphics.removeAll();
     this.stepper.reset();
-		console.log(	this.eventHandlers)
 
     //reset eventHandler events
     this.removeEventHandlers();

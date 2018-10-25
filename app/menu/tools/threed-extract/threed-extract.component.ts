@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 
+import { ToolsNameService } from '../../tools-name.service';
+import { ToolsList } from '../../tools.list';
+
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'extract-3d',
@@ -16,15 +20,36 @@ import { Component } from '@angular/core';
 	`]
 })
 
-export class ThreeDExtractComponent {
+export class ThreeDExtractComponent implements AfterViewInit {
   private toolActive = false;
+	s: Subscription;
+
+  constructor(private toolsNameService: ToolsNameService) { }
 
   toggleExtract() {
     this.toolActive = !this.toolActive;
+		if (this.toolActive) {
+			this.s = this.toolsNameService.currentToolName
+				.subscribe((name) => {
+					console.log(this.s, 'Name', name, ToolsList.extract)
+					if (ToolsList.extract !== name) { this.closeMeasure() };
+				});
+		}
+
   }
 
-	closeMeasure() {
-		this.toolActive = false;
-	}
+  closeMeasure() {
+    this.toolActive = false;
+		this.s.unsubscribe();
+		console.log(this.s)
+  }
+
+  ngAfterViewInit() {
+    // this.toolsNameService.currentToolName.subscribe((name) => {
+    //   console.log('Name', name, ToolsList.extract)
+    //   if (ToolsList.extract !== name) {this.closeMeasure()};
+    // });
+
+  }
 
 }

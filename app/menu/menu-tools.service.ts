@@ -11,7 +11,14 @@ import TextSymbol = require('esri/symbols/TextSymbol');
 @Injectable()
 export class MenuToolsService {
 
+	// current selected tool containing draw feature
+	currentDrawTool = '';
+
   constructor() { }
+
+	setCurrentDrawTool(tool: string) {
+		return this.currentDrawTool = tool;
+	}
 
   initPrint(view) {
     return new Print({

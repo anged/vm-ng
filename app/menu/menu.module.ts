@@ -6,6 +6,8 @@ import { RouterModule } from '@angular/router';
 import { ShareModule } from '../share.module';
 import { MenuToolsService } from './menu-tools.service';
 import { ThreeDExtractService } from "./tools/threed-extract/threed-extract.service";
+import { MeasureMapService } from './tools/measure/measure-map.service'; // re-export the named thing
+import { ToolsNameService } from './tools-name.service'; // re-export the named thing
 import { MenuComponent } from './menu.component';
 import {
   MenuLayersItvComponent,
@@ -16,8 +18,11 @@ import {
   MenuToolsComponent,
   MenuThemesComponent,
   ThreeDExtractComponent,
+  MeasureMapComponent,
+  MeasureContainerComponent,
   ExtractContainerComponent,
-	PrintMapComponent
+
+  PrintMapComponent
 } from '../menu';
 
 import { NgDraggableModule } from 'angular-draggable';
@@ -40,12 +45,15 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MenuLayersItvComponent, MenuLayersComponent,
     MenuLegendItvComponent, MenuLegendComponent,
     ThreeDExtractComponent, ExtractContainerComponent,
-		PrintMapComponent
+    MeasureMapComponent, MeasureContainerComponent,
+    PrintMapComponent
   ],
   exports: [MenuComponent, MenuThemesComponent],
   providers: [
     MenuToolsService,
-    ThreeDExtractService
+    ThreeDExtractService,
+		MeasureMapService,
+		ToolsNameService
   ]
 })
 export class MenuModule { }

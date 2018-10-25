@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnChange } from '@angular/core';
 
 import { MapService } from '../../../map.service';
-import { MenuToolsService } from '../../menu-tools.service';
+import { MeasureMapService } from './measure-map.service';
+import { ToolsNameService } from '../../tools-name.service';
+import { ToolsList } from '../../tools.list';
+
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'measure-map',
-  templateUrl: './app/menu/tools/print/print-map.component.html',
+  templateUrl: './app/menu/tools/measure/measure-map.component.html',
   styles: [`
 		:host button {
 	    margin: 10px;
@@ -18,18 +22,75 @@ import { MenuToolsService } from '../../menu-tools.service';
 	`]
 })
 
-export class MeasureMapComponent implements OnInit {
-  private printActive = false;
+export class MeasureMapComponent implements OnInit, AfterViewInit, OnChange {
+  private measureActive = false;
 
-  constructor(
-    private mapService: MapService,
-    private menuToolsService: MenuToolsService
-  ) { }
+	// checking if first theme was inisiated before
+	// if true, create new input data based on new theme
+	firstThemeLoaded = false;
+	s: Subscription;
 
+	constructor(
+		private mapService: MapService,
+		private measureMapService: MeasureMapService,
+		private toolsNameService: ToolsNameService
+	) { }
 
-  ngOnInit() {
-    const view = this.mapService.getView();
+	toggleMeasure() {
+		this.measureActive = !this.measureActive;
+		if (this.measureActive) {
+			// destroy tool component if other component containing draw tool got opened
+			this.s = this.toolsNameService.currentToolName.subscribe((name) => {
+				console.log('Name M', name, ToolsList.measure)
+				console.log(this.s)
+				if  (ToolsList.measure !== name) {
+					// TODO refactor, currently using setTimeout for ExpressionChangedAfterItHasBeenCheckedError
+					setTimeout(() => {
+						this.closeMeasure();
+					});
+				}
+			});
+		}
+	}
 
-  }
+	closeMeasure() {
+		this.measureActive = false;
+		this.s.unsubscribe();
+		console.log(this.s)
+	}
+
+	ngOnInit() {
+		const view = this.mapService.getView();
+		view.on("layerview-create", (event) => {
+			console.log(event)
+			// wait for last layer to be loaded then init createInputsData
+			if (!this.firstThemeLoaded) {
+			 if (event.layer.id === "allLayers") {
+				 // create buffer inputs data
+				 this.measureMapService.createInputsData(view);
+				 this.firstThemeLoaded =  true;
+			 }
+			} else {
+				// create buffer inputs based on new theme
+				this.measureMapService.createInputsData(view);
+			}
+		});
+	}
+
+	ngOnChange(a) {
+		console.log('Change', a)
+	}
+
+	ngAfterViewInit() {
+		// // destroy tool component if other component containing draw tool got opened
+		// this.toolsNameService.currentToolName.subscribe((name) => {
+		// 	console.log('Name M', name, ToolsList.measure)
+		// 	if  (ToolsList.measure !== name) {
+		// 		setTimeout(() => {
+		// 			this.closeMeasure();
+		// 		});
+		// 	}
+		// });
+	}
 
 }
