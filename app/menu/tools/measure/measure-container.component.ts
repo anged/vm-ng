@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input, ElementRef } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MenuToolsService } from '../../menu-tools.service';
@@ -6,6 +6,9 @@ import { MeasureMapService } from './measure-map.service';
 import { ToolsNameService } from '../../tools-name.service';
 import { AnalyzeParams } from './AnalyzeParams';
 import { ToolsList } from '../../tools.list';
+import PolygonDrawAction = require('esri/views/2d/draw/PolygonDrawAction');
+
+import isEmpty from 'lodash-es/isempty';
 
 import forOwn from 'lodash-es/forOwn';
 
@@ -27,7 +30,7 @@ import forOwn from 'lodash-es/forOwn';
 	`]
 })
 
-export class MeasureContainerComponent implements OnInit {
+export class MeasureContainerComponent implements OnInit, OnDestroy {
   //@Input('measureActive') measureActive: boolean;
   @ViewChild('bufferCheckbox') bufferCheckbox: ElementRef;
 
@@ -35,7 +38,8 @@ export class MeasureContainerComponent implements OnInit {
   draw: any;
   activeToolsState = false;
   activeTool = "";
-
+  checkboxChecked: boolean;
+  canCreateBuffer: boolean = true;
   analyzeParams: AnalyzeParams = {
     bufferSize: 1,
     inputlayer: null,
@@ -83,32 +87,18 @@ export class MeasureContainerComponent implements OnInit {
   }
 
   checkBoxChange() {
-    this.measureMapService.checkBoxChange(this.bufferCheckbox.nativeElement.checked);
+    this.checkboxChecked = this.bufferCheckbox.nativeElement.checked;
+    this.measureMapService.resetCalculate();
   }
 
 
   restoreDefault() {
-    // this.calculatedUnits = null;
-    // this.calculateCount = null;
-    // this.checkboxChecked = false;
-    // this.bufferCheckbox.nativeElement.checked = false;
     //  set active tool to empty string
     this.activeTool = "";
-    this.measureMapService.checkBoxChange(this.bufferCheckbox.nativeElement.checked);
-
-    // complete 2d draw action since 4.5 complete() method is available
-    // this.draw.complete();
-    // currently using actions.complete() method
-    if (this.draw.activeAction) {
-      this.draw.activeAction.complete();
-      this.draw.activeAction.destroy();
-      this.draw.activeAction = null;
-    }
-
+    this.measureMapService.resetCalculate();
     console.log('draw', this.draw);
 
-    this.resetTools();
-    //this.view.graphics.removeAll();
+    this.view.graphics.removeAll();
   }
 
   //remove eventHandlers
@@ -123,6 +113,7 @@ export class MeasureContainerComponent implements OnInit {
     //esri draw approach
     //this.view.graphics.removeAll(); //TODO check if we need to removeAll in final solution
     //TODO refactor
+
     switch (this.activeTool) {
       case "draw-polygon":
         this.enableCreatePolygon(this.draw, this.view, this.activeTool);
@@ -152,12 +143,31 @@ export class MeasureContainerComponent implements OnInit {
 
   // U
   resetTools() {
+    console.log('activeToolsState', this.activeToolsState, this.activeTool )
 		// TODO cancel requests
+
+    // complete 2d draw action since 4.5 complete() method is available
+    const action = this.draw.activeAction as PolygonDrawAction
+
+    if (!isEmpty(action)) {
+      console.log('action', action)
+      action.complete();
+
+      // BUG Fix: in order to unsuspend run destroy as well
+      // BUG effects if we closing draw feature after first draw element has been added
+      //action.destroy();
+
+      this.draw.activeAction = null;
+    }
+
+    this.measureMapService.resetCalculate();
+
+    this.view.graphics.removeAll();
+
+    console.log('VIEW graphics', this.view.graphics)
 
     //reset eventHandler events
     this.removeEventHandlers();
-    this.measureMapService.resetCalculate();
-    this.view.graphics.removeAll();
 
     //unsuspend layers
     if (this.mapService.getSuspendedIdentitication()) {
@@ -189,13 +199,18 @@ export class MeasureContainerComponent implements OnInit {
     // focus the view to activate keyboard shortcuts for drawing polygons
     this.view.focus();
     // listen to vertex-add event on the action
-    this.eventHandlers.push(action.on("vertex-add", (e) => this.measureMapService.drawPolygon(e, this.analyzeParams)));
+    this.eventHandlers.push(action.on("vertex-add", (e) => {
+      this.measureMapService.drawPolygon(e, this.analyzeParams);
+    }));
     // listen to cursor-update event on the action
     this.eventHandlers.push(action.on("cursor-update", (e) => this.measureMapService.drawPolygon(e, this.analyzeParams)));
     // listen to vertex-remove event on the action
     this.eventHandlers.push(action.on("vertex-remove", (e) => this.measureMapService.drawPolygon(e, this.analyzeParams)));
     // listen to draw-complete event on the action
-    this.eventHandlers.push(action.on("draw-complete", (e) => { this.measureMapService.drawPolygon(e, this.analyzeParams, true) }));
+    this.eventHandlers.push(action.on("draw-complete", (e) => {
+      this.measureMapService.drawPolygon(e, this.analyzeParams, true);
+      this.checkboxChecked && this.activeTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, e));
+    }));
   }
 
   //Polyline approach
@@ -204,7 +219,7 @@ export class MeasureContainerComponent implements OnInit {
 
     // listen to PolylineDrawAction.vertex-add
     // Fires when the user clicks, or presses the "F" key
-    // Can also fire when the "R" key is pressed to redo.
+    // Can also fire when the "R" key is pressed to redo
     this.eventHandlers.push(action.on("vertex-add", (evt) => {
       this.measureMapService.createPolylineGraphic(evt, this.analyzeParams);
     }));
@@ -228,6 +243,7 @@ export class MeasureContainerComponent implements OnInit {
     this.eventHandlers.push(action.on("draw-complete", (evt) => {
       console.log('COMPLETE EVENT', evt)
       this.measureMapService.createPolylineGraphic(evt, this.analyzeParams, true);
+      this.checkboxChecked && this.activeTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, evt));
       //set active tool to empty string
       this.activeTool = "";
     }));
@@ -248,6 +264,7 @@ export class MeasureContainerComponent implements OnInit {
     // Create a point when user clicks on the view or presses "C" key.
     this.eventHandlers.push(action.on("draw-complete", (evt) => {
       this.measureMapService.createPointGraphic(evt, this.analyzeParams);
+      this.checkboxChecked  && this.activeTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, evt));
       //set active tool to empty string
       this.activeTool = "";
     }));
@@ -255,8 +272,10 @@ export class MeasureContainerComponent implements OnInit {
 
 
   ngOnDestroy() {
-    this.measureMapService.checkBoxChange(false);
+    this.checkboxChecked = false;
+    this.measureMapService.resetCalculate();
     this.restoreDefault();
+    this.resetTools();
   }
 
 }

@@ -19,7 +19,7 @@ export class MeasureMapService {
   view: any;
   polygon: Polygon;
   graphic: Graphic;
-  checkboxChecked: boolean;
+  //checkboxChecked: boolean;
   analyzeParams: AnalyzeParams;
 
 	//final form inputs for building selection form
@@ -75,7 +75,7 @@ export class MeasureMapService {
 
       //create buffer if create buffer checkbox checked
       //(this.checkboxChecked) ? this.createBuffer(this.analyzeParams) : void(0);
-      this.checkboxChecked && (this.createBuffer(this.analyzeParams, evt));
+      //this.checkboxChecked && (this.view.graphics.items.length > 0) && (this.createBuffer(this.analyzeParams, evt));
     }
   }
 
@@ -287,8 +287,7 @@ export class MeasureMapService {
       const stringArray = input.url.split("/");
       const stringUrl = input.url.slice(0, -(stringArray[stringArray.length - 1].length + 1))
 
-      //Add as graphic on view approach
-      //graphic to graphics layer
+
       features.forEach((graphic) => { this.view.graphics.add(graphic) });
 
       return result.features;
@@ -297,17 +296,16 @@ export class MeasureMapService {
     });
   }
 
-  checkBoxChange(bufferCheckbox: boolean) {
-    //clear graphics if exist
-    this.view.graphics.removeAll();
-    this.checkboxChecked = bufferCheckbox;
-    this.calculatedUnits = null;
-    this.calculateCount = null;
-  }
+  // checkBoxChange(bufferCheckbox: boolean) {
+  //   this.checkboxChecked = bufferCheckbox;
+  //   this.resetCalculate();
+  // }
 
   resetCalculate(): void {
     this.calculateCount = null;
     this.calculatedUnits = null;
+    //clear graphics if exist
+    //this.view.graphics.removeAll();
   }
 
   cancelJob() {

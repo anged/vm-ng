@@ -34,7 +34,9 @@ export class ThreeDExtractComponent implements AfterViewInit {
 					console.log(this.s, 'Name', name, ToolsList.extract)
 					if (ToolsList.extract !== name) { this.closeMeasure() };
 				});
-		}
+		} else {
+      this.closeMeasure();
+    }
 
   }
 

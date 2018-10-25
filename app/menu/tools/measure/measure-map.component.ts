@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnChange } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnChanges } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MeasureMapService } from './measure-map.service';
@@ -22,7 +22,7 @@ import { Subscription } from 'rxjs';
 	`]
 })
 
-export class MeasureMapComponent implements OnInit, AfterViewInit, OnChange {
+export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
   private measureActive = false;
 
 	// checking if first theme was inisiated before
@@ -50,7 +50,9 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChange {
 					});
 				}
 			});
-		}
+		} else {
+      this.closeMeasure();
+    }
 	}
 
 	closeMeasure() {
@@ -77,7 +79,7 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChange {
 		});
 	}
 
-	ngOnChange(a) {
+	ngOnChanges(a) {
 		console.log('Change', a)
 	}
 
