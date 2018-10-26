@@ -124,7 +124,7 @@ export const MapOptions: any = {
         // },
         transportas: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Transportas/MapServer",
+            "http://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Transportas/MapServer",
           name: "Transportas / Dviračiai:",// dynamicLayers group name
           opacity: 0.9
         }

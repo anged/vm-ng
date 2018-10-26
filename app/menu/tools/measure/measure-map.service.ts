@@ -22,7 +22,7 @@ export class MeasureMapService {
   //checkboxChecked: boolean;
   analyzeParams: AnalyzeParams;
 
-	//final form inputs for building selection form
+  //final form inputs for building selection form
   themeLayers = [];
 
   //geomettry created by draw tools
@@ -45,7 +45,6 @@ export class MeasureMapService {
     private menuToolsService: MenuToolsService
   ) { }
 
-  // U
   initDraw(view): Draw {
     this.view = view;
     this.draw = new Draw({
@@ -63,7 +62,6 @@ export class MeasureMapService {
     return this.geo;
   }
 
-  // U
   deactivateAndDisable(evt) {
     //on complete remove class
     if (evt.type === "draw-complete") {
@@ -72,27 +70,25 @@ export class MeasureMapService {
       setTimeout(() => {
         this.mapService.unSuspendLayersToggle();
       }, 800);
-
-      //create buffer if create buffer checkbox checked
-      //(this.checkboxChecked) ? this.createBuffer(this.analyzeParams) : void(0);
-      //this.checkboxChecked && (this.view.graphics.items.length > 0) && (this.createBuffer(this.analyzeParams, evt));
     }
+
   }
 
-  // U
   drawPolygon(evt, analyzeParams, ended = false, ) {
+	  let vertices = evt.vertices;
     this.analyzeParams = analyzeParams;
     //on complete remove class
     this.deactivateAndDisable(evt);
 
-    let vertices = evt.vertices;
     //remove existing graphic
     this.view.graphics.removeAll();
+
     // create a new polygon
     let polygon = new Polygon({
       rings: vertices,
       spatialReference: this.view.spatialReference
     });
+
     // create a new graphic representing the polygon, add it to the view
     let graphic = new Graphic({
       geometry: polygon,
@@ -100,7 +96,6 @@ export class MeasureMapService {
     });
 
     this.drawGeometry = graphic;
-
     this.view.graphics.add(graphic);
 
     // calculate the area of the polygon
@@ -108,6 +103,7 @@ export class MeasureMapService {
     if (area < 0) {
       area = - area;
     }
+
     // start displaying the area of the polygon
     this.labelAreas(polygon, area, ended);
   }
@@ -143,7 +139,7 @@ export class MeasureMapService {
     this.labelLinesAndPoints("line", polyline.paths[lastIndex], line, ended);
   }
 
-  //Label text
+  // Label text
   labelLinesAndPoints(geometryType: string, points, geometry = undefined, ended = false) {
     //this.calculatedUnits
     const endString = ended ? "" : " (užbaigti dvigubu paspaudimu)";
@@ -199,7 +195,6 @@ export class MeasureMapService {
   }
 
   createBuffer(options: any, evt) {
-    console.log('evt', evt)
     //add required options for buffer execution
     let parameters = new BufferParameters();
     let geometry = this.drawGeometry.geometry;
@@ -228,16 +223,6 @@ export class MeasureMapService {
         geometry: results[0],
         symbol: Symbols.bufferSymbol
       });
-      //Add as layer approach
-      //const features = result.features
-      // const layer = new GraphicsLayer({
-      //   graphics: [polyline],
-      //   id: "bufferPolygon",
-      //   title: "bufferPolygon",
-      //   popupEnabled: false
-      // })
-      // const map = this.mapService.returnMap();
-      // map.add(layer);
 
       //Add as graphic on view approach
       this.view.graphics.add(polyline);
@@ -245,8 +230,8 @@ export class MeasureMapService {
       //add union if only input is selected
       if (options.inputlayer >= 0) {
         const input = this.themeLayers.find((le, i) => i === options.inputlayer);
-        //console.log("Selected input", input)
-        const selectedGraphixByInput = this.createQuery(input, polyline);
+        console.log("Selected input", input, 'Poly', polyline)
+        this.createQuery(input, polyline);
       }
     });
   }
@@ -254,7 +239,6 @@ export class MeasureMapService {
   getSymbol(feature) {
     //check geomtery type base on first result
     let graphicSymbol: any;
-
     if (feature.geometry.rings) {
       graphicSymbol = Symbols.selectionPolygon;
     } else if (feature.geometry.paths) {
@@ -271,9 +255,8 @@ export class MeasureMapService {
     const queryTask = this.mapService.addQueryTask(input.url);
 
     query.returnGeometry = true;
-    query.outFields = ["*"];
+    query.outFields = ["OBJECTID"];
     query.geometry = polyline.geometry;
-
     queryTask.execute(query).then((result) => {
       const symbol = this.getSymbol(result.features[0]);
 
@@ -287,7 +270,6 @@ export class MeasureMapService {
       const stringArray = input.url.split("/");
       const stringUrl = input.url.slice(0, -(stringArray[stringArray.length - 1].length + 1))
 
-
       features.forEach((graphic) => { this.view.graphics.add(graphic) });
 
       return result.features;
@@ -296,16 +278,9 @@ export class MeasureMapService {
     });
   }
 
-  // checkBoxChange(bufferCheckbox: boolean) {
-  //   this.checkboxChecked = bufferCheckbox;
-  //   this.resetCalculate();
-  // }
-
   resetCalculate(): void {
     this.calculateCount = null;
     this.calculatedUnits = null;
-    //clear graphics if exist
-    //this.view.graphics.removeAll();
   }
 
   cancelJob() {
