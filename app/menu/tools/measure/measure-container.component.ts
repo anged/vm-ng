@@ -187,7 +187,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   }
 
 	completeDrawing(e): void {
-		console.log("Complete P", this.previousActiveTool , 'C,' this.activeTool);
+		//console.log("Complete P", this.previousActiveTool , 'C', this.activeTool);
 		this.checkboxChecked && this.activeTool && !this.previousActiveTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, e));
 		//set active tool to empty string
 		this.activeTool = "";

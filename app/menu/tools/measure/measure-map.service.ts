@@ -145,7 +145,7 @@ export class MeasureMapService {
     const endString = ended ? "" : " (užbaigti dvigubu paspaudimu)";
     let text: string;
     geometryType === "line" ? text = geometry.toFixed(3) + " km" + endString : text = `x: ${points[1].toFixed(2)}, y: ${points[0].toFixed(2)}`;
-    geometryType === "line" ? this.calculatedUnits = geometry.toFixed(3) + " km" : this.calculatedUnits = `x: ${points[1].toFixed(2)}, y: ${points[0].toFixed(2)}`
+    geometryType === "line" ? this.calculatedUnits = geometry.toFixed(3) + " km" : this.calculatedUnits = `x: ${points[1].toFixed(2)}, <br>y: ${points[0].toFixed(2)}`
     const graphic = this.menuToolsService.createLineOrPointLabelGraphic(points, text, this.view);
     this.view.graphics.add(graphic);
   }
@@ -281,18 +281,6 @@ export class MeasureMapService {
   resetCalculate(): void {
     this.calculateCount = null;
     this.calculatedUnits = null;
-  }
-
-  cancelJob() {
-    if (this.job) {
-      this.job.cancel();
-      // add timeout to get API jobId, default updateDelay is 1000 ms
-      setTimeout(() => {
-        const geo = this.geo as any;
-        const jobId = Object.keys(geo._updateTimers)[0];
-        this.geo.cancelJob(jobId);
-      }, 2000)
-    }
   }
 
 }

@@ -13,7 +13,10 @@
 	<div class="feature-results">
 		<div class="feature-count">
 			<p class="feature-title feature-units">Matavimo rezultatas:</p>
-			<span [ngStyle]="!measureMapService.calculatedUnits && {'display': 'none'}" class="feature-units   sp-width">{{measureMapService.calculatedUnits}}</span>
+			<span
+				[ngStyle]="!measureMapService.calculatedUnits && {'display': 'none'}"
+				[innerHTML]="measureMapService.calculatedUnits"
+				class="feature-units   sp-width"></span>
 			<span [ngStyle]="measureMapService.calculatedUnits && {'display': 'none'}" class="feature-units">-</span>
 		</div>
 	</div>
