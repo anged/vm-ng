@@ -7,6 +7,7 @@ import { ShareModule } from '../share.module';
 import { MenuToolsService } from './menu-tools.service';
 import { ThreeDExtractService } from "./tools/threed-extract/threed-extract.service";
 import { MeasureMapService } from './tools/measure/measure-map.service'; // re-export the named thing
+import { ProfileToolService } from './tools/profile/profile-tool.service'; // re-export the named thing
 import { ToolsNameService } from './tools-name.service'; // re-export the named thing
 import { MenuComponent } from './menu.component';
 import {
@@ -21,7 +22,8 @@ import {
   MeasureMapComponent,
   MeasureContainerComponent,
   ExtractContainerComponent,
-
+	ProfileToolComponent,
+	ProfileContainerComponent,
   PrintMapComponent
 } from '../menu';
 
@@ -46,6 +48,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MenuLegendItvComponent, MenuLegendComponent,
     ThreeDExtractComponent, ExtractContainerComponent,
     MeasureMapComponent, MeasureContainerComponent,
+		ProfileToolComponent, ProfileContainerComponent,
     PrintMapComponent
   ],
   exports: [MenuComponent, MenuThemesComponent],
@@ -53,6 +56,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MenuToolsService,
     ThreeDExtractService,
 		MeasureMapService,
+		ProfileToolService,
 		ToolsNameService
   ]
 })

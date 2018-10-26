@@ -11,4 +11,6 @@ export { ThreeDExtractComponent } from './tools/threed-extract/threed-extract.co
 export { ExtractContainerComponent } from './tools/threed-extract/extract-container.component'; // re-export the named thing
 export { MeasureMapComponent } from './tools/measure/measure-map.component'; // re-export the named thing
 export { MeasureContainerComponent } from './tools/measure/measure-container.component'; // re-export the named thing
+export { ProfileToolComponent } from './tools/profile/profile-tool.component'; // re-export the named thing
+export { ProfileContainerComponent } from './tools/profile/profile-container.component'; // re-export the named thing
 export { PrintMapComponent } from './tools/print/print-map.component'; // re-export the named thing
