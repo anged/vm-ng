@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, Subject } from 'rxjs';
@@ -72,7 +72,7 @@ export class MapService {
 	// progress bar loader
 	progressBar: any;
 
-  constructor(private http: HttpClient, private projectsService: ProjectsListService) { }
+  constructor(private zone: NgZone, private http: HttpClient, private projectsService: ProjectsListService) { }
 
 	setProgressBar(bar): void {
 		this.progressBar = bar;
@@ -89,31 +89,33 @@ export class MapService {
   }
 
   viewMap(map: Map): MapView {
-    const  view = new MapView({
-      //container: this.elementRef.nativeElement.firstChild, // AG good practis
-      container: 'map',
-      constraints: {
-        snapToZoom: true, //When true, the view snaps to the next LOD when zooming in or out. When false, the zoom is continuous.
-        rotationEnabled: true  // Disables map rotation
-      },
-      popup: {
-        dockEnabled: true,
-        dockOptions: {
-          position: 'bottom-left',
-          // Disables the dock button from the popup
-          buttonEnabled: true,
-          // Ignore the default sizes that trigger responsive docking
-          breakpoint: false
-        }
-      },
-      map: map,
-      //center: [25.266, 54.698], // lon, lat
-      zoom: 1,
-      extent: MapOptions.mapOptions.extent
+    this.zone.runOutsideAngular(() => {
+      const  view = new MapView({
+        //container: this.elementRef.nativeElement.firstChild, // AG good practis
+        container: 'map',
+        constraints: {
+          snapToZoom: true, //When true, the view snaps to the next LOD when zooming in or out. When false, the zoom is continuous.
+          rotationEnabled: true  // Disables map rotation
+        },
+        popup: {
+          dockEnabled: true,
+          dockOptions: {
+            position: 'bottom-left',
+            // Disables the dock button from the popup
+            buttonEnabled: true,
+            // Ignore the default sizes that trigger responsive docking
+            breakpoint: false
+          }
+        },
+        map: map,
+        //center: [25.266, 54.698], // lon, lat
+        zoom: 1,
+        extent: MapOptions.mapOptions.extent
+      });
+      this.watchLayers(view);
+      this.view = view;
     });
-		this.watchLayers(view);
-		this.view = view;
-    return view;
+    return this.view;
   }
 
 	watchLayers(view) {

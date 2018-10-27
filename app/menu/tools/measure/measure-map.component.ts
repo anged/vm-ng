@@ -30,6 +30,11 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
 	firstThemeLoaded = false;
 	s: Subscription;
 
+  get change() {
+    console.log('change measure');
+    return '';
+  }
+
 	constructor(
 		private mapService: MapService,
 		private measureMapService: MeasureMapService,

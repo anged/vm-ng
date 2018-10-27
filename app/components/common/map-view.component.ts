@@ -11,7 +11,7 @@ import watchUtils = require("esri/core/watchUtils");
 // using onPuch change detection to avoid view ESRI UPDATES constanly initaiting change detection
 @Component({
   selector: 'esri-map-view',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app/components/common/map-view.component.html'
 })
 export class MapViewComponent implements OnInit, OnChanges {
