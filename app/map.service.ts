@@ -89,6 +89,7 @@ export class MapService {
   }
 
   viewMap(map: Map): MapView {
+    // using runOutsideAngular instead of onPush change detection in component o avoid view ESRI UPDATES constanly initaiting change detection
     this.zone.runOutsideAngular(() => {
       const  view = new MapView({
         //container: this.elementRef.nativeElement.firstChild, // AG good practis
