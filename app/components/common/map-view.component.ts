@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, ElementRef, ViewChild, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnChanges, ChangeDetectionStrategy, ElementRef, ViewChild, Renderer2 } from '@angular/core';
 
 import { MapService } from '../../map.service';
 import { ViewService } from '../../themes/default/view.service';
@@ -8,8 +8,10 @@ import { MapOptions } from '../../options';
 
 import watchUtils = require("esri/core/watchUtils");
 
+// using onPuch change detection to avoid view ESRI UPDATES constanly initaiting change detection
 @Component({
   selector: 'esri-map-view',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app/components/common/map-view.component.html'
 })
 export class MapViewComponent implements OnInit, OnChanges {
