@@ -159,13 +159,12 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  getLabel(data: number[], chartData): string[] {
+  getLabel(dataZCoord: number[], chartData): string[] {
     const dataXCoord = chartData.geometry.paths[0].map(coord => coord[0].toFixed(2));
     const dataYCoord = chartData.geometry.paths[0].map(coord => coord[1].toFixed(2));
     const length = chartData.attributes.ProfileLength.toFixed(2);
-    const dataLength = data.length;
-    const dataXLength = this.calcLengthXData(dataXCoord, dataYCoord, length);
-    return data.map((z, i) => {
+    const dataXLength = this.calcLengthXData(dataXCoord, dataYCoord, dataZCoord, length);
+    return dataZCoord.map((z, i) => {
       if (i === 0) return '0';
       // calculate current length of point based on x value and full length
       return (dataXLength[i] / 1000).toFixed(2) + ' km';
@@ -173,14 +172,14 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   // calculate length value in meters by X coordinate
-  calcLengthXData(dataXCoord: number[], dataYCoord: number[], length): number[] {
+  calcLengthXData(dataXCoord: number[], dataYCoord: number[], dataZCoord: number, length): number[] {
     let lengthInMeters = 0;
     return dataXCoord.map((x, i) => {
       console.log('X', x)
       if (i === 0) return 0;
       if (i > 0) {
         //const l = Math.abs(x - dataXCoord[i-1]);
-        const l = Math.sqrt(Math.pow((x - dataXCoord[i - 1]), 2) + Math.pow((dataYCoord[i] - dataYCoord[i - 1]), 2));
+        const l = Math.sqrt(Math.pow((x - dataXCoord[i - 1]), 2) + Math.pow((dataYCoord[i] - dataYCoord[i - 1]), 2) + Math.pow(dataZCoord[i]-dataZCoord[i - 1], 2));
         lengthInMeters += l;
         return lengthInMeters;
       }
