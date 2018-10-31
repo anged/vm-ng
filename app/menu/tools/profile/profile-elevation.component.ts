@@ -76,8 +76,6 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
 
   initProfileElevationChart(chartData) {
     const data = chartData.geometry.paths[0].map(coord => coord[2].toFixed(2));
-    const length  = chartData.attributes.ProfileLength.toFixed(2);
-    const dataLength = data.length;
     console.log('data', data, this.profileChart)
     const datasets = [
       {
@@ -105,15 +103,7 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
       this.profileChart = new Chart(this.canvasChart, {
         type: 'customChart',
         data: {
-          labels: data.map((z, i) => {
-           const mid = (((dataLength - 1) / 2).toFixed(0));
-           const midValue = (length/2).toFixed(2);
-           console.log((((dataLength - 1) / 2).toFixed(0)), (length/2).toFixed(2));
-           if (i === 0) return 0;
-           if (i === mid) return midValue;
-           if (i === (dataLength - 1)) return length;
-           return ' ';
-          }),
+          labels: this.getLabel(data, chartData),
           //labels: ["Spalis", "Lapkritis", "Gruodis", "Sausis", "Vasaris", "Kovas", "Balandis"],
           datasets
         },
@@ -145,7 +135,7 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
             xAxes: [{
               scaleLabel: {
                 display: true,
-                labelString: 'Distancija (m)'
+                labelString: 'Distancija (km)'
               },
               gridLines: {
                 display: false
@@ -160,13 +150,45 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
 
     } else {
      this.profileChart.data = {
-       labels: data.map(d => ''),
+			 labels: this.getLabel(data, chartData),
        //labels: ["Spalis", "Lapkritis", "Gruodis", "Sausis", "Vasaris", "Kovas", "Balandis"],
        datasets
      }
      this.profileChart.update();
     }
   }
+
+	getLabel(data: number[], chartData): string[] {
+		const dataXCoord = chartData.geometry.paths[0].map(coord => coord[0].toFixed(2));
+		const dataYCoord = chartData.geometry.paths[0].map(coord => coord[1].toFixed(2));
+		const length  = chartData.attributes.ProfileLength.toFixed(2);
+		const dataLength = data.length;
+		const dataXLength = this.calcLengthXData(dataXCoord, dataYCoord, length);
+		return data.map((z, i) => {
+		 console.log('LENGHT', )
+		 console.log((((dataLength - 1) / 2).toFixed(0)), (length/2).toFixed(2));
+		 if (i === 0) return 0;
+		 if (i === (dataLength - 1)) return length;
+		 // calculate current length of point based on x value and full length
+		 return (dataXLength[i] / 1000).toFixed(2) + ' km';
+	 });
+	}
+
+	// calculate length value in meters by X coordinate
+	calcLengthXData(dataXCoord: number[], dataYCoord: number[], length): number[] {
+		let lengthInMeters = 0;
+		return dataXCoord.map((x, i) => {
+			console.log('X', x)
+			if (i === 0 ) return 0;
+			if (i > 0) {
+				//const l = Math.abs(x - dataXCoord[i-1]);
+				const l = Math.sqrt(Math.pow((x - dataXCoord[i-1]), 2) + Math.pow((dataYCoord[i] - dataYCoord[i-1]), 2));
+				lengthInMeters += l;
+				return lengthInMeters;
+			}
+			if (i === (dataXCoord.length - 1)) return length;
+		});
+	}
 
   ngOnChanges() {
     //console.log("chart data changed", this.data, this.profileChart);
