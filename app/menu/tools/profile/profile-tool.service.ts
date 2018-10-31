@@ -75,13 +75,13 @@ export class ProfileToolService {
   submitExtractJob() {
     let params = {
      // TODO expand choice list, curent list: [ , FINEST, 1m ]
-     DEMResolution: '1m', //default '1m'
+     DEMResolution: 'FINEST', //default '1m'
      returnZ: true
     };
 
     this.featureSet.features = [this.graphic];
     params[MapOptions.mapOptions.staticServices.profileGP.params.name] = this.featureSet;
-    console.log(params);
+    console.log(params, this.featureSet);
     this.job = this.geo.execute(params);
     return this.job.then((res) => {
       if (res.jobStatus !== 'job-failed') {

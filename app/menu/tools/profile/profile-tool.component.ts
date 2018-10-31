@@ -7,15 +7,15 @@ import { MapService } from '../../../map.service';
   templateUrl: './app/menu/tools/profile/profile-tool.component.html',
   styles: [`
 		:host button {
-    position: relative;
-    left: 160px;
-    margin: 10px;
-    padding: 6px 10px 6px 10px;
-    background-color: #e9e9e9;
-    border: 1px solid #53565d;
-    border-radius: 2px;
-		  font-size: 14px;
-		}
+	    position: relative;
+	    left: 10px;
+	    margin: 10px;
+	    padding: 6px 10px 6px 10px;
+	    background-color: #e9e9e9;
+	    border: 1px solid #53565d;
+	    border-radius: 2px;
+			font-size: 14px;
+	}
   :host #measure-container .measure {
     position: absolute;
     padding: 12px 15px;

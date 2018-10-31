@@ -22,47 +22,48 @@ import Draw = require('esri/views/2d/draw/Draw');
 		.form-control {
 			border: 1px solid #ccc;
 		}
-  .esri-widget-button {
-    width: 130px;
-    height: 30px;
-    right: 50px;
-    margin-right: 20px;
-    margin-left: auto;
-    font-size: 13px;
-    background-color: #e9e9e9;
-   }
-  :host .esri-widget-button.active {
-    background-color: #c5c5c5;
-   }
-   .esri-icon-polyline {
-     margin-right: 10px;
-   }
+	  .esri-widget-button {
+			width: 130px;
+	    height: 30px;
+	    right: 50px;
+	    margin-right: 20px;
+	    margin-left: auto;
+	    font-size: 14px;
+	    border: 1px solid #caced4;
+	    background-color: #fff;
+	   }
+	  :host .esri-widget-button.active {
+	    background-color: #c5c5c5;
+	   }
+	   .esri-icon-polyline {
+	     margin-right: 10px;
+	   }
 	`]
 })
 
 export class ProfileContainerComponent implements OnInit, OnDestroy {
- private drawActive = false;
+  private drawActive = false;
 
- //dojo draw events handlers Array
- private eventHandlers = [];
- chartData: any;
- view: any;
- draw: Draw;
+  //dojo draw events handlers Array
+  private eventHandlers = [];
+  chartData: any;
+  view: any;
+  draw: Draw;
 
- constructor(
-   private mapService: MapService,
-   private profileToolService: ProfileToolService,
-   private toolsNameService: ToolsNameService
- ) { }
+  constructor(
+    private mapService: MapService,
+    private profileToolService: ProfileToolService,
+    private toolsNameService: ToolsNameService
+  ) { }
 
   ngOnInit() {
-   this.view = this.mapService.getView();
+    this.view = this.mapService.getView();
 
-   // add draw capabilities for temporary geometries
-   this.view.then(() => {
-     this.draw = this.profileToolService.initDraw(this.view);
-     this.profileToolService.initGeoprocessor(this.view);
-   });
+    // add draw capabilities for temporary geometries
+    this.view.then(() => {
+      this.draw = this.profileToolService.initDraw(this.view);
+      this.profileToolService.initGeoprocessor(this.view);
+    });
   }
 
   toggleDraw() {
@@ -106,8 +107,8 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
     // listen to draw-complete event on the action
     this.eventHandlers.push(action.on("draw-complete", (e) => {
       this.profileToolService.createPolylineGraphic(e, true).then((result) => {
-       this.chartData = result;
-       console.log(result);
+        this.chartData = result;
+        console.log(result);
       });
       this.toggleDraw();
     }));
