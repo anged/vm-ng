@@ -1,3 +1,6 @@
-<div class="measure-content">
-	Demo
+<div class="profile-content">
+ <div id="draw-line" class="esri-widget-button esri-widget esri-interactive" title="Brėžti liniją" (click)="selectDrawEl()" [ngClass]="{'active': drawActive}">
+  <span class="esri-icon-polyline"> </span> Brėžti liniją
+ </div>
+ <profile-elevation [data]="chartData"></profile-elevation>
 </div>

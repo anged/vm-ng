@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, DoCheck
+, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 
 import { MapService } from '../map.service';
 import { ToolsNameService } from './tools-name.service';
@@ -75,7 +76,7 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
 
         // set tool name Obs, to close tools boxes if opened
         this.toolsNameService.setCurentToolName('');
-
+        //this.cdr.detectChanges();
       });
 
       this.listWidget = this.mapService.initLayerListWidget(view, this.list.nativeElement);
@@ -85,6 +86,10 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
         this.mapService.updateOpacity(event);
       });
     });
+  }
+
+  ngDoCheck() {
+   //console.log("do check")
   }
 
   ngOnDestroy() {

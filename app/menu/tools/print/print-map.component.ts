@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MenuToolsService } from '../../menu-tools.service';
@@ -18,13 +18,18 @@ import { MenuToolsService } from '../../menu-tools.service';
 	`]
 })
 
-export class PrintMapComponent implements OnInit {
+export class PrintMapComponent implements OnInit, AfterViewInit {
   private printActive = false;
 
+  get change() {
+   //console.log('print change')
+   return '';
+  }
   constructor(
     private mapService: MapService,
-    private menuToolsService: MenuToolsService
-  ) { }
+    private menuToolsService: MenuToolsService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
 
   ngOnInit() {
@@ -32,12 +37,17 @@ export class PrintMapComponent implements OnInit {
 
     //init Print
     const printWidget = this.menuToolsService.initPrint(view);
-		console.log("PRINT", printWidget)
+		  console.log("PRINT", printWidget)
+  }
 
+  ngAfterViewInit() {
+   // detaching change in AfterViewInit because we using draggable widget
+   this.cdr.detach();
   }
 
   togglePrint() {
     this.printActive = !this.printActive;
+    this.cdr.detectChanges();
   }
 
 }

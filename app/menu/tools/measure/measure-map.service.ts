@@ -218,7 +218,7 @@ export class MeasureMapService {
     }
 
     parameters.geometries = [geometry];
-    this.geometryService.buffer(parameters).then((results) => {
+    return this.geometryService.buffer(parameters).then((results) => {
       const polyline = new Graphic({
         geometry: results[0],
         symbol: Symbols.bufferSymbol
@@ -231,7 +231,7 @@ export class MeasureMapService {
       if (options.inputlayer >= 0) {
         const input = this.themeLayers.find((le, i) => i === options.inputlayer);
         console.log("Selected input", input, 'Poly', polyline)
-        this.createQuery(input, polyline);
+        return this.createQuery(input, polyline);
       }
     });
   }
@@ -257,7 +257,7 @@ export class MeasureMapService {
     query.returnGeometry = true;
     query.outFields = ["OBJECTID"];
     query.geometry = polyline.geometry;
-    queryTask.execute(query).then((result) => {
+    return queryTask.execute(query).then((result) => {
       const symbol = this.getSymbol(result.features[0]);
 
       const features = result.features.map((feature) => {

@@ -13,4 +13,5 @@ export { MeasureMapComponent } from './tools/measure/measure-map.component'; // 
 export { MeasureContainerComponent } from './tools/measure/measure-container.component'; // re-export the named thing
 export { ProfileToolComponent } from './tools/profile/profile-tool.component'; // re-export the named thing
 export { ProfileContainerComponent } from './tools/profile/profile-container.component'; // re-export the named thing
+export { ProfileElevationComponent } from './tools/profile/profile-elevation.component'; // re-export the named thing
 export { PrintMapComponent } from './tools/print/print-map.component'; // re-export the named thing

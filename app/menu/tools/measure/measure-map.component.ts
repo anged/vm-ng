@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, AfterViewInit, OnChanges } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MeasureMapService } from './measure-map.service';
@@ -31,7 +31,7 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
 	s: Subscription;
 
   get change() {
-    console.log('change measure');
+    //console.log('change measure');
     return '';
   }
 
@@ -85,7 +85,7 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
 	}
 
 	ngOnChanges(a) {
-		console.log('Change', a)
+		console.log('Change measure map', a)
 	}
 
 	ngAfterViewInit() {

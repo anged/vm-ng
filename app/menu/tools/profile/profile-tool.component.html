@@ -1,4 +1,4 @@
-<button id="measure-button" (click)="toggleMeasure()" [class.active]="toolActive">
+<button id="tool-button" (click)="toggleMeasure()" [class.active]="toolActive">
 	<span class="svg-measure">
 	<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
 		<image *ngIf="!toolActive; else svgMeasureW" xlink:href="../../app/img/svg/measure.svg" x="0" y="0" height="15px" width="15px"/>
@@ -8,8 +8,8 @@
 	Reljefo profilis
 </button>
 
-<div id="measure-container" class="measure-tool buffer-tool">
-  <div id="measure-menu" class="measure" [class.measure-active]="toolActive" draggable="true">
+<div id="tool-container profile-container" class="profile-tool buffer-tool">
+  <div id="measure-menu" class="map-tool" [class.measure-active]="toolActive">
     <span id="close-measure" (click)="closeMeasure()" [class.measure-active]="toolActive">
       <svg xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" height="612px" id="Capa_1"  version="1.1" viewBox="0 0 612 612" width="612px" x="0px" xmlns="http://www.w3.org/2000/svg" y="0px">
       <g>
@@ -21,12 +21,6 @@
       </g>
       </svg>
     </span>
-		<span id="drag-measure" [class.print-active]="toolActive">
-			<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
-				<image xlink:href="../../app/img/svg/move.svg" x="0" y="0" height="15px" width="15px"/>
-			</svg>
-		<span title="Keiskite padėti pelės pagalba">- keiskite padėti</span>
-		</span>
 
 		<profile-container *ngIf="toolActive"></profile-container>
 

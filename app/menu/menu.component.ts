@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, OnChanges, OnDestroy, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -13,7 +13,8 @@ import watchUtils = require("esri/core/watchUtils");
 
 @Component({
   selector: 'menu-map',
-  templateUrl: './app/menu/menu.component.html'
+  templateUrl: './app/menu/menu.component.html'//,
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MenuComponent implements OnInit, OnDestroy {
   @Input() view: any;

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Input, ElementRef } from '@angular/core';
+import { Component, ChangeDetectorRef, DoCheck, OnInit, OnDestroy, ViewChild, Input, ElementRef } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MenuToolsService } from '../../menu-tools.service';
@@ -70,6 +70,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   eventHandlers = [];
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private mapService: MapService,
     private measureMapService: MeasureMapService,
     private toolsNameService: ToolsNameService
@@ -188,9 +189,13 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
 
 	completeDrawing(e): void {
 		//console.log("Complete P", this.previousActiveTool , 'C', this.activeTool);
-		this.checkboxChecked && this.activeTool && !this.previousActiveTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, e));
+		this.checkboxChecked && this.activeTool && !this.previousActiveTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, e).then((a) => {
+  //this.cdr.detectChanges();
+  console.log('a',a);
+  }));
 		//set active tool to empty string
 		this.activeTool = "";
+  //this.cdr.detectChanges();
 	}
 
   //Polygon approach
@@ -209,8 +214,8 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     this.eventHandlers.push(action.on("vertex-remove", (e) => this.measureMapService.drawPolygon(e, this.analyzeParams)));
     // listen to draw-complete event on the action
     this.eventHandlers.push(action.on("draw-complete", (e) => {
-			this.measureMapService.drawPolygon(e, this.analyzeParams, true);
-			this.completeDrawing(e);
+			  this.measureMapService.drawPolygon(e, this.analyzeParams, true);
+			  this.completeDrawing(e);
     }));
   }
 
@@ -243,7 +248,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     // on the view or presses the "C" key
     this.eventHandlers.push(action.on("draw-complete", (evt) => {
  			this.measureMapService.createPolylineGraphic(evt, this.analyzeParams, true);
-			this.completeDrawing(evt);
+			 this.completeDrawing(evt);
     }));
   }
 
@@ -266,6 +271,9 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     }));
   }
 
+  ngDoCheck() {
+   //console.log("do check measure")
+  }
 
   ngOnDestroy() {
     this.checkboxChecked = false;

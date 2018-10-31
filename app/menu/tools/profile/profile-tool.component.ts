@@ -7,13 +7,32 @@ import { MapService } from '../../../map.service';
   templateUrl: './app/menu/tools/profile/profile-tool.component.html',
   styles: [`
 		:host button {
-	    margin: 10px;
-	    padding: 6px 10px 6px 10px;
-	    background-color: #e9e9e9;
-	    border: 1px solid #53565d;
-	    border-radius: 2px;
-			font-size: 14px;
+    position: relative;
+    left: 160px;
+    margin: 10px;
+    padding: 6px 10px 6px 10px;
+    background-color: #e9e9e9;
+    border: 1px solid #53565d;
+    border-radius: 2px;
+		  font-size: 14px;
 		}
+  :host #measure-container .measure {
+    position: absolute;
+    padding: 12px 15px;
+    overflow-y: auto;
+    width: 100%;
+  }
+  :host .measure-tool.buffer-tool {
+    margin-left: 0;
+    top: 130px;
+    width: 100%;
+  }
+  .profile-tool {
+    position: absolute;
+    background: #ffffff;
+    width: calc(100vw - 40px);
+    bottom: 0;
+   }
 	`]
 })
 

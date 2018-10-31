@@ -534,6 +534,10 @@ li.list-active {
   margin-left: 10px;
   top: 10px;
 }
+.map-tool {
+ display: none;
+ margin: 20px;
+}
 .print, .measure {
   display: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -545,7 +549,7 @@ li.list-active {
    cursor: -moz-move;
    cursor: -webkit-move;
 }
-.print.print-active, .measure.measure-active {
+.print.print-active, .measure.measure-active, .map-tool.measure-active {
   display: block;
   z-index: 1003;
 }
@@ -2761,6 +2765,11 @@ ul > li .esri-layer-list__item-title {
   .esri-zoom .esri-widget-button:last-child {
     top: 30px;
     right: 0;
+  }
+  profile-tool {
+   position: absolute;
+   height: calc(100vh - 190px);
+   left: 0;
   }
   #print-container {
     position: absolute;

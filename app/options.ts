@@ -27,6 +27,12 @@ export const MapOptions: any = {
           name: 'Teritorija'
         }
       },
+      profileGP: {
+       url: 'https://atviras.vplanas.lt/arcgis/rest/services/Geoprocesingai/Profile/GPServer/Profile',
+       params: {
+        name: 'InputLineFeatures'
+       }
+      },
       //allLayers group service for displaying all layers
       commonMaps: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer'
     },
@@ -124,7 +130,7 @@ export const MapOptions: any = {
         // },
         transportas: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "http://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Transportas/MapServer",
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Transportas/MapServer",
           name: "Transportas / Dviračiai:",// dynamicLayers group name
           opacity: 0.9
         }
