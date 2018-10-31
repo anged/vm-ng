@@ -33,6 +33,15 @@ import { MapService } from '../../../map.service';
     width: calc(100vw - 40px);
     bottom: 0;
    }
+   @media only screen and (max-width: 1382px) {
+     .profile-tool {
+      position: absolute;
+      background: #ffffff;
+      width: calc(100vw - 600px);
+      bottom: 0;
+      left: 380px;
+      }
+    }
 	`]
 })
 

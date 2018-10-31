@@ -53,6 +53,13 @@ Chart.controllers.customChart = customChart;
      height:260px; width:
      calc(100vw - 80px)
    }
+   @media only screen and (max-width: 1382px) {
+     .canvas-wrapper {
+      position: relative;
+      height: 160px;
+      width: calc(100vw - 640px);
+      }
+  }
 	`]
 })
 
@@ -172,14 +179,14 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   // calculate length value in meters by X coordinate
-  calcLengthXData(dataXCoord: number[], dataYCoord: number[], dataZCoord: number, length): number[] {
+  calcLengthXData(dataXCoord: number[], dataYCoord: number[], dataZCoord: number[], length): number[] {
     let lengthInMeters = 0;
     return dataXCoord.map((x, i) => {
       console.log('X', x)
       if (i === 0) return 0;
       if (i > 0) {
         //const l = Math.abs(x - dataXCoord[i-1]);
-        const l = Math.sqrt(Math.pow((x - dataXCoord[i - 1]), 2) + Math.pow((dataYCoord[i] - dataYCoord[i - 1]), 2) + Math.pow(dataZCoord[i]-dataZCoord[i - 1], 2));
+        const l = Math.sqrt(Math.pow((x - dataXCoord[i - 1]), 2) + Math.pow((dataYCoord[i] - dataYCoord[i - 1]), 2));
         lengthInMeters += l;
         return lengthInMeters;
       }

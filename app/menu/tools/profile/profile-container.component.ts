@@ -31,6 +31,7 @@ import Draw = require('esri/views/2d/draw/Draw');
 	    font-size: 14px;
 	    border: 1px solid #caced4;
 	    background-color: #fff;
+      margin-bottom: 10px;
 	   }
 	  :host .esri-widget-button.active {
 	    background-color: #c5c5c5;
