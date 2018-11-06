@@ -106,6 +106,7 @@ import { MapWidgetsService } from './map-widgets.service';
             target="_blank"
             [popper]="'Faktinio Energijos Vartojimo Klasė yra skirta įvertinti, kiek energijos pastatas faktiškai vartoja patalpų šildymui. Pagal energijos vartojimą patalpų šildymui pastatai suskirstyti į 15 klasių: pati mažiausia ir efektyviausia yra 1 klasė, pati didžiausia ir mažiausiai efektyvi yra 15 klasė. Faktinio energijos vartojimo klasės skaitinė reikšmė tai dydis, kurį skaičiuojant iš jo yra eliminuota skirtingo šildymo sezono trukmės įtaka, skirtingo šildymo sezono išorės oro temperatūros įtaka, skirtingo pastato šildymo ploto įtaka, todėl galima lyginti skirtingų įvairaus dydžio pastatų skirtingų šildymo sezonų klases tarpusavyje, to paties FEVK įvairiais metais, mėnesiais ir pan.'"
             [popperTrigger]="'hover'"
+						[popperForceDetection]="true"
             [popperPlacement]="'top'"
           >vartojimo klasę</a>
           <span
@@ -114,6 +115,7 @@ import { MapWidgetsService } from './map-widgets.service';
             class="heat-highlight border-r-2 type-no"
             [popper]="popperContent"
             [popperTrigger]="'hover'"
+						[popperForceDetection]="true"
             [popperPlacement]="'top'"
             (click)="selectBuildingsByType()"
           > {{sidebarHeatContent?.TIPINIS_PR}}
