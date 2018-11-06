@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ElementRef, ViewChild, ChangeDetectorRef} from '@angular/core';
+import { Component, Input, OnChanges, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { Chart } from 'chart.js';
@@ -76,12 +76,15 @@ import { MapWidgetsService } from './map-widgets.service';
 				<div class="build-p sidebar-header" (click)="closeSidaberGroup('months')"> <a href="javascript:void(0)" class="button close animate build-close">Atgal</a></div>
         <div class="heat-title"><p>Vidutinis šilumos kiekis, tenkantis namo 1 m² naudingojo ploto, kWh/m²
 
-        <span class="heat-tip"><span
-          class="heat-highlight border-r-2"
-          [popper]="'Mėnesinis šilumos suvartojimas pagal mokėjimus už šilumą yra įtakojamas normatyvinio karšto vandens gyvatuko ir netolygaus gyventojų karšto vandens suvartojimo, todėl šis kiekis neturi sutapti su Faktiniu kiekvieno pastato išskaičiuotu vartojimu (žiūrėti į 1 grafą)'"
-          [popperTrigger]="'hover'"
-          [popperPlacement]="'bottom'"
-        >Paaiškinimas</span></span></p></div>
+        <span class="heat-tip">
+					<span
+	          class="heat-highlight border-r-2"
+	          [popper]="'Mėnesinis šilumos suvartojimas pagal mokėjimus už šilumą yra įtakojamas normatyvinio karšto vandens gyvatuko ir netolygaus gyventojų karšto vandens suvartojimo, todėl šis kiekis neturi sutapti su Faktiniu kiekvieno pastato išskaičiuotu vartojimu (žiūrėti į 1 grafą)'"
+	          [popperTrigger]="'hover'"
+						[popperForceDetection]="true"
+	          [popperPlacement]="'bottom'"
+	        >Paaiškinimas</span>
+				</span></p></div>
 				<div class="canvas-wrapper">
 					<canvas width="326" height="400" #mChart></canvas>
 				</div>
@@ -215,8 +218,8 @@ export class SidebarComponent implements OnChanges {
   selectionByTypeState = false;
 
   constructor(
-		private cdr: ChangeDetectorRef,
-		private mapWidgetsService: MapWidgetsService) { }
+    private cdr: ChangeDetectorRef,
+    private mapWidgetsService: MapWidgetsService) { }
 
   selectBuildingsByType() {
     this.selectionByTypeState = !this.selectionByTypeState;
@@ -236,7 +239,7 @@ export class SidebarComponent implements OnChanges {
         break;
     }
 
-		this.cdr.detectChanges();
+    this.cdr.detectChanges();
   }
 
   closeSidaberGroup(name: string = '') {
@@ -261,8 +264,8 @@ export class SidebarComponent implements OnChanges {
       this.selectBuildingsByType();
     }
 
-		// detect changes when closing sidebar group
-		this.cdr.detectChanges();
+    // detect changes when closing sidebar group
+    this.cdr.detectChanges();
   }
 
   initHeatMonthsGraphic() {
@@ -476,10 +479,10 @@ export class SidebarComponent implements OnChanges {
 
   }
 
-	ngDoCheck() {
-		console.log('Do Check SIDEBAR',  this.sidebarHeatContent);
-		this.cdr.detectChanges();
-	}
+  ngDoCheck() {
+    console.log('Do Check SIDEBAR', this.sidebarHeatContent);
+    this.cdr.detectChanges();
+  }
 
   ngOnChanges() {
     console.log("sidebar C", this.innerState, this.mainSidebarState, this.sidebarHeatContent)
@@ -488,26 +491,26 @@ export class SidebarComponent implements OnChanges {
     this.innerState = 's-close';
     //console.log('%c Canvas', 'background: blue; color: white', this.heatMonthsChart);
 
-		// check if heat data is empty
+    // check if heat data is empty
     if (this.sidebarHeatContent && (this.mainSidebarState === 's-open')) {
       //add setTimeout  for main heat content animation
       setTimeout(() => {
         this.innerState = 's-open';
         console.log("sidebar C 2", this.innerState, this.mainSidebarState);
-				this.cdr.detectChanges();
+        this.cdr.detectChanges();
       }, 200);
       this.lastHeatingYear = this.sidebarHeatContent.SEZONAS;
       //get data by months
       this.mapWidgetsService.queryHeatingDataByMonths(this.sidebarHeatContent.SEZONAS, this.sidebarHeatContent.ID_NAMO).then(data => {
         this.heatingMonthsData = data;
         this.heatMonthsChart && this.initHeatMonthsGraphic();
-				//this.cdr.detectChanges();
+        //this.cdr.detectChanges();
       });
       //get data by house type and heat classes
       this.mapWidgetsService.queryHeatingDataByClasses(this.sidebarHeatContent.TIPINIS_PR, this.sidebarHeatContent.REITING).then(data => {
         this.heatingClassesData = data;
         this.heatClassesChart && this.initHeatClassesGraphic();
-				//this.cdr.detectChanges();
+        //this.cdr.detectChanges();
       });
     }
 
