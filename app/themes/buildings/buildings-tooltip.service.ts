@@ -63,7 +63,7 @@ export class BuildingsTooltipService {
 				const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
 				x += (event.x - x) * 0.5;
 				y += (event.y - y)  * 0.5;
-				console.log("XY 1",  x, y, Math.abs(x - event.x ),Math.abs(y - event.y));
+				//console.log("XY 1",  x, y, Math.abs(x - event.x ),Math.abs(y - event.y));
 				if (!stop) {
 					//console.log("elements", tooltip);
 					const values = response.results["0"];
@@ -82,10 +82,10 @@ export class BuildingsTooltipService {
 					if (((Math.abs(x - event.x ) < 1) && (Math.abs(y - event.y ) < 1))) {
 						x = event.x;
 						y = event.y;
-						console.log("XY 2",  x, y, Math.abs(x - event.x ),Math.abs(y - event.y));
+						//console.log("XY 2",  x, y, Math.abs(x - event.x ),Math.abs(y - event.y));
 					} else {
 						moveRaFTimer = null;
-						console.log("XY 3",  x, y, Math.abs(x - event.x ),Math.abs(y - event.y));
+						//console.log("XY 3",  x, y, Math.abs(x - event.x ),Math.abs(y - event.y));
 						moveRaFTimer = requestAnimationFrame(draw);
 					}
 					//rend.removeChild(tooltip, text);

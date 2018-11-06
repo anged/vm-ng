@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectionStrategy, DoCheck, ChangeDetectorRef
+ } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
@@ -26,9 +27,14 @@ import { Subscription } from 'rxjs';
       height: 100%;
     }
     .sidebar-common p {
-      padding: 6px 20px;
-      line-height: 34px;
-      letter-spacing: -.4px;
+			padding: 6px 20px;
+	    letter-spacing: -.4px;
+	    margin: 0;
+	    padding-left: 70px;
+	    line-height: 34px;
+	    background: #e61c24;
+	    color: #fff;
+	    font-size: 16px;
     }
     .button.close.build-close {
       padding: 14px 16px;
@@ -87,7 +93,8 @@ import { Subscription } from 'rxjs';
       transition('s-open => s-close', animate('100ms ease-in')),
       transition('s-close => s-open', animate('100ms ease-out'))
     ])
-  ]
+  ]//,
+	//changeDetection: ChangeDetectionStrategy.OnPush
 
 })
 export class MapBuildingsComponent implements OnInit, OnDestroy {
@@ -134,6 +141,7 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
   tooltip: any;
 
   constructor(
+		private cdr: ChangeDetectorRef,
     private _mapService: MapService,
     private menuService: MenuService,
     private metaService: MetaService,
@@ -145,10 +153,16 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
     private basemapsService: BasemapsService,
     private viewService: ViewService,
     private renderer2: Renderer2,
-    private shareButtonService: ShareButtonService) { }
+    private shareButtonService: ShareButtonService) {
+			// Detach this view from the change-detection tree
+			this.cdr.detach();
+		}
 
   toggleSidebar() {
     this.sidebarState = this.sidebarState === 's-close' ? 's-open' : 's-close';
+
+		// detect changes when closing sidebar group
+		this.cdr.detectChanges();
   }
 
   openSidebar() {
@@ -183,6 +197,8 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
     this.tooltipEvent = tooltipEvent;
     this.tooltip = tooltip;
 
+		this.cdr.detectChanges();
+
     console.log('tooltipEvent', this.tooltipEvent, tooltip);
 
     this.clickEvent = view.on("click", (event) => {
@@ -192,6 +208,7 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
       // else identify with hitTest method
       // find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
       this._mapService.removeSelectionLayers(this.map);
+			console.log('%c Map CLICK', 'font-size: 22px; color: violet')
 
       // hitTest check graphics in the view
       this.hitTestFeaturePopup(view, event);
@@ -208,12 +225,11 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
 
     view.hitTest(screenPoint)
       .then(features => {
-
         const values = features.results[0];
 				console.log('click', this.map.findLayerById('feature-silumosSuvartojimas'), features, this.heatContent)
         const showResult = values.graphic;
         this.openSidebar();
-        this.heatContent = values.graphic.attributes;
+        this.heatContent = showResult.attributes;
 
         //add selectionResultsToGraphic
         const groupFeatureSelectionLayer = this._mapService.initFeatureSelectionGraphicLayer('FeatureSelection', showResult.layer.maxScale, showResult.layer.minScale, 'hide');
@@ -221,6 +237,11 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
         const selectionGraphic = this._mapService.initFeatureSelectionGraphic('polygon', geometry, layer, attributes);
         groupFeatureSelectionLayer.graphics.add(selectionGraphic);
         this.map.add(groupFeatureSelectionLayer);
+				console.log('%c Map CLICK 2', 'font-size: 22px; color: purple')
+
+				// check this view and its children
+				//this.cdr.reattach();
+				this.cdr.detectChanges();
       });
   }
 
@@ -285,6 +306,11 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
       this.initView(view);
     });
   }
+
+	ngDoCheck() {
+		console.log('Do Check');
+		//this.cdr.detectChanges();
+	}
 
   ngOnDestroy() {
     const subLayersSate = this.menuService.getSubLayersState();

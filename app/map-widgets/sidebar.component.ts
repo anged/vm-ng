@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, OnChanges, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, ElementRef, ViewChild, ChangeDetectorRef} from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+
 import { Chart } from 'chart.js';
 
 import { MapWidgetsService } from './map-widgets.service';
@@ -10,7 +11,6 @@ import { MapWidgetsService } from './map-widgets.service';
     <div [class.heat-sidebar]="sidebarHeatContent" class="col-xs-6 col-md-4 r-sidebar sidebar-right">
 			<perfect-scrollbar>
 				<ng-content ></ng-content>
-				<p class="build-p title">{{title}}</p>
 	      <div id="build-inner" class="inner sub-build">
 	        <ng-container [ngTemplateOutlet]="sidebarHeatContent && heatContent"></ng-container>
 	      </div>
@@ -196,7 +196,6 @@ import { MapWidgetsService } from './map-widgets.service';
 })
 
 export class SidebarComponent implements OnInit, OnChanges {
-  @Input() title;
   @Input() mainSidebarState;
   @Input() sidebarHeatContent;
   @ViewChild('mChart') heatMonthsChart: ElementRef;
@@ -215,7 +214,9 @@ export class SidebarComponent implements OnInit, OnChanges {
 
   selectionByTypeState = false;
 
-  constructor(private mapWidgetsService: MapWidgetsService) { }
+  constructor(
+		private cdr: ChangeDetectorRef,
+		private mapWidgetsService: MapWidgetsService) { }
 
   ngOnInit() {
     !this.title && (this.title = 'Informacija');
@@ -239,6 +240,8 @@ export class SidebarComponent implements OnInit, OnChanges {
         this.sidebarInfoState = 's-open';
         break;
     }
+
+		this.cdr.detectChanges();
   }
 
   closeSidaberGroup(name: string = '') {
@@ -262,6 +265,9 @@ export class SidebarComponent implements OnInit, OnChanges {
     if (this.selectionByTypeState) {
       this.selectBuildingsByType();
     }
+
+		// detect changes when closing sidebar group
+		this.cdr.detectChanges();
   }
 
   initHeatMonthsGraphic() {
@@ -363,6 +369,7 @@ export class SidebarComponent implements OnInit, OnChanges {
       this.monthsChart.data.datasets = datasets;
       this.monthsChart.update();
     }
+
   }
 
   initMonthsDataset() {
@@ -471,7 +478,13 @@ export class SidebarComponent implements OnInit, OnChanges {
       this.classesChart.data = data;
       this.classesChart.update();
     }
+
   }
+
+	ngDoCheck() {
+		console.log('Do Check SIDEBAR',  this.sidebarHeatContent);
+		this.cdr.detectChanges();
+	}
 
   ngOnChanges() {
     console.log("sidebar C", this.innerState, this.mainSidebarState, this.sidebarHeatContent)
@@ -479,23 +492,29 @@ export class SidebarComponent implements OnInit, OnChanges {
     //close main heat content while adding animation
     this.innerState = 's-close';
     //console.log('%c Canvas', 'background: blue; color: white', this.heatMonthsChart);
+
+		// check if heat data is empty
     if (this.sidebarHeatContent && (this.mainSidebarState === 's-open')) {
       //add setTimeout  for main heat content animation
       setTimeout(() => {
         this.innerState = 's-open';
-        console.log("sidebar C 2", this.innerState, this.mainSidebarState)
+        console.log("sidebar C 2", this.innerState, this.mainSidebarState);
+				this.cdr.detectChanges();
       }, 200);
       this.lastHeatingYear = this.sidebarHeatContent.SEZONAS;
       //get data by months
       this.mapWidgetsService.queryHeatingDataByMonths(this.sidebarHeatContent.SEZONAS, this.sidebarHeatContent.ID_NAMO).then(data => {
         this.heatingMonthsData = data;
         this.heatMonthsChart && this.initHeatMonthsGraphic();
+				//this.cdr.detectChanges();
       });
       //get data by house type and heat classes
       this.mapWidgetsService.queryHeatingDataByClasses(this.sidebarHeatContent.TIPINIS_PR, this.sidebarHeatContent.REITING).then(data => {
         this.heatingClassesData = data;
         this.heatClassesChart && this.initHeatClassesGraphic();
+				//this.cdr.detectChanges();
       });
     }
+
   }
 }
