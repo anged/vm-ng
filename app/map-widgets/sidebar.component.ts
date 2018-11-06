@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, ElementRef, ViewChild, ChangeDetectorRef} from '@angular/core';
+import { Component, Input, OnChanges, ElementRef, ViewChild, ChangeDetectorRef} from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { Chart } from 'chart.js';
@@ -195,7 +195,7 @@ import { MapWidgetsService } from './map-widgets.service';
   ]
 })
 
-export class SidebarComponent implements OnInit, OnChanges {
+export class SidebarComponent implements OnChanges {
   @Input() mainSidebarState;
   @Input() sidebarHeatContent;
   @ViewChild('mChart') heatMonthsChart: ElementRef;
@@ -217,11 +217,6 @@ export class SidebarComponent implements OnInit, OnChanges {
   constructor(
 		private cdr: ChangeDetectorRef,
 		private mapWidgetsService: MapWidgetsService) { }
-
-  ngOnInit() {
-    !this.title && (this.title = 'Informacija');
-    //console.log('Tooltip', Tooltip);
-  }
 
   selectBuildingsByType() {
     this.selectionByTypeState = !this.selectionByTypeState;
