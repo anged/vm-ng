@@ -61,12 +61,13 @@ export class BuildingsTooltipService {
 				//const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
 				const top = (event.y + 100) < window.innerHeight ? window.innerHeight - event.y + 10 + 'px' : window.innerHeight - event.y - 30 + 'px';
 				const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
+				const values = response.results["0"];
 				x += (event.x - x) * 0.5;
 				y += (event.y - y)  * 0.5;
-				//console.log("XY 1",  x, y, Math.abs(x - event.x ),Math.abs(y - event.y));
-				if (!stop) {
-					//console.log("elements", tooltip);
-					const values = response.results["0"];
+
+				// don't add tooltip in case of stop variable
+				// or in case we hit graphic object with no attributes
+				if (!stop && values.graphic.attributes) {
 					const textMsg = `${values.graphic.attributes.ADRESAS}`;
 					const text = rend.createText(textMsg);
 					tooltip.innerHTML  = textMsg;
