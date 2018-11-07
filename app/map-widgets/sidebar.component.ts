@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnChanges, ElementRef, ViewChild, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { Chart } from 'chart.js';
@@ -486,8 +486,8 @@ export class SidebarComponent implements OnChanges {
     this.cdr.detectChanges();
   }
 
-  ngOnChanges() {
-    console.log("sidebar C", this.innerState, this.mainSidebarState, this.sidebarHeatContent)
+  ngOnChanges(changes: SimpleChanges) {
+		console.log('OnChanges', changes);
     this.closeSidaberGroup();
     //close main heat content while adding animation
     this.innerState = 's-close';

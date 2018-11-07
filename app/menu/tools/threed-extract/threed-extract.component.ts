@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 
 import { ToolsNameService } from '../../tools-name.service';
 import { ToolsList } from '../../tools.list';
@@ -26,11 +26,16 @@ export class ThreeDExtractComponent implements AfterViewInit {
   private toolActive = false;
 	s: Subscription;
 
-  constructor(private toolsNameService: ToolsNameService) { }
+  constructor(private cdr: ChangeDetectorRef, private toolsNameService: ToolsNameService) {
+		this.cdr.detach();
+	}
 
   toggleExtract() {
     this.toolActive = !this.toolActive;
 		if (this.toolActive) {
+			// reatatch chnage detaction when we open tool
+			this.cdr.reattach();
+
 			this.s = this.toolsNameService.currentToolName
 				.subscribe((name) => {
 					console.log(this.s, 'Name', name, ToolsList.extract)
@@ -46,6 +51,11 @@ export class ThreeDExtractComponent implements AfterViewInit {
     this.toolActive = false;
 		this.s.unsubscribe();
 		console.log(this.s)
+
+		//  detach changes detection
+		// and last time detect changes when closing tool
+		this.cdr.detach();
+		this.cdr.detectChanges();
   }
 
   ngAfterViewInit() {

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, AfterViewInit, OnChanges } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MeasureMapService } from './measure-map.service';
@@ -31,19 +31,26 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
 	s: Subscription;
 
   get change() {
-    //console.log('change measure');
+    console.log('change measure');
     return '';
   }
 
 	constructor(
+		private cdr: ChangeDetectorRef,
 		private mapService: MapService,
 		private measureMapService: MeasureMapService,
 		private toolsNameService: ToolsNameService
-	) { }
+	) {
+		this.cdr.detach();
+	}
 
 	toggleMeasure() {
 		this.measureActive = !this.measureActive;
+
 		if (this.measureActive) {
+			// reatatch chnage detaction when we open tool
+			this.cdr.reattach();
+
 			// destroy tool component if other component containing draw tool got opened
 			this.s = this.toolsNameService.currentToolName.subscribe((name) => {
 				console.log('Name M', name, ToolsList.measure)
@@ -58,11 +65,18 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
 		} else {
       this.closeMeasure();
     }
+
 	}
 
 	closeMeasure() {
 		this.measureActive = false;
 		this.s.unsubscribe();
+
+		//  detach changes detection
+		// and last time detect changes when closing tool
+		this.cdr.detach();
+		this.cdr.detectChanges();
+
 		console.log(this.s)
 	}
 

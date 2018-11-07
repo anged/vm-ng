@@ -22,7 +22,7 @@ export class PrintMapComponent implements OnInit, AfterViewInit {
   private printActive = false;
 
   get change() {
-   //console.log('print change')
+   console.log('print change')
    return '';
   }
   constructor(
