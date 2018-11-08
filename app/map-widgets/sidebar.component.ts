@@ -143,7 +143,8 @@ import { MapWidgetsService } from './map-widgets.service';
 	          </p>
 	          <p>
 	            <span>Statybos metai<br /></span>
-	            {{sidebarHeatContent.STATMETAI}}
+	            <ng-container *ngIf="sidebarHeatContent.STATMETAI; else yearUnknown" >{{sidebarHeatContent.STATMETAI}}</ng-container>
+	            <ng-template #yearUnknown >-</ng-template>
 	          </p>
 	        </div>
 	        <div class="heat-info">

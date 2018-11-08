@@ -1,9 +1,10 @@
 <div>
   <ng-container #chart>
     <div class="heat-months-graphic sidebar-container">
-        <div class="canvas-wrapper">
-          <canvas id='profile-chart' #elevationChart></canvas>
-        </div>
+			<ng-content></ng-content>
+      <div class="canvas-wrapper">
+        <canvas id='profile-chart' #elevationChart></canvas>
+      </div>
     </div>
   </ng-container>
 </div>

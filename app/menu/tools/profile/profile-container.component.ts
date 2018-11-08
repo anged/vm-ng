@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { ProfileToolService } from './profile-tool.service';
@@ -23,22 +23,32 @@ import Draw = require('esri/views/2d/draw/Draw');
 			border: 1px solid #ccc;
 		}
 	  .esri-widget-button {
-			width: 130px;
-	    height: 30px;
-	    right: 50px;
-	    margin-right: 20px;
+			width: 160px;
+	    margin-right: 40px;
 	    margin-left: auto;
+	    padding: 20px;
 	    font-size: 14px;
-	    border: 1px solid #caced4;
-	    background-color: #fff;
-      margin-bottom: 10px;
+	    border: 1px solid #53565d;
+    	background-color: #e9e9e9;
+	    margin-bottom: 10px;
+	    border-radius: 2px;
+			font-size: 16px;
 	   }
 	  :host .esri-widget-button.active {
-	    background-color: #c5c5c5;
+			background-color: #53565d;
+	    border: 1px solid #53565d;
+			color: #fff;
 	   }
 	   .esri-icon-polyline {
 	     margin-right: 10px;
+			 font-size: 17px;
 	   }
+		 .mat-spinner.mat-progress-spinner {
+			 position: absolute;
+			 transform: translate(50%, -50%);
+			 top: calc(50% - 30px);
+			 right: 50%;
+		 }
 	`]
 })
 
@@ -52,10 +62,13 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
   draw: Draw;
 
   constructor(
+		private cdr: ChangeDetectorRef,
     private mapService: MapService,
     private profileToolService: ProfileToolService,
     private toolsNameService: ToolsNameService
-  ) { }
+  ) {
+		//this.cdr.detach()
+	}
 
   ngOnInit() {
     this.view = this.mapService.getView();
@@ -110,6 +123,8 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
       this.profileToolService.createPolylineGraphic(e, true).then((result) => {
         this.chartData = result;
         console.log(result);
+				// detect changes for view and child components
+				this.cdr.detectChanges();
       });
       this.toggleDraw();
     }));

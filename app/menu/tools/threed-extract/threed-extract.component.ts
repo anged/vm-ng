@@ -24,24 +24,24 @@ import { Subscription } from 'rxjs';
 
 export class ThreeDExtractComponent implements AfterViewInit {
   private toolActive = false;
-	s: Subscription;
+  s: Subscription;
 
   constructor(private cdr: ChangeDetectorRef, private toolsNameService: ToolsNameService) {
-		this.cdr.detach();
-	}
+    this.cdr.detach();
+  }
 
   toggleExtract() {
     this.toolActive = !this.toolActive;
-		if (this.toolActive) {
-			// reatatch chnage detaction when we open tool
-			this.cdr.reattach();
+    if (this.toolActive) {
+      // reatatch chnage detaction when we open tool
+      this.cdr.reattach();
 
-			this.s = this.toolsNameService.currentToolName
-				.subscribe((name) => {
-					console.log(this.s, 'Name', name, ToolsList.extract)
-					if (ToolsList.extract !== name) { this.closeMeasure() };
-				});
-		} else {
+      this.s = this.toolsNameService.currentToolName
+        .subscribe((name) => {
+          console.log(this.s, 'Name', name, ToolsList.extract)
+          if (ToolsList.extract !== name) { this.closeMeasure() };
+        });
+    } else {
       this.closeMeasure();
     }
 
@@ -49,13 +49,13 @@ export class ThreeDExtractComponent implements AfterViewInit {
 
   closeMeasure() {
     this.toolActive = false;
-		this.s.unsubscribe();
-		console.log(this.s)
+    this.s.unsubscribe();
+    console.log(this.s)
 
-		//  detach changes detection
-		// and last time detect changes when closing tool
-		this.cdr.detach();
-		this.cdr.detectChanges();
+    //  detach changes detection
+    // and last time detect changes when closing tool
+    this.cdr.detach();
+    this.cdr.detectChanges();
   }
 
   ngAfterViewInit() {

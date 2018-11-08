@@ -29,9 +29,12 @@ import { MapService } from '../../../map.service';
   }
   .profile-tool {
     position: absolute;
-    background: #ffffff;
+    background: #e9e9e9;
     width: calc(100vw - 40px);
     bottom: 0;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
    }
    @media only screen and (max-width: 1382px) {
      .profile-tool {

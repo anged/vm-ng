@@ -2,5 +2,7 @@
  <div id="draw-line" class="esri-widget-button esri-widget esri-interactive" title="Brėžti liniją" (click)="selectDrawEl()" [ngClass]="{'active': drawActive}">
   <span class="esri-icon-polyline"> </span> Brėžti liniją
  </div>
- <profile-elevation [data]="chartData"></profile-elevation>
+ <profile-elevation [data]="chartData">
+	<!-- <mat-spinner *ngIf="!data" diameter="50"></mat-spinner> -->
+ </profile-elevation>
 </div>

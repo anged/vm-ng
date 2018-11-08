@@ -66,5 +66,16 @@ export const Symbols: any = {
       width: 2//,
       //style: "short-dash"
     }
+  },
+  profileHoverPoint: {
+    type: "simple-marker", // autocasts as SimpleMarkerSymbol
+    style: "circle",
+    color: [193, 39, 45, 1],
+    size: "12px",
+    outline: { // autocasts as SimpleLineSymbol
+      color: [255, 255, 255],
+      width: 2//,
+      //style: "short-dash"
+    }
   }
 };
