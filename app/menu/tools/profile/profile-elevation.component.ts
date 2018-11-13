@@ -7,9 +7,15 @@ import { Symbols } from '../../symbols';
 import { Chart } from 'chart.js';
 import Graphic = require('esri/Graphic');
 
-Chart.controllers.customChart = Chart.controllers.line;
 
-const customChart = Chart.controllers.line.extend({
+class ProfileChart extends Chart {
+  tooltip: any;
+  fullData: any;
+}
+
+ProfileChart.controllers.customChart = ProfileChart.controllers.line;
+
+const customChart = ProfileChart.controllers.line.extend({
   draw: function(ease) {
     // Call super method first
     Chart.controllers.line.prototype.draw.call(this, ease);
@@ -34,7 +40,7 @@ const customChart = Chart.controllers.line.extend({
       ctx.beginPath();
       ctx.arc(activePoint.tooltipPosition().x, activePoint.tooltipPosition().y, 5, 0, 2 * Math.PI, false);
       ctx.fill();
-			ctx.lineWidth = 3;
+      ctx.lineWidth = 2;
       ctx.strokeStyle = '#e61c24';
       ctx.stroke();
 
@@ -63,17 +69,17 @@ Chart.controllers.customChart = customChart;
       }
   }
 	`],
-	changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
   @Input() data;
   @ViewChild('elevationChart') elevationChart: ElementRef;
 
-  profileChart: Chart;
+  profileChart: ProfileChart;
   canvasChart: any;
-	previousPoint: number[];
-	view: any;
+  previousPoint: Graphic;
+  view: any;
 
   constructor(
     private mapService: MapService,
@@ -82,87 +88,85 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     console.log("chart data", this.data);
-		this.view = this.mapService.getView();
+    this.view = this.mapService.getView();
     this.canvasChart = this.elevationChart.nativeElement.getContext('2d');
-		this.profileChart = new Chart(this.canvasChart, {
-			type: 'customChart',
-			options: {
-				maintainAspectRatio: false,
-				tooltips: {
-					caretPadding: 10,
-					caretSize: 4,
-					cornerRadius: 2,
-					mode: 'index',
-					intersect: false,
+    this.profileChart = new ProfileChart(this.canvasChart, {
+      type: 'customChart',
+      options: {
+        maintainAspectRatio: false,
+        tooltips: {
+          caretPadding: 10,
+          caretSize: 4,
+          cornerRadius: 2,
+          mode: 'index',
+          intersect: false,
 
-					// get active tooltip point coordinates
-					custom: (tooltipModel) => {
-						const isActiveTooltip = this.profileChart.tooltip._active[0] ? true : false;
-						if (isActiveTooltip) {
-							const activePointIndex = this.profileChart.tooltip._active[0]._index;
-							const activePointCoordinates = this.profileChart.fullData[activePointIndex];
-							console.log('tooltipModel', activePointCoordinates);
-							this.createPointGraphic(activePointCoordinates);
-						}
+          // get active tooltip point coordinates
+          custom: (tooltipModel) => {
+            const isActiveTooltip = this.profileChart.tooltip._active[0] ? true : false;
+            if (isActiveTooltip) {
+              const activePointIndex = this.profileChart.tooltip._active[0]._index;
+              const activePointCoordinates = this.profileChart.fullData[activePointIndex];
+              //console.log('tooltipModel', activePointCoordinates);
+              this.createPointGraphic(activePointCoordinates);
+            }
 
-					}
-				},
-				legend: {
-					display: false
-				},
-				scales: {
-					yAxes: [{
-						scaleLabel: {
-							display: true,
-							fontSize: 14,
-							padding: 20,
-							labelString: 'Absoliutinis aukštis (m)'
-						},
-						gridLines: {
-							display: true
-						},
-						ticks: {
-							callback: function(label, index, labels) { return label + ' m'},
-							beginAtZero: false
-						}
-					}],
-					xAxes: [{
-						scaleLabel: {
-							display: true,
-							fontSize: 14,
-							labelString: 'Atstumas (km)'
-						},
-						gridLines: {
-							display: false
-						},
-						ticks: {
-							//autoSkip: true,
-							maxTicksLimit: 10,
-							beginAtZero: false
-						}
-					}]
-				}
-			}
-		});
+          }
+        },
+        legend: {
+          display: false
+        },
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              fontSize: 14,
+              labelString: 'Aukštis (m)'
+            },
+            gridLines: {
+              display: true
+            },
+            ticks: {
+              callback: function(label, index, labels) { return label + ' m' },
+              beginAtZero: false
+            }
+          }],
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              fontSize: 14,
+              labelString: 'Atstumas (km)'
+            },
+            gridLines: {
+              display: false
+            },
+            ticks: {
+              //autoSkip: true,
+              maxTicksLimit: 10,
+              beginAtZero: false
+            }
+          }]
+        }
+      }
+    });
   }
 
   initProfileElevationChart(chartData) {
-    const data = chartData.geometry.paths[0].map(coord => coord[2].toFixed(2));
-		// add x y data to chart
-		this.profileChart.fullData = chartData.geometry.paths[0].map(coord => {coord.pop(); return coord;});
-		console.log('data', data, this.profileChart)
+    const data = chartData.geometry.paths[0].map(coord => (Math.round(coord[2] * 10) / 10).toFixed(1));
+    // add x y data to chart
+    this.profileChart.fullData = chartData.geometry.paths[0].map(coord => { coord.pop(); return coord; });
+    console.log('data', data, this.profileChart)
     const datasets = [
       {
         label: '',
         data,
-        cubicInterpolationMode: 'monotone',
         backgroundColor: [
           'rgba(154, 8, 8, 0.1)'
         ],
         borderColor: [
           'rgba(230, 28, 36, 1.0)'
         ],
-        borderWidth: 3,
+        borderWidth: 2,
         pointHoverBackgroundColor: 'rgba(255, 255, 255, 1)',
         pointHoverBorderColor: 'rgba(150, 106, 236, 1)',
         pointBorderColor: 'rgba(255, 255, 255, 1)',
@@ -170,17 +174,15 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
         pointHoverRadius: 0,
         pointRadius: 0,
         spanGaps: false,
-				steppedLine: false // square lines enabled, no smoothing
+        steppedLine: false // square lines enabled, no smoothing
         //pointHitRadius: 10
       }
     ];
 
-		this.profileChart.data = {
-				labels: this.getLabel(data, chartData),
-				datasets
-			}
+    this.profileChart.data.labels = this.getLabel(data, chartData);
+    this.profileChart.data.datasets = datasets;
 
-		this.profileChart.update();
+    this.profileChart.update();
   }
 
   getLabel(dataZCoord: number[], chartData): string[] {
@@ -211,40 +213,40 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-	removePointGraphic() {
-		if (this.previousPoint) {
-			this.view.graphics.remove(this.previousPoint);
-		}
-	}
+  removePointGraphic() {
+    if (this.previousPoint) {
+      this.view.graphics.remove(this.previousPoint);
+    }
+  }
 
-	createPointGraphic(point) {
-		this.removePointGraphic();
+  createPointGraphic(pointCoordinates) {
+    this.removePointGraphic();
 
-		let point = {
-			type: "point", // autocasts as /Point
-			x: point[0],
-			y: point[1],
-			spatialReference: this.view.spatialReference
-		};
+    let point = {
+      type: "point", // autocasts as /Point
+      x: pointCoordinates[0],
+      y: pointCoordinates[1],
+      spatialReference: this.view.spatialReference
+    };
 
-		let graphic = new Graphic({
-			geometry: point,
-			symbol: Symbols.profileHoverPoint
-		});
+    let graphic = new Graphic({
+      geometry: point,
+      symbol: Symbols.profileHoverPoint
+    });
 
-		this.view.graphics.add(graphic);
-		this.previousPoint = graphic;
-	}
+    this.view.graphics.add(graphic);
+    this.previousPoint = graphic;
+  }
 
   ngOnChanges() {
-		this.removePointGraphic();
+    this.removePointGraphic();
     //console.log("chart data changed", this.data, this.profileChart);
     this.profileChart && this.profileChart.clear();
     this.data && this.initProfileElevationChart(this.data);
   }
 
   ngOnDestroy() {
-		this.previousPoint = null;
+    this.previousPoint = null;
   }
 
 }

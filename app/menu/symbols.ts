@@ -71,10 +71,10 @@ export const Symbols: any = {
     type: "simple-marker", // autocasts as SimpleMarkerSymbol
     style: "circle",
     color: [193, 39, 45, 1],
-    size: "12px",
+    size: "10px",
     outline: { // autocasts as SimpleLineSymbol
       color: [255, 255, 255],
-      width: 2//,
+      width: 1//,
       //style: "short-dash"
     }
   }

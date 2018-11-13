@@ -58,6 +58,7 @@ export class ProfileToolService {
     if (ended) {
       return this.submitExtractJob();
     }
+
   }
 
   deactivateAndDisable(evt) {

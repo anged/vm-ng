@@ -47,6 +47,7 @@
   "devDependencies": {
     "@angular/compiler-cli": "^6.0.3",
     "@types/arcgis-js-api": "^4.9.0",
+    "@types/chart.js": "^2.7.40",
     "@types/core-js": "^0.9.43",
     "@types/dojo": "^1.9.40",
     "@types/jasmine": "^2.5.47",

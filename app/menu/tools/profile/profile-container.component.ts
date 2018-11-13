@@ -3,9 +3,11 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef 
 import { MapService } from '../../../map.service';
 import { ProfileToolService } from './profile-tool.service';
 import { ToolsNameService } from '../../tools-name.service';
-
+import PolylineDrawAction = require('esri/views/2d/draw/PolylineDrawAction');
 
 import Draw = require('esri/views/2d/draw/Draw');
+
+import isEmpty from 'lodash-es/isempty';
 
 @Component({
   selector: 'profile-container',
@@ -24,16 +26,15 @@ import Draw = require('esri/views/2d/draw/Draw');
 		}
 	  .esri-widget-button {
 			width: 160px;
-	    margin-right: 40px;
+			margin-bottom: 10px;
+	    margin-right: 30px;
 	    margin-left: auto;
-	    padding: 20px;
+	    padding: 16px 10px;
 	    font-size: 14px;
 	    border: 1px solid #53565d;
-    	background-color: #e9e9e9;
-	    margin-bottom: 10px;
-	    border-radius: 2px;
-			font-size: 16px;
-	   }
+	    background-color: #e9e9e9;
+			border-radius: 2px;
+	  }
 	  :host .esri-widget-button.active {
 			background-color: #53565d;
 	    border: 1px solid #53565d;
@@ -62,13 +63,13 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
   draw: Draw;
 
   constructor(
-		private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef,
     private mapService: MapService,
     private profileToolService: ProfileToolService,
     private toolsNameService: ToolsNameService
   ) {
-		//this.cdr.detach()
-	}
+    //this.cdr.detach()
+  }
 
   ngOnInit() {
     this.view = this.mapService.getView();
@@ -91,10 +92,12 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
     // if button was active (after taggle becomes false)
     // button behaves as reset button and starts to draw
     if (!this.drawActive) {
-      //this.resetTools();
+
       this.enableCreatePolyline();
       this.toggleDraw();
     } else {
+      this.view.graphics.removeAll();
+
       // TODO implement ssuspend hitTest of feature layers
       this.mapService.suspendLayersToggle();
       this.enableCreatePolyline();
@@ -123,14 +126,48 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
       this.profileToolService.createPolylineGraphic(e, true).then((result) => {
         this.chartData = result;
         console.log(result);
-				// detect changes for view and child components
-				this.cdr.detectChanges();
+        // detect changes for view and child components
+        this.cdr.detectChanges();
       });
       this.toggleDraw();
     }));
   }
 
+  //remove eventHandlers
+  removeEventHandlers() {
+    this.eventHandlers.forEach((event) => {
+      event.remove();
+    });
+    this.eventHandlers = [];
+  }
+
+  resetTools() {
+    // complete 2d draw action since 4.5 complete() method is available
+    const action = this.draw.activeAction as PolylineDrawAction;
+
+    if (!isEmpty(action)) {
+      action.complete();
+
+      // BUG Fix: in order to unsuspend run destroy as well
+      // BUG effects if we closing draw feature after first draw element has been added
+      action.destroy();
+
+      this.draw.activeAction = null;
+    }
+
+    this.view.graphics.removeAll();
+
+    //reset eventHandler events
+    this.removeEventHandlers();
+
+    //unsuspend layers
+    if (this.mapService.getSuspendedIdentitication()) {
+      this.mapService.unSuspendLayersToggle();
+    }
+  }
+
   ngOnDestroy() {
+    this.resetTools();
   }
 
 }
