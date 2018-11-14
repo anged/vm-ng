@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnChanges, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { ProfileToolService } from './profile-tool.service';
@@ -72,7 +72,7 @@ Chart.controllers.customChart = customChart;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
+export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() data;
   @ViewChild('elevationChart') elevationChart: ElementRef;
 
@@ -86,7 +86,7 @@ export class ProfileElevationComponent implements OnInit, OnChanges, OnDestroy {
     private profileToolService: ProfileToolService
   ) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     console.log("chart data", this.data);
     this.view = this.mapService.getView();
     this.canvasChart = this.elevationChart.nativeElement.getContext('2d');

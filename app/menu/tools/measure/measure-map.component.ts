@@ -40,9 +40,7 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
 		private mapService: MapService,
 		private measureMapService: MeasureMapService,
 		private toolsNameService: ToolsNameService
-	) {
-		this.cdr.detach();
-	}
+	) {}
 
 	toggleMeasure() {
 		this.measureActive = !this.measureActive;
@@ -103,15 +101,7 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
 	}
 
 	ngAfterViewInit() {
-		// // destroy tool component if other component containing draw tool got opened
-		// this.toolsNameService.currentToolName.subscribe((name) => {
-		// 	console.log('Name M', name, ToolsList.measure)
-		// 	if  (ToolsList.measure !== name) {
-		// 		setTimeout(() => {
-		// 			this.closeMeasure();
-		// 		});
-		// 	}
-		// });
+		this.cdr.detach();
 	}
 
 }

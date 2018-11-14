@@ -23,6 +23,9 @@
 </div>
 <!--End Navigation content-->
 
+<!-- Special ng-container for adding Profile Component -->
+<ng-container *ngComponentOutlet="ProfileToolContainerComponent"></ng-container>
+
 <!-- top menu -->
 <div class="modes" [class.active-tools]="toolsActive">
   <div id="top-menu" class="top-nav maps-nav col app animate col5 bottom small pad4x dark fill-denim animate" [class.mobile-active]="mobileActive">

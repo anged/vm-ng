@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, OnChanges, OnDestroy, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, OnChanges, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -8,17 +8,21 @@ import { MapOptions } from '../options';
 import { MapService } from '../map.service';
 import { ShareButtonService } from '../services/share-button.service';
 import { MenuService } from './menu.service';
+import { ProfileToolContainerComponent } from './tools/profile/profile-tool-container.component'; // re-export the named thing
 
 import watchUtils = require("esri/core/watchUtils");
 
 @Component({
   selector: 'menu-map',
+	entryComponents: [ProfileToolContainerComponent],
   templateUrl: './app/menu/menu.component.html'//,
   //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MenuComponent implements OnInit, OnDestroy {
   @Input() view: any;
   @Input() allLayerslayer: any;
+  //@ViewChild(ProfileElevationComponent) profileElevationComponent: ProfileElevationComponent;
+	ProfileToolContainerComponent = ProfileToolContainerComponent;
 
   mobileActive: boolean = false;
   //add tools active class and remove menu wrapper inm order to use tools on map directly
@@ -152,15 +156,15 @@ export class MenuComponent implements OnInit, OnDestroy {
     //load message about sublayers if they are visible on Init
     this.view.on("layerview-create", (event) => {
       // refresh layer with goTo, since 4.6 API
-			// do not refresh when selecting adn creating feature selection layer
-			// custom teams usually
-			if ((event.layer.type !== 'graphics') && ( (event.layer.type === 'map-image'))) {
-				const mapView = this.mapService.getView();
-				const center = mapView.center
-				center.x += 0.001;
-				center.y += 0.001;
-				mapView.goTo(center);
-			}
+      // do not refresh when selecting adn creating feature selection layer
+      // custom teams usually
+      if ((event.layer.type !== 'graphics') && ((event.layer.type === 'map-image'))) {
+        const mapView = this.mapService.getView();
+        const center = mapView.center
+        center.x += 0.001;
+        center.y += 0.001;
+        mapView.goTo(center);
+      }
 
       //get visibleSubLayerNumber when allLayers layer uis loaded
       event.layer.id === "allLayers" ? this.getVisibleSubLayerNumber() : void (0);

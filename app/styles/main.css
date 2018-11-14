@@ -2766,11 +2766,6 @@ ul > li .esri-layer-list__item-title {
     top: 30px;
     right: 0;
   }
-  profile-tool {
-   position: absolute;
-   height: calc(100vh - 190px);
-   left: 0;
-  }
   #print-container {
     position: absolute;
     margin-left: 465px;

@@ -12,18 +12,27 @@ import FeatureSet = require('esri/tasks/support/FeatureSet');
 
 @Injectable()
 export class ProfileToolService {
+	toolActive = false;
   geo: Geoprocessor;
   view: any;
   chartData: any;
   draw: Draw;
   graphic: Graphic;
   featureSet = new FeatureSet();
-  job: IPromise<any>
+  job: IPromise<any>;
 
   constructor(
     private mapService: MapService,
     private menuToolsService: MenuToolsService
   ) { }
+
+	closeMeasure() {
+		this.toolActive = false;
+	}
+
+	toggleMeasure() {
+		this.toolActive = !this.toolActive;
+	}
 
   initDraw(view): Draw {
     this.view = view;

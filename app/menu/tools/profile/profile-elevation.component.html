@@ -1,10 +1,8 @@
-<div>
-  <ng-container #chart>
-    <div class="heat-months-graphic sidebar-container" (mouseout)="removePointGraphic()">
-			<ng-content></ng-content>
-      <div class="canvas-wrapper">
-        <canvas id='profile-chart' #elevationChart></canvas>
-      </div>
+<div #chart>
+  <div class="heat-months-graphic sidebar-container" (mouseout)="removePointGraphic()">
+		<ng-content></ng-content>
+    <div class="canvas-wrapper">
+      <canvas id='profile-chart' #elevationChart></canvas>
     </div>
-  </ng-container>
+  </div>
 </div>

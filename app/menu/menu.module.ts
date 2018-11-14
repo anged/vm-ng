@@ -23,6 +23,7 @@ import {
   MeasureContainerComponent,
   ExtractContainerComponent,
  	ProfileToolComponent,
+	ProfileToolContainerComponent,
  	ProfileContainerComponent,
   ProfileElevationComponent,
   PrintMapComponent
@@ -49,7 +50,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MenuLegendItvComponent, MenuLegendComponent,
     ThreeDExtractComponent, ExtractContainerComponent,
     MeasureMapComponent, MeasureContainerComponent,
-		  ProfileToolComponent, ProfileContainerComponent, ProfileElevationComponent,
+		ProfileToolComponent, ProfileToolContainerComponent, ProfileContainerComponent, ProfileElevationComponent,
     PrintMapComponent
   ],
   exports: [MenuComponent, MenuThemesComponent],
