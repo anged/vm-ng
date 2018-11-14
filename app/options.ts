@@ -267,7 +267,7 @@ export const MapOptions: any = {
       layers: {
         darzeliai: { // layer unique name
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer",
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer",
           name: "Darželiai"
         }
       }

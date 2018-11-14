@@ -110,8 +110,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     !this.title && (this.title = 'Informacija');
     this.geometryService = this.menuToolsService.addGeometryService(MapOptions.mapOptions.staticServices.geometryUrl);
 
-    this.simpleQuery('https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/3').then(features => {
-      //console.log('area', features);
+    this.simpleQuery(MapOptions.themes.kindergartens.layers.darzeliai.dynimacLayerUrls + '/3').then(features => {
       this.fullArea = features[0];
     })
 
