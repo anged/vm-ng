@@ -68,7 +68,7 @@ export const MapOptions: any = {
       layers: {
         teritorijuGrazinimas: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Zemes_grazinimas/MapServer",
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Zemes_grazinimas/MapServer",
           name: "Teritorijų grąžinimas:",
           isGroupService: true
         }
@@ -104,7 +104,7 @@ export const MapOptions: any = {
       layers: {
         aplinkosauga: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Aplinkosauga/MapServer",
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Aplinkosauga/MapServer",
           name: "Aplinkosauginiai sluoksniai:", // dynamicLayers group name
           opacity: 0.7,
           isGroupService: true // if layers has grouping in mxd / value for administration purpose only
@@ -147,7 +147,7 @@ export const MapOptions: any = {
       layers: {
         laisvalaikis: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Laisvalaikis/MapServer",
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Laisvalaikis/MapServer",
           name: "Laisvalaikis" // dynamicLayers group name
         }
       }
@@ -285,9 +285,9 @@ export const MapOptions: any = {
       layers: {
         administravimas: { // layer unique name
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Pastatu_administravimas/MapServer",
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Pastatu_administravimas/MapServer",
           featureLayerUrls: [
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Pastatu_administravimas/MapServer/1"
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Pastatu_administravimas/MapServer/1"
           ]
         }
       }
@@ -327,7 +327,7 @@ export const MapOptions: any = {
       layers: {
         mokyklos: { // layer unique name //
           dynimacLayerUrls:  //  dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Mokyklos/MapServer"
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Mokyklos/MapServer"
         }
       }
     },
