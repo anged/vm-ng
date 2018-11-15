@@ -71,7 +71,7 @@ Chart.controllers.customChart = customChart;
      .canvas-wrapper {
       position: relative;
       height: 160px;
-      width: calc(100vw - 640px);
+      width: calc(100vw - 40px);
       }
   }
 	`],

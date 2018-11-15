@@ -30,11 +30,11 @@ import { ProfileToolService } from './profile-tool.service';
 	   }
 	   @media only screen and (max-width: 1382px) {
 	     .profile-tool {
-		      position: absolute;
-		      background: #e9e9e9;
-		      width: calc(100vw - 600px);
-		      bottom: 0;
-		      left: 380px;
+				 margin: 10px;
+				 position: absolute;
+		     background: #e9e9e9;
+		     width: calc(100vw - 20px);
+		     bottom: 0;
 	      }
 	    }
 	`]
