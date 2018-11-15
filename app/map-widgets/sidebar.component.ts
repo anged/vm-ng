@@ -220,6 +220,9 @@ export class SidebarComponent implements OnChanges {
 
   selectionByTypeState = false;
 
+	// chart labels for tooltip
+	chartLabels = [];
+
   constructor(
     private cdr: ChangeDetectorRef,
     private mapWidgetsService: MapWidgetsService) { }
@@ -397,7 +400,7 @@ export class SidebarComponent implements OnChanges {
     const data = {
       labels,
       datasets: [{
-        label: [],
+        label: '',
         data: [],
         backgroundColor: [],
         borderColor: [],
@@ -406,7 +409,7 @@ export class SidebarComponent implements OnChanges {
     };
     const dataset = data.datasets[0];
     this.heatingClassesData.classes.forEach((name) => {
-      dataset.label.push(this.heatingClassesData.dataByClasses[name].label + ', viso pastatų: ');
+      this.chartLabels.push(this.heatingClassesData.dataByClasses[name].label + ', viso pastatų: ');
       dataset.data.push(this.heatingClassesData.dataByClasses[name].count);
       dataset.backgroundColor.push(this.heatingClassesData.dataByClasses[name].color);
       dataset.borderColor.push(this.heatingClassesData.dataByClasses[name].strokeColor);
@@ -422,7 +425,6 @@ export class SidebarComponent implements OnChanges {
     if (!this.classesChart) {
       this.classesChart = new Chart(el, {
         type: 'bar',
-        data,
         options: {
           tooltips: {
             position: 'nearest',
@@ -434,9 +436,8 @@ export class SidebarComponent implements OnChanges {
                 const result = data.datasets["0"].data[tooltipItem.index];
                 return label + result;
               },
-              beforeTitle: function(tooltipItems, data) {
-                console.log(arguments);
-                return data.datasets["0"].label[tooltipItems[0].index].split(',')[0];
+              beforeTitle: (tooltipItems, data) => {
+                return this.chartLabels[tooltipItems[0].index].split(',')[0];
               },
               title: (tooltipItem, chart) => {
                 return '';
@@ -475,8 +476,11 @@ export class SidebarComponent implements OnChanges {
           }
         }
       });
+      this.classesChart.data.labels = data.labels;
+      this.classesChart.data.datasets = data.datasets;
+			this.classesChart.update();
     } else {
-      this.classesChart.data = data;
+      //this.classesChart.data = data;
       this.classesChart.update();
     }
 
@@ -488,7 +492,7 @@ export class SidebarComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-		console.log('OnChanges', changes);
+    console.log('OnChanges', changes);
     this.closeSidaberGroup();
     //close main heat content while adding animation
     this.innerState = 's-close';
