@@ -61,6 +61,12 @@ Chart.controllers.customChart = customChart;
      height:260px; width:
      calc(100vw - 80px)
    }
+	 p {
+		text-align: right;
+		position: relative;
+		bottom: 2px;
+		font-size: 12px;
+	 }
    @media only screen and (max-width: 1382px) {
      .canvas-wrapper {
       position: relative;
