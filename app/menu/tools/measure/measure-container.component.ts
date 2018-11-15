@@ -135,7 +135,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     } else {
 			this.previousActiveTool = this.activeTool;
       //suspend layers toggle (e.g. suspend layers while drawing with measure tools)
-      this.mapService.suspendLayersToggle();
+      //this.mapService.suspendLayersToggle();
       this.resetTools();
       this.activateTool(id);
       this.drawElement();
@@ -156,27 +156,24 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
       action.destroy();
 
       this.draw.activeAction = null;
+
     }
 
     this.measureMapService.resetCalculate();
     this.view.graphics.removeAll();
 
-    //reset eventHandler events
+    // reset eventHandler events
     this.removeEventHandlers();
 
-    //unsuspend layers
-    if (this.mapService.getSuspendedIdentitication()) {
-      this.mapService.unSuspendLayersToggle();
-    }
   }
 
-  //activate measure tools based on id
+  // activate measure tools based on id
   activateTool(id: string) {
     //check if any tool is active
     this.activeToolsState = false;
-    //iterate with lodash
+    // iterate with lodash
     forOwn(this.measureActiveOpt, (value, key) => {
-      //active tools
+      // active tools
       if (value.name === id) {
         value.active = !value.active;
         //add or remove disabled attribute and activeTool name
@@ -190,16 +187,31 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
 	completeDrawing(e): void {
 		//console.log("Complete P", this.previousActiveTool , 'C', this.activeTool);
 		this.checkboxChecked && this.activeTool && !this.previousActiveTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, e).then((a) => {
-  //this.cdr.detectChanges();
-  console.log('a',a);
-  }));
+	  //this.cdr.detectChanges();
+	  console.log('a',a);
+	  }));
+		console.log('EVENT ', e, this.activeToolsState, this.activeTool)
+
 		//set active tool to empty string
 		this.activeTool = "";
-  //this.cdr.detectChanges();
+
+		// unsuspend layers
+		if (this.mapService.getSuspendedIdentitication()) {
+			if (e.coordinates) {
+				setTimeout(() => {
+					this.mapService.unSuspendLayersToggle();
+				}, 800);
+			} else {
+				this.mapService.unSuspendLayersToggle();
+			}
+		}
+
 	}
 
   //Polygon approach
   enableCreatePolygon(draw, view, activeTool) {
+		this.mapService.suspendLayersToggle();
+
     // create() will return a reference to an instance of PolygonDrawAction
     let action = this.draw.create("polygon");
     // focus the view to activate keyboard shortcuts for drawing polygons
@@ -222,6 +234,8 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   //Polyline approach
   enableCreatePolyline(draw, view) {
     let action = draw.create("polyline");
+
+		this.mapService.suspendLayersToggle();
 
     // listen to PolylineDrawAction.vertex-add
     // Fires when the user clicks, or presses the "F" key
@@ -256,6 +270,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   enableCreatePoint(draw, view) {
 		// TODO add action property to component and complete() on draw toolbox close
     let action = draw.create("point");
+		this.mapService.suspendLayersToggle();
 
     // PointDrawAction.cursor-update
     // Give a visual feedback to users as they move the pointer over the view

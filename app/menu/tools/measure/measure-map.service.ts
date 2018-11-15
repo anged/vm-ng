@@ -62,23 +62,9 @@ export class MeasureMapService {
     return this.geo;
   }
 
-  deactivateAndDisable(evt) {
-    //on complete remove class
-    if (evt.type === "draw-complete") {
-      //first unsuspend layers on draw-complete event
-      //set timeout, needed for point element specificallly as we do not want to start identify method too early
-      setTimeout(() => {
-        this.mapService.unSuspendLayersToggle();
-      }, 800);
-    }
-
-  }
-
   drawPolygon(evt, analyzeParams, ended = false, ) {
 	  let vertices = evt.vertices;
     this.analyzeParams = analyzeParams;
-    //on complete remove class
-    this.deactivateAndDisable(evt);
 
     //remove existing graphic
     this.view.graphics.removeAll();
@@ -119,7 +105,6 @@ export class MeasureMapService {
 
   createPolylineGraphic(evt, analyzeParams, ended = false) {
     this.analyzeParams = analyzeParams;
-    this.deactivateAndDisable(evt);
 
     this.view.graphics.removeAll();
     const polyline = {
@@ -152,7 +137,6 @@ export class MeasureMapService {
 
   createPointGraphic(evt, analyzeParams) {
     this.analyzeParams = analyzeParams;
-    this.deactivateAndDisable(evt);
 
     this.view.graphics.removeAll();
     let point = {

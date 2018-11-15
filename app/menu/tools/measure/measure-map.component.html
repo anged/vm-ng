@@ -1,5 +1,5 @@
 {{change}}
-<button id="measure-button" (click)="toggleMeasure()" [class.active]="measureActive">
+<button id="measure-button" class="tool-button" (click)="toggleMeasure()" [class.active]="measureActive">
 	<span class="svg-measure">
 	<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
 		<image *ngIf="!measureActive; else svgMeasureW" xlink:href="../../app/img/svg/measure.svg" x="0" y="0" height="15px" width="15px"/>
