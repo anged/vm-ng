@@ -40,6 +40,9 @@ export class ShareButtonService {
         const shareURL = document.getElementById("url-link") as HTMLInputElement;
         if (shareURL) {
           shareURL.select();
+					// copy to clipboard
+					 // TODO add message
+					document.execCommand('copy');
         }
       }, 20);
     }
