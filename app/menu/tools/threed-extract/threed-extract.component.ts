@@ -17,6 +17,10 @@ import { Subscription } from 'rxjs';
 	    border-radius: 2px;
 			font-size: 14px;
 		}
+		.svg-measure {
+			font-size: 16px;
+	    top: 2px;
+		}
 	`]
 })
 

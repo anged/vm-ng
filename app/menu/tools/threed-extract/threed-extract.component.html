@@ -1,10 +1,5 @@
 <button id="measure-button" class="tool-button" (click)="toggleExtract()" [class.active]="toolActive">
-	<span class="svg-measure">
-	<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
-		<image *ngIf="!toolActive; else svgMeasureW" xlink:href="../../app/img/svg/measure.svg" x="0" y="0" height="15px" width="15px"/>
-		<ng-template #svgMeasureW><image xlink:href="../../app/img/svg/measure-w.svg" x="0" y="0" height="15px" width="15px"/></ng-template>
-	</svg>
-	</span>
+	<span class="svg-measure esri-icon-feature-layer"></span>
 	3D traukimas
 </button>
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, OnChanges, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, AfterViewInit, OnChanges, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { ProfileToolService } from './profile-tool.service';
@@ -58,8 +58,11 @@ Chart.controllers.customChart = customChart;
   styles: [`
    .canvas-wrapper {
      position: relative;
-     height:260px; width:
-     calc(100vw - 80px)
+     height:260px;
+		 width: calc(100vw - 80px)
+   }
+   .canvas-wrapper.canvas-full {
+     height: calc(100vh - 130px);
    }
 	 p {
 		text-align: right;
@@ -80,6 +83,7 @@ Chart.controllers.customChart = customChart;
 
 export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() data;
+  @Input() fullscreen;
   @ViewChild('elevationChart') elevationChart: ElementRef;
 
   profileChart: ProfileChart;
@@ -244,11 +248,14 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
     this.previousPoint = graphic;
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.removePointGraphic();
     //console.log("chart data changed", this.data, this.profileChart);
     this.profileChart && this.profileChart.clear();
-    this.data && this.initProfileElevationChart(this.data);
+		console.log('changes', changes);
+		// do not init chart if fullscreen value has change,
+		// run init only on first time
+    this.data && !changes.fullscreen && this.initProfileElevationChart(this.data);
   }
 
   ngOnDestroy() {

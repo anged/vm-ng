@@ -14,6 +14,9 @@ import { ProfileToolService } from './profile-tool.service';
 	    border-radius: 2px;
 			font-size: 14px;
 	}
+	.svg-measure {
+		font-size: 18px;
+	}
 	`]
 })
 

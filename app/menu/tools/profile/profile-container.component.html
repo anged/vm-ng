@@ -1,8 +1,18 @@
 <div class="profile-content">
+ <div id="draw-line" class="esri-widget-button auto-width esri-widget esri-interactive" title="Brėžti liniją" (click)="isFullScreen = !isFullScreen" [ngClass]="{'active': isFullScreen}">
+	<ng-container *ngIf="isFullScreen, else Expand">
+		  <span aria-hidden="true" class="esri-icon-minimize"></span>
+		Sumažinti
+	</ng-container>
+	<ng-template #Expand>
+		<span aria-hidden="true" class="esri-icon-maximize"></span>
+		Išplėsti
+	</ng-template>
+ </div>
  <div id="draw-line" class="esri-widget-button esri-widget esri-interactive" title="Brėžti liniją" (click)="selectDrawEl()" [ngClass]="{'active': drawActive}">
   <span class="esri-icon-polyline"> </span> Brėžti liniją
  </div>
- <profile-elevation [data]="chartData">
+ <profile-elevation [data]="chartData" [fullscreen]="isFullScreen">
 	<!-- <mat-spinner *ngIf="!data" diameter="50"></mat-spinner> -->
  </profile-elevation>
 </div>

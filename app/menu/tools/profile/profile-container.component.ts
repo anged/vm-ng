@@ -26,21 +26,28 @@ import isEmpty from 'lodash-es/isempty';
 		}
 	  .esri-widget-button {
 			width: 160px;
-			margin-bottom: 10px;
-	    margin-right: 30px;
-	    margin-left: auto;
-	    padding: 16px 10px;
+	    margin-bottom: 10px;
+	    margin-right: 10px;
+	    margin-left: 10px;
+	    padding: 6px 12px 6px;
+	    line-height: 1.6;
 	    font-size: 14px;
 	    border: 1px solid #53565d;
 	    background-color: #e9e9e9;
-			border-radius: 2px;
+	    border-radius: 2px;
+	    display: inline-block;
+	    height: 35px;
+	  }
+	  .esri-widget-button.auto-width {
+			width: auto;
 	  }
 	  :host .esri-widget-button.active {
 			background-color: #53565d;
 	    border: 1px solid #53565d;
 			color: #fff;
 	   }
-	   .esri-icon-polyline {
+	   .esri-icon-polyline,
+		 .esri-widget-button span {
 	     margin-right: 10px;
 			 font-size: 17px;
 	   }
@@ -59,6 +66,7 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
   //dojo draw events handlers Array
   private eventHandlers = [];
   chartData: any;
+  isFullScreen =  false;
   view: any;
   draw: Draw;
 
