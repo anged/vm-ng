@@ -13,7 +13,7 @@ export const MapOptions: any = {
     },
     staticServices: {
       //for basemaps const check basemaps.ts in map-widgets folder
-      basemapUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_1000/MapServer',
+      basemapUrl: 'https://atviras.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_light_LKS/MapServer',
       basemapDarkUrl: 'https://atviras.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_dark_LKS/MapServer',
       ortofotoUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORT5LT_2016/MapServer',
       basemapEngineeringUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services//Baziniai_zemelapiai/Vilnius_Inzinerija/MapServer',
