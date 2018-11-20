@@ -10,7 +10,7 @@ export class ShareButtonService {
 
   constructor(private mapService: MapService, private basemapsService: BasemapsService) { }
 
-  shareToggle(e, shareContainerActive, isProjectsTheme=false) {
+  shareToggle(shareContainerActive, isProjectsTheme=false) {
     //get visible and checked layers ids
     const view = this.mapService.getView();
     const ids: any = !isProjectsTheme ? this.getVisibleLayersIds(view) :  this.getVisibleLayersIds(view, true);
@@ -41,7 +41,6 @@ export class ShareButtonService {
         if (shareURL) {
           shareURL.select();
 					// copy to clipboard
-					 // TODO add message
 					document.execCommand('copy');
         }
       }, 20);

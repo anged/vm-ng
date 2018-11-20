@@ -7,8 +7,8 @@ import { BasemapsService } from './basemaps.service';
   styles: [`
       #basemap-button {
         position: absolute;
-        right: 20px;
-        bottom: 60px;
+        right: 10px;
+        bottom: 40px;
         z-index: 0;
         width: 100px;
         background: #fff;
@@ -41,6 +41,11 @@ import { BasemapsService } from './basemaps.service';
     @media only screen and (min-width: 740px) {
       #basemap-button {
         bottom: 45px;
+      }
+    }
+    @media only screen and (min-width: 840px) {
+      #basemap-button {
+        right: 20px;
       }
     }
     `],

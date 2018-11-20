@@ -76,6 +76,9 @@ Chart.controllers.customChart = customChart;
       height: 160px;
       width: calc(100vw - 40px);
       }
+			.canvas-wrapper.canvas-full[_ngcontent-c21] {
+			  height: calc(100vh - 110px);
+			}
   }
 	`],
   changeDetection: ChangeDetectionStrategy.OnPush
