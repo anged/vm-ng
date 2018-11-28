@@ -8,6 +8,9 @@ import findKey from 'lodash-es/findKey';
 import pick from 'lodash-es/pick';
 import forIn from 'lodash-es/forIn';
 
+import { forkJoin, from } from  'rxjs';
+import { map } from 'rxjs/operators';
+
 @Injectable()
 export class KindergartensLayersService {
 
@@ -17,11 +20,11 @@ export class KindergartensLayersService {
 		//using lodash find and pick themeLayer from options
     const themeName = findKey(MapOptions.themes, { "id": snapshotUrl.path });
     const themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
-    const map = this.mapService.returnMap();
+    const mapEsri = this.mapService.returnMap();
 
     //all theme layers will be added to common group layer
     const mainGroupLayer = this.mapService.initGroupLayer(themeName + 'group', 'Ikimokylinio ugdymo įstaigos', 'show');
-    map.add(mainGroupLayer);
+    mapEsri.add(mainGroupLayer);
 
     forIn(themeLayers, (layer, key) => {
       const response = this.mapService.fetchRequest(layer.dynimacLayerUrls)
@@ -44,7 +47,21 @@ export class KindergartensLayersService {
 					});
 				});
 			});
-    });
+
+			// const dataStore$ = forkJoin(
+			// 	from(this.mapKindergartensService.getAllQueryDataPromise(layer.dynimacLayerUrls + '/4', 'elderates', ['ID', 'LABEL'])),
+			// 	from(this.mapKindergartensService.getAllQueryDataPromise(layer.dynimacLayerUrls + '/5', 'mainInfo', ['GARDEN_ID', 'LABEL', 'EMAIL', 'PHONE', 'FAX', 'ELDERATE', 'ELDERATE2','ELDERATE3', 'ELDERATE4', 'SCHOOL_TYPE'])),
+			// )
+			// const dataStore$ = from(this.mapKindergartensService.getAllQueryDataPromise(layer.dynimacLayerUrls + '/4', 'elderates', ['ID', 'LABEL']));
+			//
+			// dataStore$.pipe(
+			// 	map(results => (
+			// 		{ elderates: results.features.map(feature => feature.attributes)}
+			// 	)
+			// ))
+			// .subscribe(a => console.log('dataStore$', a));
+			// console.log('dataStore$', dataStore$);
+
 
     //set raster layers
     const rasterLayers = this.mapService.getRasterLayers();

@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import MapImageLayer = require("esri/layers/MapImageLayer");
-
 import QueryTask = require("esri/tasks/QueryTask");
 import Query = require("esri/tasks/support/Query");
 
@@ -46,9 +44,9 @@ export class ProjectsListService {
     //return geometry in order to get popup and graphic on list click
     query.returnGeometry = true;
 
-    //if input value is empty asign to empty string, else make additiniol sql query
-    //UPDATED words are filtered same way if first letter is uppercase or lowercase
-    //TODO make search by word case insesitive
+    // if input value is empty asign to empty string, else make additiniol sql query
+    // UPDATED words are filtered same way if first letter is uppercase or lowercase
+    // TODO make search by word case insesitive
     let valueAutocomplete = inputValue.length > 0 ? "((Pavadinimas LIKE '%" + inputValue.charAt(0).toLowerCase() + inputValue.slice(1) + "%')" + " OR " + "(Pavadinimas LIKE '%" + inputValue.charAt(0).toUpperCase() + inputValue.slice(1) + "%'))" : "";
     query.outFields = ["*"];
     //check if query expression was set by filters

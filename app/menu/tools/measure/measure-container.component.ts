@@ -1,11 +1,8 @@
-import { Component, ChangeDetectorRef, DoCheck, OnInit, OnDestroy, ViewChild, Input, ElementRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 
 import { MapService } from '../../../map.service';
-import { MenuToolsService } from '../../menu-tools.service';
 import { MeasureMapService } from './measure-map.service';
-import { ToolsNameService } from '../../tools-name.service';
 import { AnalyzeParams } from './AnalyzeParams';
-import { ToolsList } from '../../tools.list';
 import PolygonDrawAction = require('esri/views/2d/draw/PolygonDrawAction');
 
 import isEmpty from 'lodash-es/isempty';
@@ -31,7 +28,6 @@ import forOwn from 'lodash-es/forOwn';
 })
 
 export class MeasureContainerComponent implements OnInit, OnDestroy {
-  //@Input('measureActive') measureActive: boolean;
   @ViewChild('bufferCheckbox') bufferCheckbox: ElementRef;
 
   view: any;
@@ -66,14 +62,13 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     }
   };
 
-  //dojo draw events handlers Array
+  // dojo draw events handlers Array
   eventHandlers = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
     private mapService: MapService,
-    private measureMapService: MeasureMapService,
-    private toolsNameService: ToolsNameService
+    private measureMapService: MeasureMapService
   ) { }
 
   ngOnInit() {
@@ -83,9 +78,6 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     this.view.then(() => {
       this.draw = this.measureMapService.initDraw(this.view);
     });
-
-		// set tool name Obs
-    this.toolsNameService.setCurentToolName(ToolsList.measure);
   }
 
   checkBoxChange() {
@@ -116,7 +108,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     //esri draw approach
     switch (this.activeTool) {
       case "draw-polygon":
-        this.enableCreatePolygon(this.draw, this.view, this.activeTool);
+        this.enableCreatePolygon();
         break;
       case "draw-line":
         this.enableCreatePolyline(this.draw, this.view);
@@ -127,7 +119,6 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     }
   }
 
-  // U
   selectDrawEl(evt, id) {
     if (id === this.activeTool) {
       this.activeTool = "";
@@ -143,8 +134,6 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   }
 
   resetTools() {
-		// TODO cancel requests
-
     // complete 2d draw action since 4.5 complete() method is available
     const action = this.draw.activeAction as PolygonDrawAction;
 
@@ -172,7 +161,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     //check if any tool is active
     this.activeToolsState = false;
     // iterate with lodash
-    forOwn(this.measureActiveOpt, (value, key) => {
+    forOwn(this.measureActiveOpt, (value) => {
       // active tools
       if (value.name === id) {
         value.active = !value.active;
@@ -185,10 +174,8 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   }
 
 	completeDrawing(e): void {
-		//console.log("Complete P", this.previousActiveTool , 'C', this.activeTool);
 		this.checkboxChecked && this.activeTool && !this.previousActiveTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, e).then((a) => {
 	  //this.cdr.detectChanges();
-	  console.log('a',a);
 	  }));
 		console.log('EVENT ', e, this.activeToolsState, this.activeTool)
 
@@ -209,7 +196,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
 	}
 
   //Polygon approach
-  enableCreatePolygon(draw, view, activeTool) {
+  enableCreatePolygon() {
 		this.mapService.suspendLayersToggle();
 
     // create() will return a reference to an instance of PolygonDrawAction
@@ -293,6 +280,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.checkboxChecked = false;
     this.measureMapService.resetCalculate();
+		this.mapService.unSuspendLayersToggle();
     this.restoreDefault();
     this.resetTools();
   }

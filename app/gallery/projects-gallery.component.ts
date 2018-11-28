@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { ProjectsListService } from '../projects-list/projects-list.service';
-import { NgGalleryCompontent } from './ng-gallery.component';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -12,7 +11,6 @@ import { Subscription } from 'rxjs';
 })
 
 export class ProjectsGalleryComponent implements OnInit, OnDestroy {
-  //elementRef;
   gallery: any = [];
   subscription: Subscription;
 
@@ -20,7 +18,7 @@ export class ProjectsGalleryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscription = this.projectsListService.galleryArr.subscribe((imgGallery) => {
-      //set to emtpy array and destroy child gallery
+      // set to emtpy array and destroy child gallery
       this.gallery = [];
       setTimeout(()=>{
         this.gallery = imgGallery;

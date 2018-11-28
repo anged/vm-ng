@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { ProfileToolService } from './profile-tool.service';
-import { ToolsNameService } from '../../tools-name.service';
+import { ProfileElevationComponent } from './profile-elevation.component';
 import PolylineDrawAction = require('esri/views/2d/draw/PolylineDrawAction');
 
 import Draw = require('esri/views/2d/draw/Draw');
@@ -51,17 +51,33 @@ import isEmpty from 'lodash-es/isempty';
 	     margin-right: 10px;
 			 font-size: 17px;
 	   }
-		 .mat-spinner.mat-progress-spinner {
-			 position: absolute;
-			 transform: translate(50%, -50%);
-			 top: calc(50% - 30px);
-			 right: 50%;
+		 .profile-msg {
+			 border: 1px solid #e61c24;
+			 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			-webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		 }
+		 .profile-msg,
+		 .profile-spinner {
+			 position: absolute;
+	     top: 50%;
+	     left: 50%;
+	     transform: translate(-50%, -50%);
+	     background: #e9e9e9;
+	     color: #000;
+	     padding: 10px;
+	     font-size: 16px;
+	     border-radius: 2px;
+		}
+		.profile-spinner {
+			background: none;
+		}
 	`]
 })
 
 export class ProfileContainerComponent implements OnInit, OnDestroy {
-  private drawActive = false;
+	@ViewChild(ProfileElevationComponent) pEC;
+	private drawActive = false;
 
   //dojo draw events handlers Array
   private eventHandlers = [];
@@ -69,12 +85,13 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
   isFullScreen =  false;
   view: any;
   draw: Draw;
+	hasError = false;
+	updatingChart = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private mapService: MapService,
-    private profileToolService: ProfileToolService,
-    private toolsNameService: ToolsNameService
+    private profileToolService: ProfileToolService
   ) {
     //this.cdr.detach()
   }
@@ -104,6 +121,8 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
       this.enableCreatePolyline();
       this.toggleDraw();
     } else {
+			this.pEC.resetChart();
+			this.hasError = false;
       this.view.graphics.removeAll();
 
       // TODO implement ssuspend hitTest of feature layers
@@ -131,8 +150,16 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
 
     // listen to draw-complete event on the action
     this.eventHandlers.push(action.on("draw-complete", (e) => {
+			this.updatingChart = true;
       this.profileToolService.createPolylineGraphic(e, true).then((result) => {
-        this.chartData = result;
+				this.updatingChart = false;
+				if (result.details && (result.details.httpStatus === 400)) {
+					this.hasError = true;
+					this.chartData = null;
+				} else {
+					this.hasError ? this.hasError =  false : this.hasError;
+					this.chartData = result;
+				}
         console.log(result);
         // detect changes for view and child components
         this.cdr.detectChanges();

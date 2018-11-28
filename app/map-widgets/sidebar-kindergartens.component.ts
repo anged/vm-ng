@@ -1,9 +1,7 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, ElementRef, ViewChild, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
-import { Chart } from 'chart.js';
 
 import { MapOptions } from '../options';
-import { SearchKindergartensComponent } from './search-kindergartens.component';
 import { SearchService } from '../search/search.service';
 import { MapWidgetsService } from './map-widgets.service';
 import { MapService } from '../map.service';
@@ -14,7 +12,6 @@ import { Symbols } from '../menu/symbols';
 
 import { Subscription } from 'rxjs';
 import Graphic = require('esri/Graphic');
-import geometryEngine = require('esri/geometry/geometryEngine');
 import BufferParameters = require('esri/tasks/support/BufferParameters');
 import Polygon = require('esri/geometry/Polygon');
 import FeatureSet = require('esri/tasks/support/FeatureSet');
@@ -45,7 +42,6 @@ import FeatureSet = require('esri/tasks/support/FeatureSet');
       transition('s-close => s-open', animate('100ms ease-out'))
     ])
   ],
-	//changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class SidebarKindergartensComponent implements OnInit, OnChanges {
@@ -97,6 +93,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
   distance: number;
 
   constructor(
+		private cdr: ChangeDetectorRef,
     private mapWidgetsService: MapWidgetsService,
     private mapService: MapService,
     private selectorsService: SelectorsService,
@@ -106,7 +103,6 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
-    const map = this.mapService.returnMap();
     !this.title && (this.title = 'Informacija');
     this.geometryService = this.menuToolsService.addGeometryService(MapOptions.mapOptions.staticServices.geometryUrl);
 
@@ -126,13 +122,18 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       this.dataName = this.selectorsService.getUniqueAttribute(data.mainInfo, 'LABEL');
       //console.log("UNIQUE dataName: ", this.dataName)
 			console.log(7, this.dataStore )
+			this.cdr.detectChanges();
       this.subscription.unsubscribe();
     });
   }
 
+	ngDoCheck() {
+		this.cdr.detectChanges();
+	}
+
   //check if any filter is has been set
   isFiltered() {
-    const { eldership, groupByAge, groupByLang, hasVacancy, groupByType, groupByName, groupByAddress } = this.analyzeParams;
+    const { groupByAge, groupByLang, hasVacancy, groupByType, groupByName, groupByAddress } = this.analyzeParams;
     //console.log('change', this.analyzeParams);
     if ((groupByAge !== '') ||
       (groupByLang !== '') ||
@@ -141,9 +142,12 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       (groupByName !== '') ||
       (groupByAddress !== '')) {
       this.filtersOn = true;
+			this.cdr.detectChanges();
     } else {
       this.filtersOn = false;
+			this.cdr.detectChanges();
     }
+
   }
 
   resetFilters() {
@@ -185,10 +189,9 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       const features = results.features[0];
       let fullData = null;
       const dataStore = this.mapKindergartensService.returnAllQueryData();
-      const mainInfo = dataStore.mainInfo.forEach(data => {
+      dataStore.mainInfo.forEach(data => {
         if (data.GARDEN_ID === id) {
           fullData = Object.assign({}, data);
-          //console.log('selection item', data)
         }
       });
 
@@ -203,10 +206,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
 
       if (this.dataStore && this.sidebarContent) {
         this.groups = this.dataStore.info.filter(data => data.DARZ_ID === this.sidebarContent.GARDEN_ID);
-        //console.log('groups', this.groups);
       }
-      //console.log('selection item', features, fullData, dataStore, this.sidebarContent);
-
       const groupFeatureSelectionLayer = this.mapService.initFeatureSelectionGraphicLayer('FeatureSelection', features.layer.maxScale, features.layer.minScale, 'hide');
       const { geometry, layer, attributes } = features;
       const selectionGraphic = this.mapService.initFeatureSelectionGraphic('point', geometry, layer, attributes, '26px', 'dash');
@@ -217,13 +217,12 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
 
   filterGartens() {
     const search = this.searchService.returnGartensSearchWidget();
-    //console.log('idsGartens', idsGartens);
     this.selectionByFilterState = true;
     const view = this.mapService.getView();
     view.graphics.removeAll();
-    //remove existing graphic
+    // remove existing graphic
     this.mapService.removeFeatureSelection();
-    //remove info content and selection if exists
+    // remove info content and selection if exists
     this.selectedGartenId = null;
     this.sidebarContent = null;
 
@@ -231,23 +230,18 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       this.distance = this.analyzeParams.bufferSize;
       this.analyzeParams.groupByAddress = search.searchTerm;
       this.isFiltered();
-      //search using search widget
+      // search using search widget
       search.autoSelect = true;
       search.search().then((e) => {
-        const searchGeometry = e.results["0"].results["0"].feature.geometry;
-        this.mapService.runQueryByGeometry('https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/2', searchGeometry).then((result: FeatureSet) => {
-					console.log('result', result)
-          //assign elderates' name
-          this.analyzeParams.eldership = result.features["0"].attributes.NR;
+        const searchGeometry = e.results[0].results[0].feature.geometry;
+        this.mapService.runQueryByGeometry(MapOptions.themes.kindergartens.layers.darzeliai.dynimacLayerUrls + '/2', searchGeometry).then((result: FeatureSet) => {
+          this.analyzeParams.eldership = result.features[0].attributes.NR;
           const idsGartens = this.mapWidgetsService.filterKindergartents(this.dataStore, this.analyzeParams);
-          //console.log(e, search, this.analyzeParams);
-          this.createBuffer(this.analyzeParams, e.results["0"].results["0"].feature).then(buffer => {
-            //console.log('Buffer', buffer);
-            //console.log('this.fullArea', this.fullArea);
-            this.createQuery(buffer, "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer/0", idsGartens).then((filteredIds: any[]) => {
+          this.createBuffer(this.analyzeParams, e.results[0].results[0].feature).then(buffer => {
+						const url = MapOptions.themes.kindergartens.layers.darzeliai.dynimacLayerUrls + '/0';
+            this.createQuery(buffer, url, idsGartens).then((filteredIds: any[]) => {
               this.filteredGartens = this.dataStore.mainInfo.filter(data => filteredIds.includes(data.GARDEN_ID));
               this.mapWidgetsService.selectKindergartens(filteredIds, this.selectionByFilterState, buffer);
-
               if (this.filteredGartens.length > 0) {
                 this.createBufferPolygon(this.fullArea, buffer);
               }
@@ -258,20 +252,11 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     } else {
       const idsGartens = this.mapWidgetsService.filterKindergartents(this.dataStore, this.analyzeParams);
       this.distance = null;
-      //do not use search widget
+
+      // do not use search widget
       this.filteredGartens = this.dataStore.mainInfo.filter(data => idsGartens.includes(data.GARDEN_ID));
-      //console.log('this.filteredGartens', this.filteredGartens);
-      //console.log(this.mapWidgetsService.filterKindergartents(this.dataStore, this.analyzeParams));
       this.mapWidgetsService.selectKindergartens(idsGartens, this.selectionByFilterState);
     }
-  }
-
-  checkBoxChange() {
-    //console.log('hasVacancy', this.analyzeParams.hasVacancy);
-  }
-
-  bufferChange(buffer) {
-    //console.log('Size change', buffer, this.analyzeParams)
   }
 
   openSidaberGroup(name: string) {
@@ -375,6 +360,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       //add setTimeout  for main heat content animation
       setTimeout(() => {
         this.innerState = 's-open';
+				this.cdr.detectChanges();
       }, 200);
     }
   }
@@ -399,5 +385,6 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     this.closeSidaberGroup();
     //console.log('this.sidebarContent', this.sidebarContent)
     this.toggleInfoContent();
+		this.cdr.detectChanges();
   }
 }

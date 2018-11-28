@@ -13,6 +13,8 @@ import Polygon = require('esri/geometry/Polygon');
 import geometryEngine = require('esri/geometry/geometryEngine');
 import BufferParameters = require('esri/tasks/support/BufferParameters');
 
+import * as Raven from 'raven-js';
+
 @Injectable()
 export class MeasureMapService {
   draw: Draw;
@@ -250,15 +252,15 @@ export class MeasureMapService {
       });
 
       this.calculateCount = features.length;
-      //create ulr string
-      const stringArray = input.url.split("/");
-      const stringUrl = input.url.slice(0, -(stringArray[stringArray.length - 1].length + 1))
 
       features.forEach((graphic) => { this.view.graphics.add(graphic) });
 
       return result.features;
-    }, (error) => {
-      console.error(error);
+    }).catch(function(err) {
+			Raven.captureMessage('VP error ' + err, {
+			  level: 'error' // one of 'info', 'warning', or 'error'
+			});
+      console.error(err);
     });
   }
 

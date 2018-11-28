@@ -51,7 +51,7 @@ export class SearchService {
     });
   }
 
-  kindergartensSearchWidget(view: any, url: string, container: string, placeholder = "Adreso Paieška") {
+  kindergartensSearchWidget(view: any, container: string, placeholder = "Adreso Paieška") {
     this.gartensSearchWidget = new Search({
       autoSelect: false, //autoselect to false, selection will be based on only button click event
       view,

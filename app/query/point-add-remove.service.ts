@@ -8,8 +8,8 @@ import { IdentifyService } from '../services/identify/identify.service';
 import Extent = require("esri/geometry/Extent");
 import Point = require("esri/geometry/Point");
 
-import {Subject} from 'rxjs';
-
+import { Subject } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 @Injectable()
 export class PointAddRemoveService {
@@ -19,7 +19,10 @@ export class PointAddRemoveService {
   identifyPointCoordinates: any;
 
   private pointObs = new Subject();
-  pointItem = this.pointObs.asObservable();
+  pointItem = this.pointObs.asObservable()
+		.pipe(
+			first()
+		);
 
   constructor(private _mapService: MapService, private projectsListService: ProjectsListService, private identifyService: IdentifyService) { }
 
@@ -34,7 +37,7 @@ export class PointAddRemoveService {
 
   removeSelectionLayers(): void {
     //find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
-    this._mapService.removeSelectionLayers(this.map);
+    this._mapService.removeSelectionLayers();
   }
 
   //NEW method selection on point
@@ -45,26 +48,18 @@ export class PointAddRemoveService {
         return layer;
       }
     });
-    //console.log("layer found", layer, number);
-    //do not neet to call queryResultsToGraphic, call selectionResultsToGraphic instead
-    //this.queryResultsToGraphic(map, feature, layer, number);
+    //do not need to call queryResultsToGraphic, call selectionResultsToGraphic instead
     this._mapService.selectionResultsToGraphic(map, feature, layer["0"].maxScale, layer["0"].minScale, layer, number);
   }
 
   //selection on point, polygon or polyline
   showSelectionGraphicCommon(feature, map, view, projectsLayer, number, geometryTypes) {
-    //console.log("projectsLayer", projectsLayer);
-    let layer = projectsLayer.sublayers.items.filter(layer => {
+    projectsLayer.sublayers.items.filter(layer => {
       if (layer.id === feature.subLayerId) {
         return layer;
       }
     });
-    //console.log("layer found", layer, number);
-    //console.log("feature sent", feature);
     return this.searchProjects(feature, map, view, projectsLayer, geometryTypes, number);
-    //do not neet to call queryResultsToGraphic, call selectionResultsToGraphic instead
-    //this.queryResultsToGraphic(map, feature, layer, number);
-    //this._mapService.selectionResultsToGraphic(map, feature, layer["0"].maxScale, layer["0"].minScale, layer, number);
   }
 
   getPointCoordinates() {

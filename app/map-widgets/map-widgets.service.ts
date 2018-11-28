@@ -8,9 +8,9 @@ export class MapWidgetsService {
 
   constructor(private mapService: MapService) { }
 
-  //fetch heating data based on building id
+  // fetch heating data based on building id
   queryHeatingDataByMonths(year: number, id: number) {
-    //add heating data url, check REST endpoint
+    // add heating data url, check REST endpoint
     const url = MapOptions.themes.buildings.layers.silumosSuvartojimas.dynimacLayerUrls + '/3';
     const query = this.mapService.addQuery();
     const queryTask = this.mapService.addQueryTask(url);
@@ -26,7 +26,7 @@ export class MapWidgetsService {
     });
   }
 
-  //simple copmpare f for sort method
+  // simple copmpare f for sort method
   compare(a, b) {
     return a - b;
   }
@@ -56,7 +56,7 @@ export class MapWidgetsService {
     return data;
   }
 
-  //count unique results by class and by overall count
+  // count unique results by class and by overall count
   countHeatingResultsByClass(results, currentRate) {
     let dataByClass = {};
     let uniqueClasses = [];
@@ -151,7 +151,7 @@ export class MapWidgetsService {
         extent.ymin = extent.ymin - width;
         extent.xmax = extent.xmax + width;
         extent.ymax = extent.ymax + width;
-        if  (buffer) {
+        if (buffer) {
           buffer.geometry.extent.xmin = buffer.geometry.extent.xmin - width;
           buffer.geometry.extent.ymin = buffer.geometry.extent.ymin - width;
           buffer.geometry.extent.xmax = buffer.geometry.extent.xmax + width;
@@ -175,45 +175,45 @@ export class MapWidgetsService {
         target: featureLayer.fullExtent
       }, MapOptions.animation.options);
     }
-}
+  }
 
-filterKindergartents(dataStore, { eldership, groupByAge, groupByLang, groupByName, groupByType, hasVacancy }) {
-  //console.log("STORE", dataStore, '\n', eldership, groupByAge, groupByLang, groupByName, groupByType, hasVacancy)
-  const gartens = dataStore.mainInfo;
-  const elderate = dataStore.elderates.filter(data => data.ID === eldership)[0];
-  const eldarateLabel = elderate ? elderate.LABEL : '';
-  let gartensIDs = [];
-  gartens.forEach((garten) => {
-    const idByAge = dataStore.info.map(data => {
-      if (data.TYPE_LABEL === groupByAge) {
-        return data.DARZ_ID;
-      }
-    });
-    const idByLang = dataStore.info.map(data => {
-      if (data.LAN_LABEL === groupByLang) {
-        return data.DARZ_ID;
-      }
-    });
-    const idByVacancy = dataStore.summary.map(data => {
-      if (data.FREE_SPACE > 0) {
-        return data.DARZ_ID;
-      }
-    });
+  filterKindergartents(dataStore, { eldership, groupByAge, groupByLang, groupByName, groupByType, hasVacancy }) {
+    //console.log("STORE", dataStore, '\n', eldership, groupByAge, groupByLang, groupByName, groupByType, hasVacancy)
+    const gartens = dataStore.mainInfo;
+    const elderate = dataStore.elderates.filter(data => data.ID === eldership)[0];
+    const eldarateLabel = elderate ? elderate.LABEL : '';
+    let gartensIDs = [];
+    gartens.forEach((garten) => {
+      const idByAge = dataStore.info.map(data => {
+        if (data.TYPE_LABEL === groupByAge) {
+          return data.DARZ_ID;
+        }
+      });
+      const idByLang = dataStore.info.map(data => {
+        if (data.LAN_LABEL === groupByLang) {
+          return data.DARZ_ID;
+        }
+      });
+      const idByVacancy = dataStore.summary.map(data => {
+        if (data.FREE_SPACE > 0) {
+          return data.DARZ_ID;
+        }
+      });
 
-    if (((garten.ELDERATE === eldarateLabel) || (!eldership) || (garten.ELDERATE === 'Visos seniūnijos')) &&
-      ((garten.SCHOOL_TYPE === groupByType) || (groupByType === '')) &&
-      ((garten.LABEL === groupByName) || (groupByName === '')) &&
-      (idByAge.includes(garten.GARDEN_ID) || (groupByAge === '')) &&
-      (idByLang.includes(garten.GARDEN_ID) || (groupByLang === ''))) {
-      if (hasVacancy) {
-        if (idByVacancy.includes(garten.GARDEN_ID)) {
+      if (((garten.ELDERATE === eldarateLabel) || (!eldership) || (garten.ELDERATE === 'Visos seniūnijos')) &&
+        ((garten.SCHOOL_TYPE === groupByType) || (groupByType === '')) &&
+        ((garten.LABEL === groupByName) || (groupByName === '')) &&
+        (idByAge.includes(garten.GARDEN_ID) || (groupByAge === '')) &&
+        (idByLang.includes(garten.GARDEN_ID) || (groupByLang === ''))) {
+        if (hasVacancy) {
+          if (idByVacancy.includes(garten.GARDEN_ID)) {
+            return gartensIDs.push(garten.GARDEN_ID);
+          }
+        } else {
           return gartensIDs.push(garten.GARDEN_ID);
         }
-      } else {
-        return gartensIDs.push(garten.GARDEN_ID);
       }
-    }
-  });
-  return gartensIDs;
-}
+    });
+    return gartensIDs;
+  }
 }

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Title, Meta }     from '@angular/platform-browser';
+import { Title, Meta } from '@angular/platform-browser';
 import { MapOptions } from '../options';
 
 @Injectable()
 export class MetaService {
 	// in production we use express and ejs templates,
-	// how ever routing is based on Angualr routing
+	// how ever routing is based on Angular routing
 	// so we add basic meta tags when routes changes
-	//default title
+	// default title
 	title = MapOptions.defaultTitle;
 
 	constructor(private titleService: Title, private metaService: Meta) { }
@@ -24,12 +24,8 @@ export class MetaService {
 					const description = themes[theme].description;
 					newTitle ? (newTitle = newTitle + " / " + this.title) : (newTitle = this.title);
 					let newMeta = description ? description : newTitle;
-					//current meta
-					let metaElement = this.metaService.getTags('name=description');
-					//add meta const name: MetaDefinition = {name: 'application-name', content: 'Name of my application'};
 					let metadDefinition = {name: 'description', content: newMeta};
 					this.metaService.updateTag(metadDefinition);
-					//set title
 					this.titleService.setTitle(newTitle);
 				}
 			}

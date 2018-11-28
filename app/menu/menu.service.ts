@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import {Subject} from 'rxjs';
+import { Subject } from 'rxjs';
 
 import Legend = require('esri/widgets/Legend');
 
@@ -81,42 +81,11 @@ export class MenuService {
     let view = this.mapService.getView();
     let map = this.mapService.returnMap();
     //UPDATE hide dom instead
-    //map.layers.items = this.listModeSelection("allLayers", map.layers.items);
-    //this.subLayersActive ? this.subListWidget = this.mapService.initSubLayerListWidget(view, map) : "";
     if (this.subListModeOff && this.subLayersActive) {
-      view.then((viewMap) => {
+      view.then(() => {
         this.subListWidget = this.mapService.initSubLayerListWidget(view, map);
       });
-      //this.subListWidget = this.mapService.initSubLayerListWidget(view, map);
-      //console.log("SublayerLISTWIDGET", this.subListWidget);
       this.subListModeOff = false;
-
-      //this.queryParams = this.mapService.returnQueryParams();
-      //console.log("this.queryParams", this.queryParams);
-
-      // setTimeout(() => {
-      //   //open main item
-      //   this.subListWidget.operationalItems.items["0"].open = true;
-      //   this.subListWidget.operationalItems.items["0"].children.forEach(child => {
-      //     //console.log("child", child);
-      //     child.children.items.map(item => {
-      //       if (item.visible) {
-      //         if (item.children.items.length > 0) {
-      //           item.children.items.map(subItem => {
-      //             if (subItem.visible) {
-      //               item.open = true;
-      //               child.open = true;
-      //             }
-      //           });
-      //         } else {
-      //           child.open = true;
-      //           item.open = true;
-      //         }
-      //       }
-      //     });
-      //   });
-      // }, 500);
-
     }
   }
 
@@ -156,7 +125,6 @@ export class MenuService {
            return item;
          }
       });
-      //console.log("NEW ITEMS", newItems);
       return newItems;
     } else if (layersType ==="allLayers" ) {
       newItems =  items.map((item)=>{
@@ -168,17 +136,15 @@ export class MenuService {
           return item;
         }
       });
-      //console.log("NEW ITEMS", newItems);
       return newItems;
     }
   }
 
-	//fetchLegend
+	// fetchLegend
 	fetchLegend(container: HTMLElement) {
 		const view = this.mapService.getView()
 	  return new Legend({
 	    view,
-	    //container: "legend-list"
 	    container
 	  });
 	}

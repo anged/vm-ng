@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, OnChanges, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -52,11 +52,10 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   //Hash toggle, get all anchor elements
   constructor(
-    private el: ElementRef,
     private mapService: MapService,
     private router: Router,
     private menuService: MenuService, private shareButtonService: ShareButtonService) {
-    //temporary: Hash toggle, reload, new page,
+    // temporary: Hash toggle, reload, new page,
     window.location.hash = '#';
   }
 
@@ -126,8 +125,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
 
   watchLayers() {
-    watchUtils.whenTrue(this.view, "updating", (b) => {
-      //console.log("view updating ...", b);
+    watchUtils.whenTrue(this.view, "updating", () => {
       this.componentsVisibleSubLayerNumberState = this.menuService.getVisibleSubLayerNumberState();
       //check if help box is enabled with componentsVisibleSubLayerNumberState
       if (this.componentsVisibleSubLayerNumberState) {
@@ -137,7 +135,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   getVisibleSubLayerNumber() {
-    //this.mapService.returnThemeName() === "projektai" ?  this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view, true) : this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view);
     this.themeName === "projektai" ? this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view, true) : this.visibleSubLayerNumber = this.shareButtonService.getVisibleSubLayerNumber(this.view);
   }
 

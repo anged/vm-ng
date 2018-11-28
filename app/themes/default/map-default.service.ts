@@ -5,10 +5,7 @@ import { MapService } from '../../map.service';
 
 @Injectable()
 export class MapDefaultService {
-  //dinamic layers array
   dynamicLayersArray: any[] = [];
-
-  //url array
   urlArray: string[] = [];
 
   constructor(private mapService: MapService) { }
@@ -17,14 +14,14 @@ export class MapDefaultService {
     return this.urlArray;
   }
 
-  //return Dynimac Layers
+  // return Dynimac Layers
   initDefaultDynamicLayers(themeServiceUrl: any, id: string, name: string, opacity: number, raster: boolean = false): any {
     let dynamicLayer = this.mapService.initDynamicLayer(themeServiceUrl, id, name, opacity);
     dynamicLayer["isRaster"] = raster;
     return dynamicLayer;
   }
 
-  //get service based on theme
+  // get service based on theme
   getDefaultDynamicLayers(urlTheme: string): any[] {
     let themes: any = MapOptions.themes;
     for (let theme in themes) {

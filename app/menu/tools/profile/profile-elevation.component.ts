@@ -1,7 +1,6 @@
-import { Component, Input, OnInit, SimpleChanges, AfterViewInit, OnChanges, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, SimpleChanges, AfterViewInit, OnChanges, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 
 import { MapService } from '../../../map.service';
-import { ProfileToolService } from './profile-tool.service';
 import { Symbols } from '../../symbols';
 
 import { Chart } from 'chart.js';
@@ -69,14 +68,16 @@ Chart.controllers.customChart = customChart;
 		position: relative;
 		bottom: 2px;
 		font-size: 12px;
+		padding-right: 20px;
+    overflow: hidden;
 	 }
    @media only screen and (max-width: 1382px) {
      .canvas-wrapper {
-      position: relative;
-      height: 160px;
-      width: calc(100vw - 40px);
+	      position: relative;
+	      height: 160px;
+	      width: calc(100vw - 60px);
       }
-			.canvas-wrapper.canvas-full[_ngcontent-c21] {
+			.canvas-wrapper.canvas-full {
 			  height: calc(100vh - 110px);
 			}
   }
@@ -95,8 +96,7 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
   view: any;
 
   constructor(
-    private mapService: MapService,
-    private profileToolService: ProfileToolService
+    private mapService: MapService
   ) { }
 
   ngAfterViewInit() {
@@ -115,7 +115,7 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
           intersect: false,
 
           // get active tooltip point coordinates
-          custom: (tooltipModel) => {
+          custom: () => {
             const isActiveTooltip = this.profileChart.tooltip._active[0] ? true : false;
             if (isActiveTooltip) {
               const activePointIndex = this.profileChart.tooltip._active[0]._index;
@@ -140,7 +140,7 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
               display: true
             },
             ticks: {
-              callback: function(label, index, labels) { return label + ' m' },
+              callback: function(label) { return label + ' m' },
               beginAtZero: false
             }
           }],
@@ -167,7 +167,10 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
   initProfileElevationChart(chartData) {
     const data = chartData.geometry.paths[0].map(coord => (Math.round(coord[2] * 10) / 10).toFixed(1));
     // add x y data to chart
-    this.profileChart.fullData = chartData.geometry.paths[0].map(coord => { coord.pop(); return coord; });
+    this.profileChart.fullData = chartData.geometry.paths[0].map(coord => {
+      coord.pop();
+      return coord;
+    });
     console.log('data', data, this.profileChart)
     const datasets = [
       {
@@ -205,23 +208,22 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
     const dataXLength = this.calcLengthXData(dataXCoord, dataYCoord, dataZCoord, length);
     return dataZCoord.map((z, i) => {
       if (i === 0) return '0';
-      // calculate current length of point based on x value and full length
       return (dataXLength[i] / 1000).toFixed(3) + ' km';
     });
   }
 
-  // calculate length value in meters by X coordinate
+  // calculate length value in meters
   calcLengthXData(dataXCoord: number[], dataYCoord: number[], dataZCoord: number[], length): number[] {
     let lengthInMeters = 0;
     return dataXCoord.map((x, i) => {
-      //console.log('X', x)
       if (i === 0) return 0;
       if (i > 0) {
-        //const l = Math.abs(x - dataXCoord[i-1]);
+        // calculate length (vector length) based  on Pythagorean theorem
         const l = Math.sqrt(Math.pow((x - dataXCoord[i - 1]), 2) + Math.pow((dataYCoord[i] - dataYCoord[i - 1]), 2));
         lengthInMeters += l;
         return lengthInMeters;
       }
+
       if (i === (dataXCoord.length - 1)) return length;
     });
   }
@@ -251,18 +253,29 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
     this.previousPoint = graphic;
   }
 
+  resetChart() {
+    this.profileChart.data.datasets = [{ data: [] }];
+    this.profileChart.data.labels = [];
+    this.profileChart.update();
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     this.removePointGraphic();
-    //console.log("chart data changed", this.data, this.profileChart);
     this.profileChart && this.profileChart.clear();
-		console.log('changes', changes);
-		// do not init chart if fullscreen value has change,
-		// run init only on first time
+    console.log('changes', changes, this.profileChart);
+
+    // do not init chart if fullscreen value has change,
+    // run init only on first time
     this.data && !changes.fullscreen && this.initProfileElevationChart(this.data);
+
+    if (!this.data && this.profileChart) {
+      this.resetChart();
+    }
   }
 
   ngOnDestroy() {
     this.previousPoint = null;
+    this.profileChart.destroy();
   }
 
 }

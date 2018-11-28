@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, AfterViewInit, OnChanges } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MeasureMapService } from './measure-map.service';
@@ -49,10 +49,13 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
 			// reatatch chnage detaction when we open tool
 			this.cdr.reattach();
 
+			// set tool name Obs
+			this.toolsNameService.setCurentToolName(ToolsList.measure);
+
 			// destroy tool component if other component containing draw tool got opened
-			this.s = this.toolsNameService.currentToolName.subscribe((name) => {
-				console.log('Name M', name, ToolsList.measure)
-				console.log(this.s)
+			this.s = this.toolsNameService.currentToolName
+			.subscribe((name) => {
+				console.log(this.s, 'Name M', name)
 				if  (ToolsList.measure !== name) {
 					// TODO refactor, currently using setTimeout for ExpressionChangedAfterItHasBeenCheckedError
 					setTimeout(() => {
@@ -75,7 +78,7 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
 		this.cdr.detach();
 		this.cdr.detectChanges();
 
-		console.log(this.s)
+		console.log('CLOSE', this.s)
 	}
 
 	ngOnInit() {

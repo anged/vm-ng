@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 
 import { MapOptions } from '../options';
 

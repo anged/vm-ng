@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, Input, HostBinding, Host, ElementRef, ViewChild, Renderer2 } from '@angular/core';
-import { ActivatedRoute, Params } from "@angular/router";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute } from "@angular/router";
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { MapService } from '../../map.service';
@@ -14,26 +14,12 @@ import { ShareButtonService } from '../../services/share-button.service';
 import { MapKindergartensService } from './map-kindergartens.service';
 import { KindergartensTooltipService } from './kindergartens-tooltip.service';
 import { KindergartensLayersService } from './kindergartens-layers.service';
-import { MapOptions } from '../../options';
-import { ProjectsListComponent } from '../../projects-list/projects-list.component';
-import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
-import { CreditsCompponent } from '../../map-widgets/credits.component';
-import { MaintenanceComponent } from '../../map-widgets/maintenance.component';
-
-import watchUtils = require("esri/core/watchUtils");
-import on = require("dojo/on");
-import all = require("dojo/promise/all");
-import GraphicsLayer = require('esri/layers/GraphicsLayer');
 
 import { FeatureQueryService } from '../../query/feature-query.service';
 import { IdentifyService } from '../../services/identify/identify.service';
 import { PointAddRemoveService } from '../../query/point-add-remove.service';
 
 import { Subscription } from 'rxjs';
-
-import findKey from 'lodash-es/findKey';
-import pick from 'lodash-es/pick';
-import forIn from 'lodash-es/forIn';
 
 @Component({
   selector: 'esri-map-kindergartens',
@@ -174,13 +160,10 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
 	tooltip: any;
 
   constructor(
+		private cdr: ChangeDetectorRef,
     private _mapService: MapService,
-    private mapDefaultService: MapDefaultService,
-    private projectsService: ProjectsListService,
     private searchService: SearchService,
-    private featureService: FeatureQueryService,
     private identify: IdentifyService,
-    private pointAddRemoveService: PointAddRemoveService,
     private activatedRoute: ActivatedRoute,
     private basemapsService: BasemapsService,
     private metaService: MetaService,
@@ -191,11 +174,17 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     private renderer2: Renderer2,
     private shareButtonService: ShareButtonService,
     private mapKindergartensService: MapKindergartensService
-  ) { }
+  ) {
+		// Detach this view from the change-detection tree
+		this.cdr.detach();
+	}
 
   toggleSidebar() {
     this.sidebarState = this.sidebarState === 's-close' ? 's-open' : 's-close';
-  }
+
+		// detect changes when closing sidebar group
+		this.cdr.detectChanges();
+	}
 
   openSidebar() {
     this.sidebarState = 's-open';
@@ -227,13 +216,15 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     this.tooltipEvent = tooltipEvent;
     this.tooltip = tooltip;
 
+		this.cdr.detectChanges();
+
     this.clickEvent = view.on("click", (event) => {
       //remove existing graphic
       this._mapService.removeFeatureSelection();
 
       // identify with hitTest method
       // find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
-      this._mapService.removeSelectionLayers(this.map);
+      this._mapService.removeSelectionLayers();
 
       //this.view.popup.close()
       //hitTest check graphics in the view
@@ -285,6 +276,8 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
             this.kindergartensContent === null ? this.kindergartensContent = 0 : this.kindergartensContent = null;
             }
           }
+
+					this.cdr.detectChanges();
         });
       });
   }

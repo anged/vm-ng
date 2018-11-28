@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Renderer2, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 
 import { MapService } from '../../map.service';
@@ -10,12 +10,9 @@ import { BasemapsService } from '../../map-widgets/basemaps.service';
 import { ShareButtonService } from '../../services/share-button.service';
 import { MapOptions } from '../../options';
 import { ProjectsListComponent } from '../../projects-list/projects-list.component';
-import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
-import { CreditsCompponent } from '../../map-widgets/credits.component';
-import { MaintenanceComponent } from '../../map-widgets/maintenance.component';
 
 import watchUtils = require("esri/core/watchUtils");
-import on = require("dojo/on");
+
 import all = require("dojo/promise/all");
 
 import { FeatureQueryService } from '../../query/feature-query.service';
@@ -74,7 +71,6 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
 		private _mapService: MapService,
 		private menuService: MenuService,
 		private metaService: MetaService,
-		private elementRef: ElementRef,
 		private projectsService: ProjectsListService,
 		private searchService: SearchService,
 		private featureService: FeatureQueryService,
@@ -101,7 +97,7 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
   // toggle share container
   shareToggle(e) {
     this.shareContainerActive = !this.shareContainerActive;
-    this.shareUrl = this.shareButtonService.shareToggle(e, this.shareContainerActive, true);
+    this.shareUrl = this.shareButtonService.shareToggle(this.shareContainerActive, true);
   }
 
   onFilter(items) {
@@ -161,7 +157,7 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
       this.projectsListComponent.activateList();
 
       // find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
-      this._mapService.removeSelectionLayers(this.map);
+      this._mapService.removeSelectionLayers();
 
       //NEW map-default.compontent approach
       //store all deffered objects of identify task in def array

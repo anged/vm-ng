@@ -4,18 +4,17 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { retry, shareReplay } from 'rxjs/operators';
 
+import { MapOptions } from './options';
+
 import Map = require("esri/Map");
 import Graphic = require("esri/Graphic");
 import Point = require("esri/geometry/Point");
-import Polyline = require("esri/geometry/Polyline");
-import Polygon = require("esri/geometry/Polygon");
 import SimpleMarkerSymbol = require("esri/symbols/SimpleMarkerSymbol");
 import SimpleLineSymbol = require("esri/symbols/SimpleLineSymbol");
 import SimpleFillSymbol = require("esri/symbols/SimpleFillSymbol");
 import Extent = require("esri/geometry/Extent");
 import Color = require("esri/Color");
 import Renderer = require("esri/renderers/Renderer");
-import Collection = require("esri/core/Collection");
 import MapView = require("esri/views/MapView");
 import GroupLayer = require("esri/layers/GroupLayer");
 import MapImageLayer = require("esri/layers/MapImageLayer");
@@ -24,14 +23,8 @@ import TileLayer = require("esri/layers/TileLayer");
 import GraphicsLayer = require("esri/layers/GraphicsLayer");
 import Basemap = require("esri/Basemap");
 import LayerList = require("esri/widgets/LayerList");
-import on = require("dojo/on");
-import IdentifyTask = require("esri/tasks/IdentifyTask");
-import IdentifyParameters = require("esri/tasks/support/IdentifyParameters");
-import { MapOptions } from './options';
-import { ProjectsListService } from './projects-list/projects-list.service';
 import QueryTask = require("esri/tasks/QueryTask");
 import Query = require("esri/tasks/support/Query");
-import RelationshipQuery = require("esri/tasks/support/RelationshipQuery");
 
 @Injectable()
 export class MapService {
@@ -62,7 +55,7 @@ export class MapService {
   //all layers for "allLayers"
   subDynamicLayers: any;
 
-	// cching sublayer request
+	// caching sublayer request
 	sublayersJsonCache$: Observable<any>
 
 	// cache every layer that has been initated duaring apps lifecycle
@@ -72,7 +65,7 @@ export class MapService {
 	// progress bar loader
 	progressBar: any;
 
-  constructor(private zone: NgZone, private http: HttpClient, private projectsService: ProjectsListService) { }
+  constructor(private zone: NgZone, private http: HttpClient) { }
 
 	setProgressBar(bar): void {
 		this.progressBar = bar;
@@ -83,8 +76,7 @@ export class MapService {
 	}
 
   initMap(options: Object): Map {
-    //return new Map(options);
-    this.map = new Map();
+    this.map = new Map(options);
 		return this.map;
   }
 
@@ -476,28 +468,35 @@ export class MapService {
 		const isInCache = cachedLayers.length;
 		if (!isInCache) {
 			const response = this.fetchRequest(layer.dynimacLayerUrls);
-			response.subscribe((json: any) => {
-				//add dyn layers
-				let sublayersArray = this.getSubDynamicLayerSubLayers(json.layers);
-				let dynamicLayer = this.initDynamicLayer(layer.dynimacLayerUrls, key, layer.name, layer.opacity, sublayersArray, popupEnabled)
-				//for Layerlist 4.4 API bug fix
-				if (groupLayer) {
-					groupLayer.add(dynamicLayer);
-				} else {
-					this.map.add(dynamicLayer);
+			response.subscribe(
+				(json: any) => {
+				if (!json.error) {
+					// add dyn layers
+					let sublayersArray = this.getSubDynamicLayerSubLayers(json.layers);
+					let dynamicLayer = this.initDynamicLayer(layer.dynimacLayerUrls, key, layer.name, layer.opacity, sublayersArray, popupEnabled)
+
+					//for Layerlist 4.4 API bug fix
+					if (groupLayer) {
+						groupLayer.add(dynamicLayer);
+					} else {
+						this.map.add(dynamicLayer);
+					}
+
+					//check other url params if exists
+					//activate layer defined in url query params
+					this.activateLayersVisibility(this.view, queryParams, this.map);
+
+					//check for type raster and push to array
+					json.layers.forEach((layer) => {
+						if (layer.type === "Raster Layer") {
+							this.rasterLayers.push(layer.name);
+						}
+					});
 				}
 
-				//check other url params if exists
-				//activate layer defined in url query params
-				this.activateLayersVisibility(this.view, queryParams, this.map);
-
-				//check for type raster and push to array
-				json.layers.forEach((layer) => {
-					if (layer.type === "Raster Layer") {
-						this.rasterLayers.push(layer.name);
-					}
-				})
-			});
+			},
+			err => console.error(`VP dyamic layer not loaded`, err)
+		);
 		} else {
 			console.log("GROUP pickMainThemeLayers", groupLayer);
 			if (groupLayer) {
@@ -523,10 +522,6 @@ export class MapService {
     return queryTask.execute(query).then((result) => {
       return result;
     }, (error) => { console.error(error); });
-  }
-
-  getArrayByUniqueValue(array, valueName) {
-    //return array.filter((data, index, arr) => data )
   }
 
   pickCustomThemeLayers(response, layer, key, queryParams, groupLayer, serviceKey, symbolType = 'simple-fill') {
@@ -568,7 +563,7 @@ export class MapService {
     return this.featureLayerArr;
   }
 
-  removeSelectionLayers(map: any): void {
+  removeSelectionLayers(): void {
     //console.log("allGraphicLayers", this.allGraphicLayers)
     if (this.allGraphicLayers.length > 0) {
       //remove all graphic from map

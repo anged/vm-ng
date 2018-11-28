@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectionStrategy, DoCheck, ChangeDetectorRef
+import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectorRef
  } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { trigger, state, style, animate, transition } from '@angular/animations';
@@ -207,7 +207,7 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
 
       // else identify with hitTest method
       // find layer and remove it, max 4 layers: polygon, polyline, point, and additional point if scale is set from point to point in mxd
-      this._mapService.removeSelectionLayers(this.map);
+      this._mapService.removeSelectionLayers();
 			console.log('%c Map CLICK', 'font-size: 22px; color: violet')
 
       // hitTest check graphics in the view

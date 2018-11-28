@@ -49,6 +49,16 @@ export class MapKindergartensService {
     }, (error) => { console.error(error); });
   }
 
+  getAllQueryDataPromise(urlStr: string, name: string, outFields) {
+    let query = this.addQuery();
+    const queryTask = this.addQueryTask(urlStr);
+    //get all data
+    query.where = "1=1";
+    query.outFields = outFields;
+    query.returnGeometry = false;
+    return queryTask.execute(query).then(r => r);
+  }
+
   returnAllQueryData() {
 		console.log(this.dataStore)
     return this.dataStore;

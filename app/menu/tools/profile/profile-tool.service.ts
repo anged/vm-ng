@@ -9,6 +9,9 @@ import Geoprocessor = require('esri/tasks/Geoprocessor');
 import Draw = require('esri/views/2d/draw/Draw');
 import Graphic = require('esri/Graphic');
 import FeatureSet = require('esri/tasks/support/FeatureSet');
+import geometryEngine = require('esri/geometry/geometryEngine');
+
+import * as Raven from 'raven-js';
 
 @Injectable()
 export class ProfileToolService {
@@ -20,6 +23,7 @@ export class ProfileToolService {
   graphic: Graphic;
   featureSet = new FeatureSet();
   job: IPromise<any>;
+	calculatedUnits: string;
 
   constructor(
     private mapService: MapService,
@@ -27,11 +31,11 @@ export class ProfileToolService {
   ) { }
 
 	closeMeasure() {
-		this.toolActive = false;
+		return this.toolActive = false;
 	}
 
 	toggleMeasure() {
-		this.toolActive = !this.toolActive;
+		return this.toolActive = !this.toolActive;
 	}
 
   initDraw(view): Draw {
@@ -68,7 +72,22 @@ export class ProfileToolService {
       return this.submitExtractJob();
     }
 
+		// calculate the area of the polygon
+		let line = geometryEngine.planarLength(graphic.geometry, "kilometers");
+		const lastIndex = polyline.paths.length - 1;
+		this.labelLinesAndPoints("line", polyline.paths[lastIndex], line, ended);
   }
+
+	// Label text
+	labelLinesAndPoints(geometryType: string, points, geometry = undefined, ended = false) {
+		//this.calculatedUnits
+		const endString = ended ? "" : " (užbaigti dvigubu paspaudimu)";
+		let text: string;
+		geometryType === "line" ? text = geometry.toFixed(3) + " km" + endString : text = `x: ${points[1].toFixed(2)}, y: ${points[0].toFixed(2)}`;
+		geometryType === "line" ? this.calculatedUnits = geometry.toFixed(3) + " km" : this.calculatedUnits = `x: ${points[1].toFixed(2)}, <br>y: ${points[0].toFixed(2)}`
+		const graphic = this.menuToolsService.createLineOrPointLabelGraphic(points, text, this.view);
+		this.view.graphics.add(graphic);
+	}
 
   deactivateAndDisable(evt) {
     //on complete remove class
@@ -102,8 +121,12 @@ export class ProfileToolService {
 
       }
 
-    }).catch(function(error) {
-      console.warn('VP Warn', error);
+    }).catch(function(err) {
+			Raven.captureMessage('VP warn: profile running out of extent ' + err, {
+			  level: 'warn' // one of 'info', 'warning', or 'error'
+			});
+      console.warn('VP warn', err);
+			return err;
     });
   }
 

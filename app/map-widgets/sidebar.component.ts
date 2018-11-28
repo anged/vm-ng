@@ -436,12 +436,13 @@ export class SidebarComponent implements OnChanges {
                 const result = data.datasets["0"].data[tooltipItem.index];
                 return label + result;
               },
-              beforeTitle: (tooltipItems, data) => {
+              beforeTitle: (tooltipItems) => {
                 return this.chartLabels[tooltipItems[0].index].split(',')[0];
               },
-              title: (tooltipItem, chart) => {
+							// add empty string
+              title: () => {
                 return '';
-              } //add empty string
+              }
             }
           },
           legend: {
@@ -480,7 +481,6 @@ export class SidebarComponent implements OnChanges {
       this.classesChart.data.datasets = data.datasets;
 			this.classesChart.update();
     } else {
-      //this.classesChart.data = data;
       this.classesChart.update();
     }
 
@@ -494,9 +494,9 @@ export class SidebarComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     console.log('OnChanges', changes);
     this.closeSidaberGroup();
-    //close main heat content while adding animation
+
+    // close main heat content while adding animation
     this.innerState = 's-close';
-    //console.log('%c Canvas', 'background: blue; color: white', this.heatMonthsChart);
 
     // check if heat data is empty
     if (this.sidebarHeatContent && (this.mainSidebarState === 's-open')) {
@@ -507,17 +507,16 @@ export class SidebarComponent implements OnChanges {
         this.cdr.detectChanges();
       }, 200);
       this.lastHeatingYear = this.sidebarHeatContent.SEZONAS;
-      //get data by months
+      // get data by months
       this.mapWidgetsService.queryHeatingDataByMonths(this.sidebarHeatContent.SEZONAS, this.sidebarHeatContent.ID_NAMO).then(data => {
         this.heatingMonthsData = data;
         this.heatMonthsChart && this.initHeatMonthsGraphic();
-        //this.cdr.detectChanges();
       });
-      //get data by house type and heat classes
+
+      // set data by house type and heat classes
       this.mapWidgetsService.queryHeatingDataByClasses(this.sidebarHeatContent.TIPINIS_PR, this.sidebarHeatContent.REITING).then(data => {
         this.heatingClassesData = data;
         this.heatClassesChart && this.initHeatClassesGraphic();
-        //this.cdr.detectChanges();
       });
     }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 
 const Tooltip = require('dijit/Tooltip');
 
@@ -45,7 +45,7 @@ export class CreditsCompponent implements OnDestroy {
   ngOnInit() {
     this.getCopyright();
   }
- 
+
   ngOnDestroy() {
     //TODO do not creat intance everytime map view changes
     this.tooltip.destroy();

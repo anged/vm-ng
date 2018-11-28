@@ -1,5 +1,4 @@
-import { Component, DoCheck
-, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 
 import { MapService } from '../map.service';
 import { ToolsNameService } from './tools-name.service';

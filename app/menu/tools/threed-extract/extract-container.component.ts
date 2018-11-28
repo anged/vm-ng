@@ -1,13 +1,11 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material';
 import { Subscription } from 'rxjs';
 ;
 import { MapService } from '../../../map.service';
 import { ThreeDExtractService } from "./threed-extract.service";
-import { ToolsNameService } from '../../tools-name.service';
-import { ToolsList } from '../../tools.list';
 
-import { leaveEnterTransition } from '../../../animations/leaveEnter-transition'
+import { leaveEnterTransition } from '../../../animations/leaveEnter-transition';
 
 import Draw = require('esri/views/2d/draw/Draw');
 import PolygonDrawAction = require('esri/views/2d/draw/PolygonDrawAction');
@@ -22,9 +20,7 @@ import isEmpty from 'lodash-es/isempty';
 })
 
 export class ExtractContainerComponent implements OnInit {
-//  @Input('toolActive') toolActive: boolean;
-
-  //dojo draw events handlers Array
+  // dojo draw events handlers Array
   private eventHandlers = [];
 
   private drawActive = false;
@@ -42,7 +38,6 @@ export class ExtractContainerComponent implements OnInit {
   constructor(
     private mapService: MapService,
     private extractService: ThreeDExtractService,
-    private toolsNameService: ToolsNameService
   ) { }
 
   ngOnInit() {
@@ -58,9 +53,6 @@ export class ExtractContainerComponent implements OnInit {
       this.draw = this.extractService.initDraw(this.view);
       this.extractService.initGeoprocessor(this.view);
     });
-
-    // set tool name Obs
-    this.toolsNameService.setCurentToolName(ToolsList.extract);
   }
 
   toggleDraw() {

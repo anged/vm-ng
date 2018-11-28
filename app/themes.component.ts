@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { MapService } from './map.service';
 import { MapOptions } from './options';
 import { themesTransition } from './animations/themes-transition'
-
-import domConstruct = require('dojo/dom-construct');
 
 import values from 'lodash-es/values';
 
@@ -137,37 +134,9 @@ import values from 'lodash-es/values';
   `
 })
 export class ThemesComponent implements OnInit {
-
   themes: any[];
 
-  constructor(private _mapService: MapService) {}
-
-  createThemeDom() {
-    const themesObj = MapOptions.themes;
-    let count = 1;
-    for (let theme in themesObj) {
-      if (themesObj.hasOwnProperty(theme)) {
-        let divTag, aTag, pTag, imgTag, alignClass, urlTag;
-        divTag = aTag = pTag = imgTag = alignClass = urlTag = null;
-        if (themesObj.hasOwnProperty(theme) && (themesObj[theme].production) && (!themesObj[theme].hide)) {
-          count++;
-          let countMod;
-          countMod = count % 2 > 0 ? alignClass = "themes-row" : alignClass = "themes-row";
-          divTag = domConstruct.create("div", { id: themesObj[theme].id, class: "col-xs-6 col-sm-3 animate " + alignClass, style: "" }, "themes-container", "last"); //AG static width in px, because we're using overflow-y: auto in main div
-          urlTag = !themesObj[theme].url
-            ?
-            //("./?theme=" + themesObj[theme].id)
-            //add id string to url path
-            ("./" + themesObj[theme].id)
-            :
-            (themesObj[theme].url); //check if theme has url defined
-          aTag = domConstruct.create("a", { href: urlTag }, divTag);
-          imgTag = domConstruct.create("img", { src: themesObj[theme].imgUrl, alt: themesObj[theme].imgAlt }, aTag);
-          pTag = domConstruct.create("p", { innerHTML: themesObj[theme].name }, aTag);
-        }
-      }
-    }
-  }
+  constructor() {}
 
   ngOnInit() {
 		this.themes = values(MapOptions.themes);

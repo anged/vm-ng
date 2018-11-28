@@ -1,29 +1,15 @@
-import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from "@angular/router";
 
 import { MapService } from '../../map.service';
 import { MenuService }  from '../../menu/menu.service';
 import { MetaService } from '../../services/meta.service';
-import { MapDefaultService } from './map-default.service';
-import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
 import { BasemapsService } from '../../map-widgets/basemaps.service';
 import { ViewService } from './view.service';
 import { ShareButtonService } from '../../services/share-button.service';
-import { MapOptions } from '../../options';
-import { ProjectsListComponent } from '../../projects-list/projects-list.component';
-import { ScaleAndLogoComponent } from '../../map-widgets/scale-and-logo.component';
-import { CreditsCompponent } from '../../map-widgets/credits.component';
-import { CommonWidgetsComponent } from '../../common-widgets.component';
-import { MaintenanceComponent } from '../../map-widgets/maintenance.component';
 
-import on = require("dojo/on");
-import all = require("dojo/promise/all");
-import GraphicsLayer = require('esri/layers/GraphicsLayer');
-
-import { FeatureQueryService } from '../../query/feature-query.service';
 import { IdentifyService } from '../../services/identify/identify.service';
-import { PointAddRemoveService } from '../../query/point-add-remove.service';
 
 import { Subscription } from 'rxjs';
 
@@ -32,7 +18,6 @@ import { Subscription } from 'rxjs';
   templateUrl: './app/themes/default/map-default.component.html'
 })
 export class MapDefaultComponent implements OnInit, OnDestroy {
-
   //execution of an Observable,
   queryUrlSubscription: Subscription;
 
@@ -63,14 +48,8 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
     private _mapService: MapService,
 		private menuService: MenuService,
     private metaService: MetaService,
-    private router: Router,
-    private mapDefaultService: MapDefaultService,
-    private elementRef: ElementRef,
-    private projectsService: ProjectsListService,
     private searchService: SearchService,
-    private featureService: FeatureQueryService,
     private identify: IdentifyService,
-    private pointAddRemoveService: PointAddRemoveService,
     private activatedRoute: ActivatedRoute,
     private basemapsService: BasemapsService,
     private viewService: ViewService,
@@ -138,7 +117,7 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
 
       //init identification of default or sub layers on MapView
       this.identifyEvent = this.identify.identifyLayers(view);
-    }, err => { });
+    }, err => { console.error('VP error: view loading issues ', err) });
   }
 
   ngOnDestroy() {

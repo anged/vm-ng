@@ -36,9 +36,12 @@ export class ThreeDExtractComponent implements AfterViewInit {
       // reatatch chnage detaction when we open tool
       this.cdr.reattach();
 
+			// set tool name Obs
+			this.toolsNameService.setCurentToolName(ToolsList.extract);
+
       this.s = this.toolsNameService.currentToolName
         .subscribe((name) => {
-          console.log(this.s, 'Name', name, ToolsList.extract)
+          console.log(this.s, 'Name 3D', name)
           if (ToolsList.extract !== name) { this.closeMeasure() };
         });
     } else {
@@ -50,7 +53,7 @@ export class ThreeDExtractComponent implements AfterViewInit {
   closeMeasure() {
     this.toolActive = false;
     this.s.unsubscribe();
-    console.log(this.s)
+    console.log('CLOSE', this.s)
 
     //  detach changes detection
     // and last time detect changes when closing tool

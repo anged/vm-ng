@@ -12,7 +12,18 @@
  <div id="draw-line" class="esri-widget-button esri-widget esri-interactive" title="Brėžti liniją" (click)="selectDrawEl()" [ngClass]="{'active': drawActive}">
   <span class="esri-icon-polyline"> </span> Brėžti liniją
  </div>
+
  <profile-elevation [data]="chartData" [fullscreen]="isFullScreen">
-	<!-- <mat-spinner *ngIf="!data" diameter="50"></mat-spinner> -->
+
  </profile-elevation>
+</div>
+
+
+<div class="profile-msg" *ngIf="hasError">
+ Atsiprašome nepavyko pateikti duomenų. <br>
+ Brėžkite pjūvį tik miesto ribose.
+</div>
+
+<div class="profile-spinner" *ngIf="updatingChart">
+ <mat-spinner  diameter="50"></mat-spinner>
 </div>

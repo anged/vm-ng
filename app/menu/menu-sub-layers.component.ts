@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { MapService } from '../map.service';
 import { MenuService } from './menu.service';
-import { MapOptions } from '../options';
 
 @Component({
   selector: 'menu-sub-layers',

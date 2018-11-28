@@ -1,4 +1,4 @@
-import { trigger, animate, style, state, group, query, stagger, transition } from '@angular/animations';
+import { trigger, animate, style, transition } from '@angular/animations';
 export const leaveEnterTransition =
 	trigger('leaveEnterTransition', [
 	     transition(':enter', [

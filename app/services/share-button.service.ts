@@ -14,7 +14,6 @@ export class ShareButtonService {
     //get visible and checked layers ids
     const view = this.mapService.getView();
     const ids: any = !isProjectsTheme ? this.getVisibleLayersIds(view) :  this.getVisibleLayersIds(view, true);
-		const visibleLayersIds = ids.identificationsIds;
     const checkedLayersIds = ids.visibilityIds;
 
     //check if there is any visible layers that can be identied in allLayers group
@@ -52,7 +51,6 @@ export class ShareButtonService {
   shareCheckedLayersIds(ids: any): string {
     let shareCheckStr: string = "";
     Object.keys(ids).forEach(function(key) {
-      let widget = ids[key];
       shareCheckStr += "&" + key + "=";
       ids[key].forEach(id => shareCheckStr += id + "!");
     });
@@ -60,12 +58,11 @@ export class ShareButtonService {
   }
 
   getVisibleLayersIds(view, custom = false) {
-    //ids will have 2 properties: 'identificationsIds' (layers to be identified) and 'visibilityIds' (all visible layers that must be checked and visible depending on mxd settings or user activated layers)
+    // ids will have 2 properties: 'identificationsIds' (layers to be identified) and 'visibilityIds' (all visible layers that must be checked and visible depending on mxd settings or user activated layers)
     this.visibleLayers["identificationsIds"] = {};
     this.visibleLayers["visibilityIds"] = {};
     let viewScale = view.scale;
-    //console.log("VIEW", view);
-    //console.log("layerViews", view.layerViews)
+
     view.layerViews.items.forEach(item => {
       if (!custom) {
         this.iterateVisibleLayersIds(item, viewScale);
@@ -86,26 +83,21 @@ export class ShareButtonService {
 
     //do not identify layer if it is Raster
     if ((item.visible) && (!item.layer.isRaster) && (item.layer.sublayers)) {
-      //UPDATE: identify raster layers as well
-      //if (item.visible) {
+      // UPDATE: identify raster layers as well
       let subLayers = item.layer.sublayers.items;
-      //console.log("subLayer", subLayers);
       subLayers.map((subLayer) => {
         let minScale = subLayer.minScale;
         let maxScale = subLayer.maxScale;
-        //add number to fit viewScale, because 0 in Esri logic means layer is not scaled
+        // add number to fit viewScale, because 0 in Esri logic means layer is not scaled
         ((minScale === 0)) ? minScale = 99999999 : minScale;
 
-        // console.log(subLayer.minScale , viewScale , subLayer.maxScale)
-        // console.log(minScale , viewScale , maxScale)
-        //if layer is visible and in view scale
+        // if layer is visible and in view scale
         if (subLayer.visible) {
           this.visibleLayers.visibilityIds[item.layer.id].push(subLayer.id);
           if ((maxScale < viewScale) && (viewScale < minScale)) {
-            //check if sublayer has subsublayers
+            // check if sublayer has subsublayers
             if (subLayer.sublayers) {
-              //console.log("subsubLayer", subLayers);
-              //3 layer if exist
+              // 3 layer if exist
               let subsublayers = subLayer.sublayers.items;
               subsublayers.map(subsublayer => {
                 let subMinScale = subsublayer.minScale;
@@ -142,7 +134,7 @@ export class ShareButtonService {
                 }
               });
             }
-            //else push id
+            // else push id
             else {
               this.visibleLayers.identificationsIds[item.layer.id].push(subLayer.id);
             }
@@ -153,11 +145,9 @@ export class ShareButtonService {
   }
 
   getVisibleSubLayerNumber(view: any, custom=false) {
-    //argument custom dedicated for custom themes
+    // argument custom dedicated for custom themes
     let ids: any = !custom ? this.getVisibleLayersIds(view) : this.getVisibleLayersIds(view, true);
-    //console.log("ids", ids.identificationsIds);
     ids.identificationsIds.allLayers ? this.visibleSubLayerNumber = ids.identificationsIds.allLayers.length - 1 : this.visibleSubLayerNumber = 0;
-    //console.log("visibleSubLayerNumber", this.visibleSubLayerNumber);
     return this.visibleSubLayerNumber;
   }
 
