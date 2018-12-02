@@ -134,7 +134,6 @@ export class ExtractContainerComponent implements OnInit {
     const action = this.draw.activeAction as PolygonDrawAction
 
     if (!isEmpty(action)) {
-      console.log('action', action)
       action.complete();
 
       // BUG Fix: in order to unsuspend run destroy as well
@@ -173,7 +172,6 @@ export class ExtractContainerComponent implements OnInit {
     this.subscription.unsubscribe();
     this.extractService.cancelJob()
     this.resetTools();
-    //this.draw.destroy();
   }
 
 }

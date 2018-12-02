@@ -15,27 +15,27 @@ import { MenuService } from './menu.service';
     `
 })
 export class MenuLegendComponent implements OnInit, OnDestroy {
-	@ViewChild('legend') legend: ElementRef;
-	legendWidget: any;
+  @ViewChild('legend') legend: ElementRef;
+  legendWidget: any;
 
-  constructor(private menuService: MenuService) {}
+  constructor(private menuService: MenuService) { }
 
-	initLegend() {
-	  return this.menuService.fetchLegend(this.legend.nativeElement);
-	}
+  initLegend() {
+    return this.menuService.fetchLegend(this.legend.nativeElement);
+  }
 
-	closeToggle() {
-	  window.location.hash = "#";
-	}
+  closeToggle() {
+    window.location.hash = "#";
+  }
 
-	ngOnInit() {
-	  this.legendWidget = this.initLegend();
-	  console.log('LEGEND', 	this.legendWidget)
-	}
+  ngOnInit() {
+    this.legendWidget = this.initLegend();
+    //console.log('LEGEND', 	this.legendWidget)
+  }
 
-	ngOnDestroy() {
-		console.log('Destroy Legend');
-		this.legendWidget.destroy();
-	}
+  ngOnDestroy() {
+    //console.log('Destroy Legend');
+    this.legendWidget.destroy();
+  }
 
 }

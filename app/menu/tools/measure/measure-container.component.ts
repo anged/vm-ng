@@ -90,8 +90,8 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     //  set active tool to empty string
     this.activeTool = "";
 
-		// set previous active tool, to indetify if any previuos tool was activeTool
-		// and blockin buffer method
+    // set previous active tool, to indetify if any previuos tool was activeTool
+    // and blockin buffer method
     this.measureMapService.resetCalculate();
     this.view.graphics.removeAll();
   }
@@ -124,7 +124,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
       this.activeTool = "";
       this.resetTools();
     } else {
-			this.previousActiveTool = this.activeTool;
+      this.previousActiveTool = this.activeTool;
       //suspend layers toggle (e.g. suspend layers while drawing with measure tools)
       //this.mapService.suspendLayersToggle();
       this.resetTools();
@@ -173,31 +173,31 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     });
   }
 
-	completeDrawing(e): void {
-		this.checkboxChecked && this.activeTool && !this.previousActiveTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, e).then((a) => {
-	  //this.cdr.detectChanges();
-	  }));
-		console.log('EVENT ', e, this.activeToolsState, this.activeTool)
+  completeDrawing(e): void {
+    this.checkboxChecked && this.activeTool && !this.previousActiveTool && (this.view.graphics.items.length > 0) && (this.measureMapService.createBuffer(this.analyzeParams, e).then(() => {
+      // detect changes when binding count number from service
+      this.cdr.detectChanges();
+    }));
 
-		//set active tool to empty string
-		this.activeTool = "";
+    //set active tool to empty string
+    this.activeTool = "";
 
-		// unsuspend layers
-		if (this.mapService.getSuspendedIdentitication()) {
-			if (e.coordinates) {
-				setTimeout(() => {
-					this.mapService.unSuspendLayersToggle();
-				}, 800);
-			} else {
-				this.mapService.unSuspendLayersToggle();
-			}
-		}
+    // unsuspend layers
+    if (this.mapService.getSuspendedIdentitication()) {
+      if (e.coordinates) {
+        setTimeout(() => {
+          this.mapService.unSuspendLayersToggle();
+        }, 800);
+      } else {
+        this.mapService.unSuspendLayersToggle();
+      }
+    }
 
-	}
+  }
 
   //Polygon approach
   enableCreatePolygon() {
-		this.mapService.suspendLayersToggle();
+    this.mapService.suspendLayersToggle();
 
     // create() will return a reference to an instance of PolygonDrawAction
     let action = this.draw.create("polygon");
@@ -213,8 +213,8 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     this.eventHandlers.push(action.on("vertex-remove", (e) => this.measureMapService.drawPolygon(e, this.analyzeParams)));
     // listen to draw-complete event on the action
     this.eventHandlers.push(action.on("draw-complete", (e) => {
-			  this.measureMapService.drawPolygon(e, this.analyzeParams, true);
-			  this.completeDrawing(e);
+      this.measureMapService.drawPolygon(e, this.analyzeParams, true);
+      this.completeDrawing(e);
     }));
   }
 
@@ -222,7 +222,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   enableCreatePolyline(draw, view) {
     let action = draw.create("polyline");
 
-		this.mapService.suspendLayersToggle();
+    this.mapService.suspendLayersToggle();
 
     // listen to PolylineDrawAction.vertex-add
     // Fires when the user clicks, or presses the "F" key
@@ -248,16 +248,16 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     // event to create a graphic when user double-clicks
     // on the view or presses the "C" key
     this.eventHandlers.push(action.on("draw-complete", (evt) => {
- 			this.measureMapService.createPolylineGraphic(evt, this.analyzeParams, true);
-			 this.completeDrawing(evt);
+      this.measureMapService.createPolylineGraphic(evt, this.analyzeParams, true);
+      this.completeDrawing(evt);
     }));
   }
 
   //Point approach
   enableCreatePoint(draw, view) {
-		// TODO add action property to component and complete() on draw toolbox close
+    // TODO add action property to component and complete() on draw toolbox close
     let action = draw.create("point");
-		this.mapService.suspendLayersToggle();
+    this.mapService.suspendLayersToggle();
 
     // PointDrawAction.cursor-update
     // Give a visual feedback to users as they move the pointer over the view
@@ -274,13 +274,13 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   }
 
   ngDoCheck() {
-   //console.log("do check measure")
+    //console.log("do check measure")
   }
 
   ngOnDestroy() {
     this.checkboxChecked = false;
     this.measureMapService.resetCalculate();
-		this.mapService.unSuspendLayersToggle();
+    this.mapService.unSuspendLayersToggle();
     this.restoreDefault();
     this.resetTools();
   }

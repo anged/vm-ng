@@ -5,12 +5,11 @@ import { MapOptions } from '../options';
 import { SearchService } from '../search/search.service';
 import { MapWidgetsService } from './map-widgets.service';
 import { MapService } from '../map.service';
-import { MapKindergartensService, DataStore } from '../themes/kindergartens/map-kindergartens.service';
+import { DataStore } from '../themes/kindergartens/map-kindergartens.service';
 import { SelectorsService } from '../selectors/selectors.service';
 import { MenuToolsService } from '../menu/menu-tools.service';
 import { Symbols } from '../menu/symbols';
 
-import { Subscription } from 'rxjs';
 import Graphic = require('esri/Graphic');
 import BufferParameters = require('esri/tasks/support/BufferParameters');
 import Polygon = require('esri/geometry/Polygon');
@@ -49,9 +48,8 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
   @Input() title;
   @Input() mainSidebarState;
   @Input() sidebarContent;
+  @Input() dataStore: DataStore;
   @Output() stateChange = new EventEmitter<string>();
-
-  subscription: Subscription;
 
   innerState = 's-close';
   sidebarInfoState = 's-close';
@@ -71,7 +69,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     bufferSize: 2
   };
 
-  dataStore: DataStore;
+  //dataStore: DataStore;
 
   //filters data
   dataAge: any[];
@@ -93,13 +91,12 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
   distance: number;
 
   constructor(
-		private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef,
     private mapWidgetsService: MapWidgetsService,
     private mapService: MapService,
     private selectorsService: SelectorsService,
     private searchService: SearchService,
-    private menuToolsService: MenuToolsService,
-    private mapKindergartensService: MapKindergartensService
+    private menuToolsService: MenuToolsService
   ) { }
 
   ngOnInit() {
@@ -109,27 +106,11 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     this.simpleQuery(MapOptions.themes.kindergartens.layers.darzeliai.dynimacLayerUrls + '/3').then(features => {
       this.fullArea = features[0];
     })
-
-    this.subscription = this.mapKindergartensService.kGartensData.subscribe(data => {
-      this.filteredGartens = data.mainInfo;
-      this.dataStore = data;
-      this.dataAge = this.selectorsService.getUniqueAttribute(data.info, 'TYPE_LABEL');
-      //console.log("UNIQUE dataAge: ", this.dataAge)
-      this.dataLang = this.selectorsService.getUniqueAttribute(data.info, 'LAN_LABEL');
-      //console.log("UNIQUE dataLang: ", this.dataLang)
-      this.dataType = this.selectorsService.getUniqueAttribute(data.mainInfo, 'SCHOOL_TYPE');
-      //console.log("UNIQUE dataType: ", this.dataType)
-      this.dataName = this.selectorsService.getUniqueAttribute(data.mainInfo, 'LABEL');
-      //console.log("UNIQUE dataName: ", this.dataName)
-			console.log(7, this.dataStore )
-			this.cdr.detectChanges();
-      this.subscription.unsubscribe();
-    });
   }
 
-	ngDoCheck() {
-		this.cdr.detectChanges();
-	}
+  ngDoCheck() {
+    this.cdr.detectChanges();
+  }
 
   //check if any filter is has been set
   isFiltered() {
@@ -142,10 +123,10 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       (groupByName !== '') ||
       (groupByAddress !== '')) {
       this.filtersOn = true;
-			this.cdr.detectChanges();
+      this.cdr.detectChanges();
     } else {
       this.filtersOn = false;
-			this.cdr.detectChanges();
+      this.cdr.detectChanges();
     }
 
   }
@@ -188,7 +169,7 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     featureLayer.queryFeatures(query).then((results) => {
       const features = results.features[0];
       let fullData = null;
-      const dataStore = this.mapKindergartensService.returnAllQueryData();
+      const dataStore = this.dataStore;
       dataStore.mainInfo.forEach(data => {
         if (data.GARDEN_ID === id) {
           fullData = Object.assign({}, data);
@@ -206,6 +187,8 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
 
       if (this.dataStore && this.sidebarContent) {
         this.groups = this.dataStore.info.filter(data => data.DARZ_ID === this.sidebarContent.GARDEN_ID);
+        this.cdr.detectChanges();
+
       }
       const groupFeatureSelectionLayer = this.mapService.initFeatureSelectionGraphicLayer('FeatureSelection', features.layer.maxScale, features.layer.minScale, 'hide');
       const { geometry, layer, attributes } = features;
@@ -238,13 +221,15 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
           this.analyzeParams.eldership = result.features[0].attributes.NR;
           const idsGartens = this.mapWidgetsService.filterKindergartents(this.dataStore, this.analyzeParams);
           this.createBuffer(this.analyzeParams, e.results[0].results[0].feature).then(buffer => {
-						const url = MapOptions.themes.kindergartens.layers.darzeliai.dynimacLayerUrls + '/0';
+            const url = MapOptions.themes.kindergartens.layers.darzeliai.dynimacLayerUrls + '/0';
             this.createQuery(buffer, url, idsGartens).then((filteredIds: any[]) => {
               this.filteredGartens = this.dataStore.mainInfo.filter(data => filteredIds.includes(data.GARDEN_ID));
               this.mapWidgetsService.selectKindergartens(filteredIds, this.selectionByFilterState, buffer);
               if (this.filteredGartens.length > 0) {
                 this.createBufferPolygon(this.fullArea, buffer);
               }
+
+              this.cdr.detectChanges();
             });
           })
         });
@@ -256,6 +241,8 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
       // do not use search widget
       this.filteredGartens = this.dataStore.mainInfo.filter(data => idsGartens.includes(data.GARDEN_ID));
       this.mapWidgetsService.selectKindergartens(idsGartens, this.selectionByFilterState);
+
+      this.cdr.detectChanges();
     }
   }
 
@@ -356,11 +343,12 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
   toggleInfoContent() {
     //close main heat content while adding animation
     this.innerState = 's-close';
+
     if (this.sidebarContent && (this.mainSidebarState === 's-open')) {
       //add setTimeout  for main heat content animation
       setTimeout(() => {
         this.innerState = 's-open';
-				this.cdr.detectChanges();
+        this.cdr.detectChanges();
       }, 200);
     }
   }
@@ -370,21 +358,29 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges {
     this.sidebarContent = null;
     //remove existing graphic
     this.mapService.removeFeatureSelection();
+    this.cdr.detectChanges();
   }
 
   ngOnChanges() {
-		console.log(4)
+    if (this.dataStore) {
+      this.filteredGartens = this.dataStore.mainInfo;
+      this.dataAge = this.selectorsService.getUniqueAttribute(this.dataStore.info, 'TYPE_LABEL');
+      //console.log("UNIQUE dataAge: ", this.dataAge)
+      this.dataLang = this.selectorsService.getUniqueAttribute(this.dataStore.info, 'LAN_LABEL');
+      //console.log("UNIQUE dataLang: ", this.dataLang)
+      this.dataType = this.selectorsService.getUniqueAttribute(this.dataStore.mainInfo, 'SCHOOL_TYPE');
+      //console.log("UNIQUE dataType: ", this.dataType)
+      this.dataName = this.selectorsService.getUniqueAttribute(this.dataStore.mainInfo, 'LABEL');
+    }
+
     if (this.dataStore && this.sidebarContent) {
       this.groups = this.dataStore.info.filter(data => data.DARZ_ID === this.sidebarContent.GARDEN_ID);
-      //console.log('groups', this.groups);
       this.selectedGartenId = this.sidebarContent.GARDEN_ID;
-			console.log(4, this.groups)
     } else {
       this.selectedGartenId = null;
     }
     this.closeSidaberGroup();
-    //console.log('this.sidebarContent', this.sidebarContent)
     this.toggleInfoContent();
-		this.cdr.detectChanges();
+    this.cdr.detectChanges();
   }
 }

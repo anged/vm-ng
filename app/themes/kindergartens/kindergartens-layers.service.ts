@@ -8,8 +8,7 @@ import findKey from 'lodash-es/findKey';
 import pick from 'lodash-es/pick';
 import forIn from 'lodash-es/forIn';
 
-import { forkJoin, from } from  'rxjs';
-import { map } from 'rxjs/operators';
+import { forkJoin, from, Observable } from 'rxjs';
 
 @Injectable()
 export class KindergartensLayersService {
@@ -17,7 +16,8 @@ export class KindergartensLayersService {
   constructor(private mapService: MapService, private mapKindergartensService: MapKindergartensService) { }
 
   addCustomLayers(queryParams, snapshotUrl) {
-		//using lodash find and pick themeLayer from options
+    let dataStore$: Observable<any>;
+    //using lodash find and pick themeLayer from options
     const themeName = findKey(MapOptions.themes, { "id": snapshotUrl.path });
     const themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
     const mapEsri = this.mapService.returnMap();
@@ -38,34 +38,41 @@ export class KindergartensLayersService {
       //add feature layer with opacity 0
       this.mapService.pickCustomThemeLayers(response, layer, key, queryParams, groupLayer, 0, 'simple-marker');
 
-			//get main info data to dataStore
-			//send each request after previous one
-			this.mapKindergartensService.getAllQueryData(layer.dynimacLayerUrls + '/4', 'elderates', ['ID', 'LABEL']).then(() => {
-				this.mapKindergartensService.getAllQueryData(layer.dynimacLayerUrls + '/5', 'mainInfo', ['GARDEN_ID', 'LABEL', 'EMAIL', 'PHONE', 'FAX', 'ELDERATE', 'ELDERATE2','ELDERATE3', 'ELDERATE4', 'SCHOOL_TYPE']).then(() => {
-					this.mapKindergartensService.getAllQueryData(layer.dynimacLayerUrls + '/6', 'info', ['DARZ_ID', 'LAN_LABEL', 'TYPE_LABEL', 'CHILDS_COUNT', 'FREE_SPACE']).then(() => {
-						this.mapKindergartensService.getAllQueryData(layer.dynimacLayerUrls + '/7', 'summary', ['DARZ_ID', 'CHILDS_COUNT', 'FREE_SPACE']);
-					});
-				});
-			});
+      //set raster layers
+      const rasterLayers = this.mapService.getRasterLayers();
+      this.mapService.setRasterLayers(rasterLayers);
 
-			// const dataStore$ = forkJoin(
-			// 	from(this.mapKindergartensService.getAllQueryDataPromise(layer.dynimacLayerUrls + '/4', 'elderates', ['ID', 'LABEL'])),
-			// 	from(this.mapKindergartensService.getAllQueryDataPromise(layer.dynimacLayerUrls + '/5', 'mainInfo', ['GARDEN_ID', 'LABEL', 'EMAIL', 'PHONE', 'FAX', 'ELDERATE', 'ELDERATE2','ELDERATE3', 'ELDERATE4', 'SCHOOL_TYPE'])),
-			// )
-			// const dataStore$ = from(this.mapKindergartensService.getAllQueryDataPromise(layer.dynimacLayerUrls + '/4', 'elderates', ['ID', 'LABEL']));
-			//
-			// dataStore$.pipe(
-			// 	map(results => (
-			// 		{ elderates: results.features.map(feature => feature.attributes)}
-			// 	)
-			// ))
-			// .subscribe(a => console.log('dataStore$', a));
-			// console.log('dataStore$', dataStore$);
+      // create data Observables from promises and forkJoin all Observables
+      const url = layer.dynimacLayerUrls
+      const dataElderates$ = from(
+        this.mapKindergartensService.getAllQueryDataPromise(url + '/4', ['ID', 'LABEL'])
+      );
+      const dataMainInfo$ = from(
+        this.mapKindergartensService.getAllQueryDataPromise(url + '/5', ['GARDEN_ID', 'LABEL', 'EMAIL', 'PHONE', 'FAX', 'ELDERATE', 'ELDERATE2', 'ELDERATE3', 'ELDERATE4', 'SCHOOL_TYPE'])
+      );
+      const dataInfo$ = from(
+        this.mapKindergartensService.getAllQueryDataPromise(url + '/6', ['DARZ_ID', 'LAN_LABEL', 'TYPE_LABEL', 'CHILDS_COUNT', 'FREE_SPACE'])
+      );
+      const dataSummary$ = from(
+        this.mapKindergartensService.getAllQueryDataPromise(url + '/7', ['DARZ_ID', 'CHILDS_COUNT', 'FREE_SPACE'])
+      );
 
 
-    //set raster layers
-    const rasterLayers = this.mapService.getRasterLayers();
-    this.mapService.setRasterLayers(rasterLayers);
-  }
+      dataStore$ = forkJoin(
+        dataElderates$,
+        dataMainInfo$,
+        dataInfo$,
+        dataSummary$,
+        (elderates: any[], mainInfo: any[], info: any[], summary: any[]) => ({
+          elderates,
+          mainInfo,
+          info,
+          summary
+        })
+       );
+
+    });
+    return dataStore$;
+   }
 
 }

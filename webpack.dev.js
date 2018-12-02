@@ -6,7 +6,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
-const DEVELOPEMENT = process.env.NODE_ENV === 'developement'; //true / false
 const PRODUCTION = process.env.NODE_ENV === 'production';
 console.log('PRODUCTION: ', PRODUCTION );
 

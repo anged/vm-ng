@@ -37,7 +37,7 @@ export class MeasureMapService {
   calculatedUnits: string;
 
   //calculated feature number
-  calculateCount: number;
+  calculateCount: number | string;
 
   job: IPromise<any>
   geo: Geoprocessor;
@@ -65,7 +65,7 @@ export class MeasureMapService {
   }
 
   drawPolygon(evt, analyzeParams, ended = false, ) {
-	  let vertices = evt.vertices;
+    let vertices = evt.vertices;
     this.analyzeParams = analyzeParams;
 
     //remove existing graphic
@@ -100,7 +100,6 @@ export class MeasureMapService {
   //Label polyon with its area
   labelAreas(geom, area, ended) {
     this.calculatedUnits = area.toFixed(4) + " km²"
-    //console.log("Geometry label", geom);
     const graphic = this.menuToolsService.createAreaLabelGraphic(geom, area, ended);
     this.view.graphics.add(graphic);
   }
@@ -215,8 +214,7 @@ export class MeasureMapService {
 
       //add union if only input is selected
       if (options.inputlayer >= 0) {
-        const input = this.themeLayers.find((le, i) => i === options.inputlayer);
-        console.log("Selected input", input, 'Poly', polyline)
+        const input = this.themeLayers.find((el, i) => i === options.inputlayer);
         return this.createQuery(input, polyline);
       }
     });
@@ -244,22 +242,26 @@ export class MeasureMapService {
     query.outFields = ["OBJECTID"];
     query.geometry = polyline.geometry;
     return queryTask.execute(query).then((result) => {
-      const symbol = this.getSymbol(result.features[0]);
+      if (result.features.length > 0) {
+        const symbol = this.getSymbol(result.features[0]);
 
-      const features = result.features.map((feature) => {
-        feature.symbol = symbol;
-        return feature;
-      });
+        const features = result.features.map((feature) => {
+          feature.symbol = symbol;
+          return feature;
+        });
 
-      this.calculateCount = features.length;
+        this.calculateCount = features.length;
 
-      features.forEach((graphic) => { this.view.graphics.add(graphic) });
+        features.forEach((graphic) => { this.view.graphics.add(graphic) });
+      } else {
+        this.calculateCount = 'Nerasta';
+      }
 
-      return result.features;
+      return;
     }).catch(function(err) {
-			Raven.captureMessage('VP error ' + err, {
-			  level: 'error' // one of 'info', 'warning', or 'error'
-			});
+      Raven.captureMessage('VP error ' + err, {
+        level: 'error' // one of 'info', 'warning', or 'error'
+      });
       console.error(err);
     });
   }

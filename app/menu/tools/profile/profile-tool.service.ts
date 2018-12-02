@@ -80,7 +80,6 @@ export class ProfileToolService {
 
 	// Label text
 	labelLinesAndPoints(geometryType: string, points, geometry = undefined, ended = false) {
-		//this.calculatedUnits
 		const endString = ended ? "" : " (užbaigti dvigubu paspaudimu)";
 		let text: string;
 		geometryType === "line" ? text = geometry.toFixed(3) + " km" + endString : text = `x: ${points[1].toFixed(2)}, y: ${points[0].toFixed(2)}`;
@@ -90,10 +89,10 @@ export class ProfileToolService {
 	}
 
   deactivateAndDisable(evt) {
-    //on complete remove class
+    // on complete remove class
     if (evt.type === "draw-complete") {
-      //first unsuspend layers on draw-complete event
-      //set timeout, needed for point element specificallly as we do not want to start identify method too early
+      // first unsuspend layers on draw-complete event
+      // set timeout, needed for point element specificallly as we do not want to start identify method too early
       setTimeout(() => {
         this.mapService.unSuspendLayersToggle();
       }, 800);
@@ -110,12 +109,9 @@ export class ProfileToolService {
 
     this.featureSet.features = [this.graphic];
     params[MapOptions.mapOptions.staticServices.profileGP.params.name] = this.featureSet;
-    console.log(params, this.featureSet);
     this.job = this.geo.execute(params);
     return this.job.then((res) => {
       if (res.jobStatus !== 'job-failed') {
-        console.log('Profile results', res, res.results[0].value.features[0].geometry.paths[0])
-        //this.chartData = res.results[0].value.features[0];
         return res.results[0].value.features[0];
       } else {
 

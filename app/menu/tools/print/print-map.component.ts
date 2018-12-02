@@ -21,10 +21,6 @@ import { MenuToolsService } from '../../menu-tools.service';
 export class PrintMapComponent implements OnInit, AfterViewInit {
   private printActive = false;
 
-  get change() {
-   console.log('print change')
-   return '';
-  }
   constructor(
     private mapService: MapService,
     private menuToolsService: MenuToolsService,
@@ -37,7 +33,6 @@ export class PrintMapComponent implements OnInit, AfterViewInit {
 
     //init Print
     const printWidget = this.menuToolsService.initPrint(view);
-		  console.log("PRINT", printWidget)
   }
 
   ngAfterViewInit() {

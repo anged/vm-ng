@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MapOptions } from '../../../options';
 
 @Component({
-    selector: 'menu-layers-itv',
-    template: `
+  selector: 'menu-layers-itv',
+  template: `
       <div>
         <p>Temos sluoksniai:</p>
         <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
@@ -28,11 +28,11 @@ import { MapOptions } from '../../../options';
       </div>
     `
 })
-export class MenuLayersItvComponent implements OnInit, OnDestroy {
+export class MenuLayersItvComponent implements OnInit {
   name: string;
   isChecked: boolean = true;
 
-  constructor(private _mapService: MapService) {}
+  constructor(private _mapService: MapService) { }
 
   toggleLayerVisibility(event) {
     //or use [change]="isChecked" and (change)="toggleLayerVisibility($event)" with event.target.value instead
@@ -50,16 +50,11 @@ export class MenuLayersItvComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-		console.log('ITV layers on');
     //add temp delay to get layers chnage to Observable
     setTimeout(() => {
       this.name = MapOptions.themes.itvTheme.name;
     }, 400)
 
   }
-
-	ngOnDestroy() {
-		console.log('Destroy Layers itv')
-	}
 
 }

@@ -79,8 +79,4 @@ export class MenuThemesComponent  implements OnInit, OnChanges {
 	ngOnChanges() {
 	}
 
-	ngOnDestroy() {
-		console.log('destroy');
-		//document.getElementById('progress-load').style.display = 'block'
-	}
 }

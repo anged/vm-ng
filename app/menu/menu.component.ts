@@ -16,7 +16,6 @@ import watchUtils = require("esri/core/watchUtils");
   selector: 'menu-map',
 	entryComponents: [ProfileToolContainerComponent],
   templateUrl: './app/menu/menu.component.html'//,
-  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MenuComponent implements OnInit, OnDestroy {
   @Input() view: any;
@@ -25,10 +24,12 @@ export class MenuComponent implements OnInit, OnDestroy {
 	ProfileToolContainerComponent = ProfileToolContainerComponent;
 
   mobileActive: boolean = false;
+
   //add tools active class and remove menu wrapper inm order to use tools on map directly
   toolsActive: boolean = false;
   subLayersActive: any = false;
   subListSubscribtion: Subscription;
+
   //get all anchor elements and run hash
   //create array from array-like object
   aTagList: any;
@@ -176,15 +177,9 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     this.themeName = window.location.pathname.slice(1);
 
-
-    //activate mobile nav menu as well when clicking close buttons or clicking any anchor which closes menu container on desktop mode
-    // let closeList = Array.from(document.getElementsByClassName('close'));
-    // closeList.map(a => a.addEventListener('click', this.activateMenuBtnOnDesktopMode, false));
-    //console.log("END");
-
     //subscribe to sub layer list button activation
     this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
-      console.log("STATE SUBLAYERS", activeState)
+      //console.log("STATE SUBLAYERS", activeState)
       this.subLayersActive = activeState;
       //get state after subscribe, if help box is closed initiate it
       if ((!this.menuService.getVisibleSubLayerNumberState()) && activeState) {
@@ -208,13 +203,12 @@ export class MenuComponent implements OnInit, OnDestroy {
           this.route = this.themeName;
         }
 
-        console.log('Active Route', this.themeName, this.router.url, event);
-
+        //console.log('Active Route', this.themeName, this.router.url, event);
       });
   }
 
   ngOnChanges() {
-    console.log('MENU', this.themeName)
+    //console.log('MENU', this.themeName)
   }
 
   ngOnDestroy() {

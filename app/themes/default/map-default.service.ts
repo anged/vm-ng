@@ -39,7 +39,6 @@ export class MapDefaultService {
     let layers = MapOptions.themes[themeId].layers;
     let layersArr: any[] = [];
     for (let layer in layers) {
-      //console.log("layeris", layers)
       if (layers.hasOwnProperty(layer)) {
         let url = layers[layer].dynimacLayerUrls; //get url
         //init dynaimc layer bases on url and push it to array
@@ -55,8 +54,7 @@ export class MapDefaultService {
         layersArr.push(this.initDefaultDynamicLayers(url, id, name, opacity, raster));
       }
     }
-    //console.log("MASYVAS", layersArr)
-    //console.log("URLS", this.urlArray);
+
     return layersArr;
   }
 

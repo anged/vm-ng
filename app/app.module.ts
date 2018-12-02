@@ -17,19 +17,32 @@ import { MenuService } from './menu/menu.service';
 import { MapService } from './map.service';
 import { BasemapsService } from './map-widgets/basemaps.service';
 
+import { environment } from '../environments/environment';
+
 import * as Raven from 'raven-js';
 
-Raven
-  .config('https://f8a58ec121d145fd9dc0115cbeb7290c@sentry9.vilnius.lt/4', {
-		captureUnhandledRejections: true
-	})
-  .install();
+if (environment.production) {
+  Raven
+    .config('https://f8a58ec121d145fd9dc0115cbeb7290c@sentry9.vilnius.lt/4', {
+      captureUnhandledRejections: true
+    })
+    .install();
+}
 
 export class RavenErrorHandler implements ErrorHandler {
-  handleError(err:any) : void {
-    Raven.captureException(err);
+  handleError(err: any): void {
+    Raven.captureException(err.originalError);
   }
 }
+
+export function VilniusMapsErrorHandler() {
+  if (environment.production) {
+    return new RavenErrorHandler();
+  } else {
+    return new ErrorHandler();
+  }
+}
+
 
 @NgModule({
   imports: [
@@ -37,18 +50,18 @@ export class RavenErrorHandler implements ErrorHandler {
     HttpClientModule,
     Routing,
     ShareModule,
-		MenuModule,
+    MenuModule,
     BrowserAnimationsModule
   ],
   declarations: [
     AppComponent,
-		CommonWidgetsComponent,
+    CommonWidgetsComponent,
     ThemesComponent,
     MapViewComponent,
     NotFoundComponent
   ],
   providers: [
-		{ provide: ErrorHandler, useClass: RavenErrorHandler },
+    { provide: ErrorHandler, useFactory: VilniusMapsErrorHandler },
     ViewService,
     MenuService,
     MapService,

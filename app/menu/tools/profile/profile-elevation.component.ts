@@ -100,7 +100,6 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
   ) { }
 
   ngAfterViewInit() {
-    console.log("chart data", this.data);
     this.view = this.mapService.getView();
     this.canvasChart = this.elevationChart.nativeElement.getContext('2d');
     this.profileChart = new ProfileChart(this.canvasChart, {
@@ -120,7 +119,6 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
             if (isActiveTooltip) {
               const activePointIndex = this.profileChart.tooltip._active[0]._index;
               const activePointCoordinates = this.profileChart.fullData[activePointIndex];
-              //console.log('tooltipModel', activePointCoordinates);
               this.createPointGraphic(activePointCoordinates);
             }
 
@@ -171,7 +169,6 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
       coord.pop();
       return coord;
     });
-    console.log('data', data, this.profileChart)
     const datasets = [
       {
         label: '',
@@ -262,7 +259,6 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
   ngOnChanges(changes: SimpleChanges) {
     this.removePointGraphic();
     this.profileChart && this.profileChart.clear();
-    console.log('changes', changes, this.profileChart);
 
     // do not init chart if fullscreen value has change,
     // run init only on first time

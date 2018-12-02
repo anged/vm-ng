@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 
 import { MapService } from '../../map.service';
 import { ViewService } from '../../themes/default/view.service';
@@ -19,7 +19,7 @@ import watchUtils = require("esri/core/watchUtils");
 	}
 `]
 })
-export class MapViewComponent implements OnInit, OnChanges {
+export class MapViewComponent implements OnInit {
   @ViewChild('mainContainer') mainContainer: ElementRef;
   @ViewChild('bar') bar: ElementRef;
 
@@ -40,7 +40,6 @@ export class MapViewComponent implements OnInit, OnChanges {
     private shareButtonService: ShareButtonService) { }
 
   select(inputSelect) {
-    console.log('inputSelect', inputSelect);
     inputSelect.select();
   }
 
@@ -79,39 +78,32 @@ export class MapViewComponent implements OnInit, OnChanges {
 
     this.mapService.setProgressBar(this.bar);
 
-    console.log('%c VIEW', 'color: brown;font-size: 23px', this.view)
-
-
     this.view.then((view) => {
-      watchUtils.whenTrue(view, "updating", (b) => {
-        console.log('%c VIEW', ' color: green;font-size: 23px', this.view)
-        console.log("watchUtils", b)
+      watchUtils.whenTrue(view, "updating", () => {
+        //console.log('%c VIEW', ' color: green;font-size: 23px', this.view)
+        //console.log("watchUtils", arguments)
         this.el.nativeElement.querySelector('#progress-load').style.display = "block";
         const intervalProgress = setInterval(() => {
           if (!this.view.updating) {
-            console.log('%c intervalProgress', "font-size: 22px", intervalProgress);
-            const clear = clearInterval(intervalProgress);
+            //console.log('%c intervalProgress', "font-size: 22px", intervalProgress);
+            clearInterval(intervalProgress);
             this.el.nativeElement.querySelector('#progress-load').style.display = "none";
-            console.log('%c intervalProgress end', "font-size: 22px", intervalProgress, clear);
+            //console.log('%c intervalProgress end', "font-size: 22px", intervalProgress);
           }
         }, 50)
       });
 
 
       this.view.on("layerview-create", (event) => {
-        console.log(event.layer.loadStatus)
+        //console.log(event.layer.loadStatus)
         if (event.layer.id !== "allLayers") {
           setTimeout(() => {
             this.el.nativeElement.querySelector('#progress-load').style.display = "none";
           }, 600);
-          console.log('%c PROGRESS', "color: red; font-size: 22px", this.el.nativeElement.querySelector('#progress-load'), event.layer.id, this.bar)
+          //console.log('%c PROGRESS', "color: red; font-size: 22px", this.el.nativeElement.querySelector('#progress-load'), event.layer.id, this.bar)
         }
       });
     });
-  }
-
-  ngOnChanges() {
-    console.log('ONCHANGE')
   }
 
 }

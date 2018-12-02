@@ -76,17 +76,17 @@ import isEmpty from 'lodash-es/isempty';
 })
 
 export class ProfileContainerComponent implements OnInit, OnDestroy {
-	@ViewChild(ProfileElevationComponent) pEC;
-	private drawActive = false;
+  @ViewChild(ProfileElevationComponent) pEC;
+  private drawActive = false;
 
   //dojo draw events handlers Array
   private eventHandlers = [];
   chartData: any;
-  isFullScreen =  false;
+  isFullScreen = false;
   view: any;
   draw: Draw;
-	hasError = false;
-	updatingChart = false;
+  hasError = false;
+  updatingChart = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -121,8 +121,8 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
       this.enableCreatePolyline();
       this.toggleDraw();
     } else {
-			this.pEC.resetChart();
-			this.hasError = false;
+      this.pEC.resetChart();
+      this.hasError = false;
       this.view.graphics.removeAll();
 
       // TODO implement ssuspend hitTest of feature layers
@@ -150,17 +150,16 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
 
     // listen to draw-complete event on the action
     this.eventHandlers.push(action.on("draw-complete", (e) => {
-			this.updatingChart = true;
+      this.updatingChart = true;
       this.profileToolService.createPolylineGraphic(e, true).then((result) => {
-				this.updatingChart = false;
-				if (result.details && (result.details.httpStatus === 400)) {
-					this.hasError = true;
-					this.chartData = null;
-				} else {
-					this.hasError ? this.hasError =  false : this.hasError;
-					this.chartData = result;
-				}
-        console.log(result);
+        this.updatingChart = false;
+        if (result.details && (result.details.httpStatus === 400)) {
+          this.hasError = true;
+          this.chartData = null;
+        } else {
+          this.hasError ? this.hasError = false : this.hasError;
+          this.chartData = result;
+        }
         // detect changes for view and child components
         this.cdr.detectChanges();
       });

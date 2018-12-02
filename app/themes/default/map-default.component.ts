@@ -122,7 +122,6 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
 		//clearInterval(window.timer);
-    console.log("Destroy map component");
 
 		// remove sublayers layers cache and close sidebar if iniatialised
 		// TODO change to router chage subscriptiopn on map-view
@@ -139,7 +138,7 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
     // dojo on remove event handler
     this.identifyEvent.remove();
 
-		//remove theme layers, exclude allLayers (JS API performance BUG)
+		// remove theme layers, exclude allLayers (JS API performance BUG)
 		this.map.removeAll();
 
 		// clear and destroy search widget and sear data

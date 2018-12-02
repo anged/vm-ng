@@ -3,21 +3,17 @@ import { ActivatedRoute } from "@angular/router";
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { MapService } from '../../map.service';
-import { MapDefaultService } from '../default/map-default.service';
-import { ProjectsListService } from '../../projects-list/projects-list.service';
 import { SearchService } from '../../search/search.service';
 import { BasemapsService } from '../../map-widgets/basemaps.service';
 import { MetaService } from '../../services/meta.service';
 import { MenuService } from '../../menu/menu.service';
 import { ViewService } from '../default/view.service';
 import { ShareButtonService } from '../../services/share-button.service';
-import { MapKindergartensService } from './map-kindergartens.service';
+import { DataStore } from './map-kindergartens.service';
 import { KindergartensTooltipService } from './kindergartens-tooltip.service';
 import { KindergartensLayersService } from './kindergartens-layers.service';
 
-import { FeatureQueryService } from '../../query/feature-query.service';
 import { IdentifyService } from '../../services/identify/identify.service';
-import { PointAddRemoveService } from '../../query/point-add-remove.service';
 
 import { Subscription } from 'rxjs';
 
@@ -116,11 +112,14 @@ import { Subscription } from 'rxjs';
 export class MapKindergartensComponent implements OnInit, OnDestroy {
   @ViewChild('mainContainer') mainContainer: ElementRef;
   @ViewChild('kindergartensContent') kindergartensContent;
-	//@HostBinding('style.display') display = 'none';
+  //@HostBinding('style.display') display = 'none';
 
   //execution of an Observable,
   subscription: Subscription;
   queryUrlSubscription: Subscription;
+
+  // store kindegarten data from different enpoints
+  dataStore: DataStore;
 
   queryParams: any;
 
@@ -145,22 +144,20 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
 
   sidebarTitle: string;
 
-  dataStore: any;
-
   maintenanceOn = false;
 
-	//dojo on map click event handler
+  //dojo on map click event handler
   identifyEvent: any;
 
-	//dojo events
-	tooltipEvent: any;
-	clickEvent: any;
+  //dojo events
+  tooltipEvent: any;
+  clickEvent: any;
 
-	// tooltip dom
-	tooltip: any;
+  // tooltip dom
+  tooltip: any;
 
   constructor(
-		private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef,
     private _mapService: MapService,
     private searchService: SearchService,
     private identify: IdentifyService,
@@ -168,27 +165,25 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     private basemapsService: BasemapsService,
     private metaService: MetaService,
     private menuService: MenuService,
-		private viewService: ViewService,
-		private kindergartensLayersService: KindergartensLayersService,
-		private kindergartensTooltipService: KindergartensTooltipService,
+    private viewService: ViewService,
+    private kindergartensLayersService: KindergartensLayersService,
+    private kindergartensTooltipService: KindergartensTooltipService,
     private renderer2: Renderer2,
     private shareButtonService: ShareButtonService,
-    private mapKindergartensService: MapKindergartensService
   ) {
-		// Detach this view from the change-detection tree
-		this.cdr.detach();
-	}
+    // Detach this view from the change-detection tree
+    this.cdr.detach();
+  }
 
   toggleSidebar() {
     this.sidebarState = this.sidebarState === 's-close' ? 's-open' : 's-close';
 
-		// detect changes when closing sidebar group
-		this.cdr.detectChanges();
-	}
+    // detect changes when closing sidebar group
+    this.cdr.detectChanges();
+  }
 
   openSidebar() {
     this.sidebarState = 's-open';
-		console.log(6, this.sidebarState)
   }
 
   select(e) {
@@ -201,22 +196,21 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     this.shareUrl = this.shareButtonService.shareToggle(e, this.shareContainerActive);
   }
 
-	setActiveBasemap(view, basemap: string) {
-		//toggle basemap
-		this.basemapsService.toggleBasemap(basemap, view);
-	}
+  setActiveBasemap(view, basemap: string) {
+    //toggle basemap
+    this.basemapsService.toggleBasemap(basemap, view);
+  }
 
-  initView(view) {
-		const mainContainerDom = this.viewService.getMapElementRef();
-		console.log('mainContainerDom', mainContainerDom);
+  initIdentification(view) {
+    const mainContainerDom = this.viewService.getMapElementRef();
     const rend = this.renderer2;
-		const dataStore = this.mapKindergartensService.returnAllQueryData();
-		const [tooltipEvent, tooltip] = this.kindergartensTooltipService.addTooltip(view, this.view, mainContainerDom, rend, dataStore);
+
+    const [tooltipEvent, tooltip] = this.kindergartensTooltipService.addTooltip(view, this.view, mainContainerDom, rend, this.dataStore);
 
     this.tooltipEvent = tooltipEvent;
     this.tooltip = tooltip;
 
-		this.cdr.detectChanges();
+    this.cdr.detectChanges();
 
     this.clickEvent = view.on("click", (event) => {
       //remove existing graphic
@@ -240,11 +234,9 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
       x: event.x,
       y: event.y
     };
-		console.log(1)
-    //console.log(screenPoint)
+
     view.hitTest(screenPoint)
       .then(features => {
-				console.log(2)
         let fullData = null;
         const values = Array.from(features.results);
         let isShown = false;
@@ -253,16 +245,16 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
             if (!isShown) {
               isShown = true;
               const showResult = value.graphic;
-              const dataStore = this.mapKindergartensService.returnAllQueryData();
-              dataStore.mainInfo.forEach(data => {
+              const mainInfo = this.dataStore && this.dataStore.mainInfo;
+              mainInfo.forEach(data => {
                 if (data.GARDEN_ID === value.graphic.attributes.Garden_Id) {
-									console.log(3)
                   fullData = Object.assign({}, data);
                 }
+
               });
               this.openSidebar();
               this.kindergartensContent = fullData;
-							console.log(5, this.kindergartensContent)
+
               //add selectionResultsToGraphic
               const groupFeatureSelectionLayer = this._mapService.initFeatureSelectionGraphicLayer('FeatureSelection', showResult.layer.maxScale, showResult.layer.minScale, 'hide');
               const { geometry, layer, attributes } = showResult;
@@ -270,20 +262,22 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
               groupFeatureSelectionLayer.graphics.add(selectionGraphic);
               this.map.add(groupFeatureSelectionLayer);
             }
+
           } else {
             if (!isShown) {
-            //TEMP null / 0 trick to initiate component change, as we can add data via sidbar compontent as well
-            this.kindergartensContent === null ? this.kindergartensContent = 0 : this.kindergartensContent = null;
+              //TEMP null / 0 trick to initiate component change, as we can add data via sidbar compontent as well
+              this.kindergartensContent === null ? this.kindergartensContent = 0 : this.kindergartensContent = null;
             }
+
           }
 
-					this.cdr.detectChanges();
+          this.cdr.detectChanges();
         });
       });
   }
 
   ngOnInit() {
-		// add basic meta data
+    // add basic meta data
     this.metaService.setMetaData();
 
     this.queryUrlSubscription = this.activatedRoute.queryParams.subscribe(
@@ -305,7 +299,7 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     this.sidebarTitle = 'Ikimokyklinės ugdymo įstaigos'
 
 
-		// return the map
+    // return the map
     this.map = this._mapService.returnMap();
 
     // return view
@@ -314,14 +308,10 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     //create theme main layers grouped
     // const themeGroupLayer = this._mapService.initGroupLayer("theme-group", "Main theme layers", "show");
 
-		// set active basemaps based on url query params
+    // set active basemaps based on url query params
     if (this.queryParams.basemap) {
       this.setActiveBasemap(this.view, this.queryParams.basemap);
     }
-
-		if (snapshotUrl) {
-			this.kindergartensLayersService.addCustomLayers(this.queryParams, snapshotUrl);
-		};
 
     this.view.then((view) => {
       this.viewService.createSubLayers(this.queryParams, this.map);
@@ -336,44 +326,53 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
         index: 2
       });
 
-			//init identification of default or sub layers on MapView
+      //init identification of default or sub layers on MapView
       this.identifyEvent = this.identify.identifyLayers(view);
 
-      //init view and get projects on vie stationary property changes
-      this.initView(view);
+      if (snapshotUrl) {
+        this.kindergartensLayersService.addCustomLayers(this.queryParams, snapshotUrl)
+          .subscribe((dataStore: DataStore) => {
+            this.dataStore = dataStore;
+
+            //init identfication logic
+            this.initIdentification(view);
+          });
+      };
+      //init identfication logic
+      this.initIdentification(view);
     });
   }
 
-	ngOnDestroy() {
-		const subLayersSate = this.menuService.getSubLayersState();
-		if (subLayersSate) {
-			this.menuService.removeSublayersLayer();
-		}
+  ngOnDestroy() {
+    const subLayersSate = this.menuService.getSubLayersState();
+    if (subLayersSate) {
+      this.menuService.removeSublayersLayer();
+    }
 
-		// close popup
-		if (this.view.popup.visible) {
-			this.view.popup.close();
-		}
+    // close popup
+    if (this.view.popup.visible) {
+      this.view.popup.close();
+    }
 
-		// dojo on remove event handler
-		this.identifyEvent.remove();
-		this.tooltipEvent.remove();
-		this.clickEvent.remove();
+    // dojo on remove event handler
+    this.identifyEvent.remove();
+    this.tooltipEvent.remove();
+    this.clickEvent.remove();
 
-		// destroy tooltip dom
-		this.tooltip.remove();
+    // destroy tooltip dom
+    this.tooltip.remove();
 
-		//remove theme layers, exclude allLayers (JS API performance BUG)
-		this.map.removeAll();
+    //remove theme layers, exclude allLayers (JS API performance BUG)
+    this.map.removeAll();
 
-		// clear and destroy search widget and sear data
-		this.search.clear();
-		this.search.destroy();
+    // clear and destroy search widget and sear data
+    this.search.clear();
+    this.search.destroy();
 
-		// cursor style auto
-		this.renderer2.setProperty(document.body.style, 'cursor', 'auto');
+    // cursor style auto
+    this.renderer2.setProperty(document.body.style, 'cursor', 'auto');
 
-		this.renderer2.removeClass(document.body, 'kindergartens');
-	}
+    this.renderer2.removeClass(document.body, 'kindergartens');
+  }
 
 }

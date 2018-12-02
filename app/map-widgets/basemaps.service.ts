@@ -28,28 +28,28 @@ export class BasemapsService {
     return this.activeBasemap;
   }
 
-	// iniatiate basemaps
-	initBasemaps(map, queryParams = { basemap: null }) {
-		console.log('map queryParams', map, queryParams)
-		// add  basemap layer
-		const basemaps = [];
+  // iniatiate basemaps
+  initBasemaps(map, queryParams = { basemap: null }) {
+    // add  basemap layer
+    const basemaps = [];
 
-		BASEMAPS.forEach(basemap => {
-			const baseMapRestEndpoint = MapOptions.mapOptions.staticServices[basemap.serviceName];
-			if (queryParams.basemap === basemap.id) {
-				this.setActiveBasemap(basemap.id);
-				const visibleBaseMap = this.mapService.initTiledLayer(baseMapRestEndpoint, basemap.id);
-				basemaps.push(visibleBaseMap);
-			} else {
-				const hiddenBaseMap = this.mapService.initTiledLayer(baseMapRestEndpoint, basemap.id, false);
-				basemaps.push(hiddenBaseMap);
-			}
-		});
-		map.basemap = this.mapService.customBasemaps(basemaps);
-		// update map instance
-		this.mapService.updateMap(map);
-		return basemaps;
-	}
+    BASEMAPS.forEach(basemap => {
+      const baseMapRestEndpoint = MapOptions.mapOptions.staticServices[basemap.serviceName];
+      if (queryParams.basemap === basemap.id) {
+        this.setActiveBasemap(basemap.id);
+        const visibleBaseMap = this.mapService.initTiledLayer(baseMapRestEndpoint, basemap.id);
+        basemaps.push(visibleBaseMap);
+      } else {
+        const hiddenBaseMap = this.mapService.initTiledLayer(baseMapRestEndpoint, basemap.id, false);
+        basemaps.push(hiddenBaseMap);
+      }
+
+    });
+    map.basemap = this.mapService.customBasemaps(basemaps);
+    // update map instance
+    this.mapService.updateMap(map);
+    return basemaps;
+  }
 
   // add current basemap visibilty
   filterBasemap(activeBasemMapId: string, view: any) {
@@ -70,6 +70,7 @@ export class BasemapsService {
           ? item.visible = true
           : void (0);
       }
+
     })
   }
 

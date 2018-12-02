@@ -26,39 +26,38 @@ import { Subscription } from 'rxjs';
 
 export class ProfileToolComponent implements OnInit {
   toolActive = false;
-	s: Subscription;
+  s: Subscription;
 
-	constructor(
-		private profileToolService: ProfileToolService,
-		private toolsNameService: ToolsNameService
-	) { }
+  constructor(
+    private profileToolService: ProfileToolService,
+    private toolsNameService: ToolsNameService
+  ) { }
 
-	toggleMeasure() {
-		this.toolActive = this.profileToolService.toggleMeasure();
+  toggleMeasure() {
+    this.toolActive = this.profileToolService.toggleMeasure();
 
-		if (this.toolActive) {
-			// set tool name Obs
-			this.toolsNameService.setCurentToolName(ToolsList.profile);
+    if (this.toolActive) {
+      // set tool name Obs
+      this.toolsNameService.setCurentToolName(ToolsList.profile);
 
-			// destroy tool component if other component containing draw tool got opened
-			this.s = this.toolsNameService.currentToolName
-			.subscribe((name) => {
-				console.log(this.s, 'Name P', name)
-				if  (ToolsList.profile !== name) {
-					// TODO refactor, currently using setTimeout for ExpressionChangedAfterItHasBeenCheckedError
-					setTimeout(() => {
-						this.toolActive = this.profileToolService.closeMeasure();
-						this.s.unsubscribe()
-					});
-				}
-			});
-		} else {
-			this.s.unsubscribe()
-		}
-	}
+      // destroy tool component if other component containing draw tool got opened
+      this.s = this.toolsNameService.currentToolName
+        .subscribe((name) => {
+          if (ToolsList.profile !== name) {
+            // TODO refactor, currently using setTimeout for ExpressionChangedAfterItHasBeenCheckedError
+            setTimeout(() => {
+              this.toolActive = this.profileToolService.closeMeasure();
+              this.s.unsubscribe()
+            });
+          }
+        });
+    } else {
+      this.s.unsubscribe()
+    }
+  }
 
-	ngOnInit() {
-	}
+  ngOnInit() {
+  }
 
 
 }

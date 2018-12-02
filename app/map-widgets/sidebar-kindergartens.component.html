@@ -80,14 +80,14 @@
       </div>
 
       <div class="form-title">Atstumas nuo adreso (km)</div>
-      <input [(ngModel)]="analyzeParams.bufferSize" id="buffersize" name="buffersize" required class="form-control form-check-inline buffer-size" type="number" #buffer="ngModel" pattern="^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$" (change)="bufferChange(buffer)">
+      <input [(ngModel)]="analyzeParams.bufferSize" id="buffersize" name="buffersize" required class="form-control form-check-inline buffer-size" type="number" #buffer="ngModel" pattern="^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$">
       <div [hidden]="buffer.valid || buffer.pristine" class="alert alert-danger buffer-alert">
         Rašykite sveikais skaičiais arba naudokite , simbolį
       </div>
 
       <mat-accordion>
         <mat-expansion-panel>
-          <mat-expansion-panel-header>
+          <mat-expansion-panel-header (click)="cdr.detectChanges()">
             <mat-panel-title>
               Išplėstiniai filtrai
             </mat-panel-title>

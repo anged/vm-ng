@@ -7,9 +7,9 @@ import { MapOptions } from '../options';
 @Component({
   selector: 'menu-layers',
   template: `
-    <div class="menu-header">
-			<p>Temos sluoksniai:</p>
-    	<a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
+   <div class="menu-header">
+			 <p>Temos sluoksniai:</p>
+    <a (click)="closeToggle()" class="button close animate" title="Uždaryti">✕</a>
 		</div>
 		<perfect-scrollbar>
 			<div class="layers-wrapper">
@@ -21,12 +21,12 @@ import { MapOptions } from '../options';
 				</div>
 			</div>
 		</perfect-scrollbar>
-    `
+  `
 })
 export class MenuLayersComponent implements OnInit, OnDestroy {
   @ViewChild('list') list: ElementRef;
   name: string;
-  isChecked: boolean = true;
+  isChecked = true;
   listWidget: any;
 
   constructor(
@@ -53,24 +53,20 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
     // init layers list widget
     const view = this.mapService.getView();
     const map = this.mapService.returnMap();
-    console.log('OnInit Layers')
+    //console.log('OnInit Layers')
     view.then(() => {
       // reorder layers in map and view
       // allLayers layer must be always last in map array,
       // as we are hiding layer list manualy with css
       // TODO remove event on destroy
       view.on("layerview-create", (event) => {
-        console.log('ONN', this.listWidget)
-
+        //console.log('ONN', this.listWidget)
         const index = map.layers.items.length - 1;
-        //reorder only if allLayers layer comes before theme layers
+        // reorder only if allLayers layer comes before theme layers
         if (event.layer.id !== "allLayers" && index > 0) {
-          // setTimeout(()=> {
-          // 	document.getElementById('progress-load').style.display = 'none';
-          // }, 1000);
           const subLayer = map.findLayerById("allLayers");
           map.reorder(subLayer, index)
-          console.log('%c LOADED', "color: red; font-size: 22px", event.layer.id)
+          //console.log('%c LOADED', "color: red; font-size: 22px", event.layer.id)
         }
 
         // set tool name Obs, to close tools boxes if opened
@@ -88,11 +84,11 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
   }
 
   ngDoCheck() {
-   //console.log("do check")
+    //console.log("do check")
   }
 
   ngOnDestroy() {
-    console.log('Destroy Layers');
+    //console.log('Destroy Layers');
     this.listWidget.destroy();
   }
 }

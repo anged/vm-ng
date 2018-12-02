@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostBinding } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'common-widgets',
@@ -14,12 +14,6 @@ import { Component, OnInit, Input, HostBinding } from '@angular/core';
     `
 })
 
-export class CommonWidgetsComponent implements OnInit {
+export class CommonWidgetsComponent {
   @Input() view: any;
-	@HostBinding('style.display') display;
-
-	ngOnInit() {
-		console.log("W HOST", this.display);
-	}
-
 };

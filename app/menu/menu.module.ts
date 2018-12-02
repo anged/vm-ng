@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-//import { MenuService }  from './menu.service';
 import { ShareModule } from '../share.module';
 import { MenuToolsService } from './menu-tools.service';
 import { ThreeDExtractService } from "./tools/threed-extract/threed-extract.service";
@@ -22,9 +21,9 @@ import {
   MeasureMapComponent,
   MeasureContainerComponent,
   ExtractContainerComponent,
- 	ProfileToolComponent,
-	ProfileToolContainerComponent,
- 	ProfileContainerComponent,
+  ProfileToolComponent,
+  ProfileToolContainerComponent,
+  ProfileContainerComponent,
   ProfileElevationComponent,
   PrintMapComponent
 } from '../menu';
@@ -50,16 +49,16 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MenuLegendItvComponent, MenuLegendComponent,
     ThreeDExtractComponent, ExtractContainerComponent,
     MeasureMapComponent, MeasureContainerComponent,
-		ProfileToolComponent, ProfileToolContainerComponent, ProfileContainerComponent, ProfileElevationComponent,
+    ProfileToolComponent, ProfileToolContainerComponent, ProfileContainerComponent, ProfileElevationComponent,
     PrintMapComponent
   ],
   exports: [MenuComponent, MenuThemesComponent],
   providers: [
     MenuToolsService,
     ThreeDExtractService,
-		MeasureMapService,
-		ProfileToolService,
-		ToolsNameService
+    MeasureMapService,
+    ProfileToolService,
+    ToolsNameService
   ]
 })
 export class MenuModule { }
