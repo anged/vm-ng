@@ -59,7 +59,7 @@ export class IdentifyService {
         // do not execute if layer is for buffer graphics and if layer is GroupLayer with list mnode 'hide-children' or type is group which means it is dedicated for retrieving data to custom sidebar via feature layer hitTest method
         // skip FeatureSelection layer as well wich is created only for Feature selection graphics
 				// TODO remove or refactor allLayers identification
-        if ((item.layer.id !== "bufferPolygon") && (item.layer.id !== "allLayers") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group') && (item.layer.id !== 'FeatureSelection') && (item.layer.id !== 'AreaSelection') && (item.layer.popupEnabled)) {
+        if ((item.layer.id !== "bufferPolygon") && (item.layer.id !== "allLayers_") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group') && (item.layer.id !== 'FeatureSelection') && (item.layer.id !== 'AreaSelection') && (item.layer.popupEnabled)) {
           //if layer is buffer result, add custom visibility
           if (item.layer.id === "bufferLayers") {
             identifyParams.layerIds = [0];

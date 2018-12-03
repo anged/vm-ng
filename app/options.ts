@@ -34,7 +34,7 @@ export const MapOptions: any = {
        }
       },
       //allLayers group service for displaying all layers
-      commonMaps: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras/MapServer'
+      commonMaps: 'https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Bendras_optimized/MapServer'
     },
   },
   themes: {
@@ -416,7 +416,12 @@ export const MapOptions: any = {
   },
   notFound: {
     msg: 'Atsiprašome, toks puslapis neegzistuoja'
-  }
+  },
+	sentry: {
+		// sentry dns id for production
+		// vcma dns f8a58ec121d145fd9dc0115cbeb7290c
+		dns: 'f8a58ec121d145fd9dc0115cbeb7290c'
+	}
 }
 
 //additionl themes mapOptions

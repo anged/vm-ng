@@ -4,7 +4,7 @@ import { BasemapsService } from '../map-widgets/basemaps.service';
 
 @Injectable()
 export class ShareButtonService {
-  //visible layers
+  // visible layers
   visibleLayers: any = {};
   visibleSubLayerNumber: number = 0;
 
@@ -36,17 +36,25 @@ export class ShareButtonService {
 		//highlight selected input
     if (shareContainerActive) {
       setTimeout(() => {
-        const shareURL = document.getElementById("url-link") as HTMLInputElement;
-        if (shareURL) {
-          shareURL.select();
-					// copy to clipboard
-					document.execCommand('copy');
-        }
+        this.copyToClipBoard();
       }, 20);
     }
 
     return shareUrlStr;
   }
+
+	copyToClipBoard() {
+		const shareURL = document.getElementById("url-link") as HTMLInputElement;
+		if (shareURL) {
+			shareURL.select();
+			shareURL.focus();
+			shareURL.setSelectionRange(0,99999);
+			// copy to clipboard
+			document.execCommand('copy');
+
+		}
+		return true;
+	}
 
   shareCheckedLayersIds(ids: any): string {
     let shareCheckStr: string = "";

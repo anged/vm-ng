@@ -434,7 +434,7 @@ export class MapService {
         if (queryParams.allLayers && (queryParams.identify === "allLayers")) {
           subLayers = sublayersArray;
         };
-        const layer = this.initSubAllDynamicLayers(MapOptions.mapOptions.staticServices.commonMaps, "allLayers", "Visų temų sluoksniai", 0.8, subLayers);
+        const layer = this.initSubAllDynamicLayers(MapOptions.mapOptions.staticServices.commonMaps, "allLayers", "Pagalbiniai sluoksniai", 0.8, subLayers);
         this.map.add(layer);
         //check other url params if exists
         //activate layer defined in url query params

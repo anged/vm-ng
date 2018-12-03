@@ -581,18 +581,6 @@ li.list-active {
   background: #fff;
 }
 
-.sub-menu.default-legend p,
-#layers p:first-child {
-  /* border-bottom: 1px solid #E9E9E9; */
-}
-
-#layers #sub-layers-list p:first-child {
-  border-bottom: none;
-  position: relative;
-  top: 28px;
-  left: 20px;
-}
-
 .sub-menu.default-legend .esri-legend__layer-caption {
   display: table-caption;
   padding: 10px 20px 0;
@@ -1040,6 +1028,7 @@ label {
 }
 
 #sub-layer-list svg {
+	display: block;
   width: 14px;
   height: 14px;
   fill: white;
@@ -1110,9 +1099,8 @@ label {
 }
 
 #filters-button {
-  position: relative;
-  left: 200px;
-  top: -25px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 measure-map {
@@ -1192,7 +1180,7 @@ measure-map {
 #filters-button button,
 #filters-button-projects button,
 #measure-button button {
-  width: 40px;
+  width: calc(100% - 40px);
   padding: 10px 20px;
   margin: 5px 15px;
   background: #d8d8d8;
@@ -2397,10 +2385,6 @@ body .dijitAlignClient {
 #basemap-button .mat-select-placeholder.mat-floating-placeholder {
   top: -36px !important;
   color: #bfbfbf;
-}
-
-#basemap-button .mat-select-value {
-  left: 8px !important;
 }
 
 #basemap-button .mat-select-placeholder {

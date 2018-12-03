@@ -14,8 +14,8 @@
           </span>
           <p>Žemėlapio nuoroda:</p>
           <input id="url-link" type="text" class="validate filter-input form-control" [value]="shareUrl" #inputSelect (click)="select(inputSelect)">
-
-					<div hideElement class="alert alert-success alert-margin-top" role="alert">
+					<button class='share-btn' (click)="copy()">Kopijuoti</button>
+					<div *ngIf="isCopiedToClipboard" hideElement class="alert alert-success alert-margin-top" role="alert">
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>

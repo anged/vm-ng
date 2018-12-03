@@ -17,6 +17,16 @@ import watchUtils = require("esri/core/watchUtils");
 	    margin-top: 10px;
 			font-size: 14px;
 	}
+	.share-btn {
+		margin-top: 10px;
+    padding: 6px 10px 6px 10px;
+    background-color: #ffffff;
+    border: 1px solid #53565d;
+    border-radius: 2px;
+    font-size: 14px;
+    color: #4c4c4c;
+    float: right;
+	}
 `]
 })
 export class MapViewComponent implements OnInit {
@@ -32,6 +42,8 @@ export class MapViewComponent implements OnInit {
 
   view: any;
 
+	isCopiedToClipboard = false;
+
   constructor(
     private el: ElementRef,
     private mapService: MapService,
@@ -45,6 +57,7 @@ export class MapViewComponent implements OnInit {
 
   // toggle share container
   shareToggle() {
+		this.isCopiedToClipboard = false;
     this.shareContainerActive = !this.shareContainerActive;
     this.shareUrl = this.shareButtonService.shareToggle(this.shareContainerActive);
   }
@@ -62,6 +75,11 @@ export class MapViewComponent implements OnInit {
         );
     });
   }
+
+	copy() {
+		this.isCopiedToClipboard = false;
+		this.isCopiedToClipboard = this.shareButtonService.copyToClipBoard();
+	}
 
   ngOnInit() {
     // create the map

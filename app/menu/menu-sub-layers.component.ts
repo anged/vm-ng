@@ -7,12 +7,12 @@ import { MenuService } from './menu.service';
   selector: 'menu-sub-layers',
   template: `
       <div>
-        <p>Papildomi sluoksniai:</p>
         <div id="filters-button">
           <button class="animate" name="button" type="button" (click)="toggleSubState()">
             <svg class="animate" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 42 42">
             <polygon points="42,19 23,19 23,0 19,0 19,19 0,19 0,23 19,23 19,42 23,42 23,23 42,23 "></polygon>
             </svg>
+						Papildomi sluoksniai
           </button>
         </div>
       </div>

@@ -1,6 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
-
-const Tooltip = require('dijit/Tooltip');
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'credits-map',
@@ -24,30 +22,21 @@ const Tooltip = require('dijit/Tooltip');
       `],
   template: `
       <div id="credits">
-        {{year | date: "y"}} m. <span class="credits-content name">| VMS interaktyvūs žemėlapiai </span> | <a id='copyright'>Autorinės teisės</a> <span class="credits-content company">| <a href='http://www.vilniausplanas.lt/' target='_blank'>SĮ „Vilniaus planas“</a></span>
+        {{year | date: "y"}} m.
+				<span class="credits-content name">
+					| VMS interaktyvūs žemėlapiai </span> |
+					<a id='copyright'
+						[popper]="'© SĮ Vilniaus planas <br>© Vilniaus miesto savivaldybė<br>ORT5LT © Nacionalinė žemės tarnyba prie ŽŪM<br>© Valstybinė saugomų teritorijų tarnyba prie Aplinkos ministerijos<br>© Policijos departamentas prie Vidaus reikalų ministerijos'"
+						[popperTrigger]="'hover'"
+						[popperForceDetection]="true"
+						[popperPlacement]="'top'"
+					>Autorinės teisės</a> <span class="credits-content company">|
+					<a href='http://www.vilniausplanas.lt/' target='_blank'>SĮ „Vilniaus planas“</a>
+				</span>
       </div>
     `
 })
 
-export class CreditsCompponent implements OnDestroy {
+export class CreditsCompponent {
   year = new Date();
-  tooltip: any;
-
-  getCopyright() {
-    this.tooltip =  new Tooltip({
-      connectId: "copyright",
-      id: "cop-class",
-      position: ["above"],
-      label: "© SĮ Vilniaus planas <br>© Vilniaus miesto savivaldybė<br>ORT5LT © Nacionalinė žemės tarnyba prie ŽŪM<br>© Valstybinė saugomų teritorijų tarnyba prie Aplinkos ministerijos<br>© Policijos departamentas prie Vidaus reikalų ministerijos"
-    });
-  }
-
-  ngOnInit() {
-    this.getCopyright();
-  }
-
-  ngOnDestroy() {
-    //TODO do not creat intance everytime map view changes
-    this.tooltip.destroy();
-  }
 }

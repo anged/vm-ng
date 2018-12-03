@@ -15,6 +15,7 @@ import { NotFoundComponent } from './not-found.component';
 import { ViewService } from './themes/default/view.service';
 import { MenuService } from './menu/menu.service';
 import { MapService } from './map.service';
+import { MapOptions } from './options';
 import { BasemapsService } from './map-widgets/basemaps.service';
 
 import { environment } from '../environments/environment';
@@ -23,7 +24,7 @@ import * as Raven from 'raven-js';
 
 if (environment.production) {
   Raven
-    .config('https://f8a58ec121d145fd9dc0115cbeb7290c@sentry9.vilnius.lt/4', {
+    .config(`https://${MapOptions.sentry.dns}@sentry9.vilnius.lt/4`, {
       captureUnhandledRejections: true
     })
     .install();
