@@ -420,7 +420,7 @@ export const MapOptions: any = {
 	sentry: {
 		// sentry dns id for production
 		// vcma dns f8a58ec121d145fd9dc0115cbeb7290c
-		dns: 'f8a58ec121d145fd9dc0115cbeb7290c'
+		dns: ''
 	}
 }
 
