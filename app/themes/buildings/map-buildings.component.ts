@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectorRef
- } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
@@ -94,7 +93,7 @@ import { Subscription } from 'rxjs';
       transition('s-close => s-open', animate('100ms ease-out'))
     ])
   ]//,
-	//changeDetection: ChangeDetectionStrategy.OnPush
+  //changeDetection: ChangeDetectionStrategy.OnPush
 
 })
 export class MapBuildingsComponent implements OnInit, OnDestroy {
@@ -141,7 +140,7 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
   tooltip: any;
 
   constructor(
-		private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef,
     private _mapService: MapService,
     private menuService: MenuService,
     private metaService: MetaService,
@@ -154,15 +153,15 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
     private viewService: ViewService,
     private renderer2: Renderer2,
     private shareButtonService: ShareButtonService) {
-			// Detach this view from the change-detection tree
-			this.cdr.detach();
-		}
+    // Detach this view from the change-detection tree
+    this.cdr.detach();
+  }
 
   toggleSidebar() {
     this.sidebarState = this.sidebarState === 's-close' ? 's-open' : 's-close';
 
-		// detect changes when closing sidebar group
-		this.cdr.detectChanges();
+    // detect changes when closing sidebar group
+    this.cdr.detectChanges();
   }
 
   openSidebar() {
@@ -195,7 +194,7 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
     this.tooltipEvent = tooltipEvent;
     this.tooltip = tooltip;
 
-		this.cdr.detectChanges();
+    this.cdr.detectChanges();
 
     this.clickEvent = view.on("click", (event) => {
       // remove existing graphic
@@ -232,8 +231,8 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
         groupFeatureSelectionLayer.graphics.add(selectionGraphic);
         this.map.add(groupFeatureSelectionLayer);
 
-				// check this view and its children
-				this.cdr.detectChanges();
+        // check this view and its children
+        this.cdr.detectChanges();
       });
   }
 
@@ -298,9 +297,9 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
     });
   }
 
-	ngDoCheck() {
-		//console.log('Do Check');
-	}
+  ngDoCheck() {
+    //console.log('Do Check');
+  }
 
   ngOnDestroy() {
     const subLayersSate = this.menuService.getSubLayersState();
@@ -328,10 +327,10 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
     this.search.clear();
     this.search.destroy();
 
-		// cursor style auto
-		this.renderer2.setProperty(document.body.style, 'cursor', 'auto');
+    // cursor style auto
+    this.renderer2.setProperty(document.body.style, 'cursor', 'auto');
 
-		this.renderer2.removeClass(document.body, 'buldings-theme');
+    this.renderer2.removeClass(document.body, 'buldings-theme');
   }
 
 }

@@ -338,8 +338,7 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
             this.initIdentification(view);
           });
       };
-      //init identfication logic
-      this.initIdentification(view);
+
     });
   }
 
