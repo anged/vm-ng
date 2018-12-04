@@ -50,7 +50,7 @@ export class MeasureMapComponent implements OnInit, AfterViewInit, OnChanges {
       // destroy tool component if other component containing draw tool got opened
       this.s = this.toolsNameService.currentToolName
         .subscribe((name) => {
-          console.log(this.s, 'Name M', name)
+          //console.log(this.s, 'Name M', name)
           if (ToolsList.measure !== name) {
             // TODO refactor, currently using setTimeout for ExpressionChangedAfterItHasBeenCheckedError
             setTimeout(() => {
