@@ -15,7 +15,7 @@ npm start
 ```
 Create production build:
 ```bash
-npm build
+npm run build
 ```
 Note: currently using express js and ejs in production  
   
