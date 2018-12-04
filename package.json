@@ -12,8 +12,9 @@
     "build": "concurrently \"webpack --mode production --config webpack.prod.js --progress\" \"tsc\" "
   },
   "keywords": [
-    "Angular-6",
-    "Esri-4"
+    "angular-6",
+    "esri-api-4",
+		"webpack"
   ],
   "dependencies": {
     "@angular/animations": "^6.0.3",

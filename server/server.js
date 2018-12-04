@@ -20,7 +20,7 @@ app.get('/*', (req, res) => {
   if (pathname.slice(1)) {
     for (theme in themes) {
       if (themes[theme].id === pathname.slice(1)) {
-        console.log('\x1b[33m%s\x1b[0m', `themes' id ${themes[theme].id}`);
+        //console.log('\x1b[33m%s\x1b[0m', `themes' id ${themes[theme].id}`);
         res.render('index.ejs', {
           oembedUrl: oembedUrl + req.url,
           oembedDescription: `${themes[theme].description} `,
