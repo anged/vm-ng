@@ -220,8 +220,8 @@ export class SidebarComponent implements OnChanges {
 
   selectionByTypeState = false;
 
-	// chart labels for tooltip
-	chartLabels = [];
+  // chart labels for tooltip
+  chartLabels = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -436,7 +436,7 @@ export class SidebarComponent implements OnChanges {
               beforeTitle: (tooltipItems) => {
                 return this.chartLabels[tooltipItems[0].index].split(',')[0];
               },
-							// add empty string
+              // add empty string
               title: () => {
                 return '';
               }
@@ -476,8 +476,10 @@ export class SidebarComponent implements OnChanges {
       });
       this.classesChart.data.labels = data.labels;
       this.classesChart.data.datasets = data.datasets;
-			this.classesChart.update();
+      this.classesChart.update();
     } else {
+      this.classesChart.data.labels = data.labels;
+      this.classesChart.data.datasets = data.datasets;
       this.classesChart.update();
     }
 
