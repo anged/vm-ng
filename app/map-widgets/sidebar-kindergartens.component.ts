@@ -361,7 +361,6 @@ export class SidebarKindergartensComponent implements OnInit, OnChanges, DoCheck
 
   ngOnChanges() {
     if (this.dataStore) {
-			console.log(this.dataStore)
       this.filteredGartens = this.dataStore.mainInfo;
       this.dataAge = this.selectorsService.getUniqueAttribute(this.dataStore.info, 'TYPE_LABEL');
       //console.log("UNIQUE dataAge: ", this.dataAge)

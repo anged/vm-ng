@@ -223,16 +223,6 @@ export const MapOptions: any = {
         }
       }
     },
-    emptyTeam: {
-      //url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
-      production: true, //if theme is ready for production
-      hide: true, //hide from themes menu, but add route with functionality
-      name: "Tuščia tema", //theme name
-      //id: "civ-sauga", //theme id class and theme URL query name
-      id: "empty", //theme id class and theme URL query name
-      imgUrl: "./app/img/civiline-sauga.png", //image URL
-      imgAlt: "Tuščia tema" // image alt attribute
-    },
     buildings: {
       production: true, //if theme is ready for production
       custom: true, // true if theme funcionality is custom
@@ -406,6 +396,16 @@ export const MapOptions: any = {
         }
       }
     },
+		emptyTeam: {
+			//url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
+			production: true, //if theme is ready for production
+			hide: true, //hide from themes menu, but add route with functionality
+			name: "Tuščia tema", //theme name
+			//id: "civ-sauga", //theme id class and theme URL query name
+			id: "empty", //theme id class and theme URL query name
+			imgUrl: "./app/img/civiline-sauga.png", //image URL
+			imgAlt: "Tuščia tema" // image alt attribute
+		},
     legacyMap: {
       production: false, //if theme is ready for production
       custom: true, // true if theme funcionality is custom
