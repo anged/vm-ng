@@ -40,8 +40,11 @@ app.get('/*', (req, res) => {
     });
   }
 
-  // redirect on error to home page
-  res.redirect('/');
+	// still using legacy maps application with static url routing
+	if (pathname.slice(1) !== 'maps_vilnius') {
+		// redirect on error to home page
+		res.redirect('/');
+	}
 
 });
 
