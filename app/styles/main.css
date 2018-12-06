@@ -2046,7 +2046,7 @@ ul>li .esri-layer-list__item-title,
 /*END NAVIGATION*/
 #loading-gif {
   width: 110px;
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   margin: auto;
