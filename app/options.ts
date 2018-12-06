@@ -205,6 +205,24 @@ export const MapOptions: any = {
         }
       }
     },
+    socialServices: {
+      //url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
+      production: true, //if theme is ready for production
+      name: "Socialinės paslaugos", //theme name
+      //id: "civ-sauga", //theme id class and theme URL query name
+      description: "Socialinių paslaugų temoje rasite informaciją apie socialine paslaugas teikiančias įstaigas",
+      id: "socialines-paslaugos", //theme id class and theme URL query name
+      imgUrl: "./app/img/soc-paslaugos.png", //image URL
+      imgAlt: "Socialinės paslaugos", // image alt attribute
+      layers: {
+        elderships: { // layer unique name //
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Socialines_paslaugos/MapServer",
+          opacity: 1,
+          name: "Socialinės paslaugos" // dynamicLayers group name
+        }
+      }
+    },
     emptyTeam: {
       //url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
       production: true, //if theme is ready for production
@@ -420,7 +438,7 @@ export const MapOptions: any = {
 	sentry: {
 		// sentry dns id for production
 		// vcma dns f8a58ec121d145fd9dc0115cbeb7290c
-		dns: ''
+		dns: 'f8a58ec121d145fd9dc0115cbeb7290c'
 	}
 }
 
