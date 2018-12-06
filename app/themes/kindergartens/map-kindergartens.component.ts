@@ -142,8 +142,6 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
   //add subDynamicLayers sublayers meta data
   subDynamicLayerSubLayers: any;
 
-  sidebarTitle: string;
-
   maintenanceOn = false;
 
   //dojo on map click event handler
@@ -295,10 +293,6 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     //let snapshotUrl = this.activatedRoute.snapshot.url["0"];
     let snapshotUrl = { path: 'darzeliai' };
 
-    //add sidebar names
-    this.sidebarTitle = 'Ikimokyklinės ugdymo įstaigos'
-
-
     // return the map
     this.map = this._mapService.returnMap();
 
@@ -339,6 +333,8 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
           });
       };
 
+			// detect changes before dataStore fetches
+			this.cdr.detectChanges();
     });
   }
 
