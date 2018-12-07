@@ -3701,7 +3701,7 @@ ul>li .esri-layer-list__item-title {
 
 @media only screen and (max-width: 480px) {
   .col-sm-3.themes-row {
-    min-height: 260px;
+    min-height: 200px;
   }
 
   .themes-page-logo span {
