@@ -189,10 +189,7 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
     // add tooltip on mouse move
     // TODO remove event on destroy
     const rend = this.renderer2;
-    const [tooltipEvent, tooltip] = this.buildingsTooltipService.addTooltip(view, this.view, mainContainerDom, rend);
-
-    this.tooltipEvent = tooltipEvent;
-    this.tooltip = tooltip;
+    this.buildingsTooltipService.addTooltip(view, this.view, mainContainerDom, rend);
 
     this.cdr.detectChanges();
 
@@ -312,13 +309,10 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
       this.view.popup.close();
     }
 
-    // dojo on remove event handler
-    this.identifyEvent.remove();
-    this.tooltipEvent.remove();
+		// dojo on remove event handler
+		this.identify.removeEvent();
+		this.buildingsTooltipService.clearMemoryAndNodes(this.renderer2);
     this.clickEvent.remove();
-
-    // destroy tooltip dom
-    this.tooltip.remove();
 
     //remove theme layers, exclude allLayers (JS API performance BUG)
     this.map.removeAll();

@@ -11,6 +11,8 @@ import all = require("dojo/promise/all");
 
 @Injectable()
 export class IdentifyService {
+	// dojo events
+	mapClickEvent: any;
 
   constructor(
     private mapService: MapService,
@@ -107,23 +109,16 @@ export class IdentifyService {
       });
 
     }, (error) => { console.error(error); });
-    //TODO REMOVE
-    // if (!window.esriMap) {
-    // 	window.esriMap = [];
-    // 	window.mapClickEvent = {};
-    // 	window.mapClickEvent[Math.random()] = mapClickEvent
-    // 	window.mapClickEvent[Math.random()] = view
-    // 	window.mapClickEvent[Math.random()] = map
-    // 	window.esriMap.push(mapClickEvent);
-    // } else {
-    // 		window.esriMap.push(mapClickEvent);
-    // 		window.mapClickEvent[Math.random()] = mapClickEvent
-    // 		window.mapClickEvent[Math.random()] = view
-    // 		window.mapClickEvent[Math.random()] = map
-    // }
 
-    return mapClickEvent;
+    return this.mapClickEvent = mapClickEvent;
   }
+
+	removeEvent() {
+		if (this.mapClickEvent) {
+			this.mapClickEvent.remove();
+		}
+
+	}
 
   showItvPopupOnCLick(view: any, event: any, identify: any, identifyParams: any) {
     identifyParams.geometry = event.mapPoint;

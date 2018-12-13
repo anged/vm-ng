@@ -3,12 +3,19 @@ import { Injectable, ElementRef, Renderer2 } from '@angular/core';
 
 @Injectable()
 export class KindergartensTooltipService {
+	parentNode: ElementRef;
+	//dojo events
+	tooltipEvent: any;
+
+	// tooltip dom
+	tooltip: any;
 
   constructor() { }
 
-  addTooltip(view, mapView, element: ElementRef, rend: Renderer2, dataStore) {
-    const tooltip = rend.createElement('div');
-    const tooltipEvent = mapView.on("pointer-move", (event) => {
+  addTooltip(view, mapView, element: ElementRef, rend: Renderer2, dataStore): void {
+		this.parentNode = element;
+    this.tooltip = rend.createElement('div');
+    this.tooltipEvent = mapView.on("pointer-move", (event) => {
       const screenPoint = {
         // hitTest BUG, as browser fails to execute 'elementFromPoint' on 'Document'
         // FIXME bug with x coordinate value, when menu icon is in view, temp solution: change x value from 0 to any value
@@ -16,9 +23,9 @@ export class KindergartensTooltipService {
         y: event.y
       };
 
-      if (tooltip.textContent.length > 0) {
-        tooltip.textContent = '';
-        rend.setStyle(tooltip, 'padding', '0px');
+      if (this.tooltip.textContent.length > 0) {
+        this.tooltip.textContent = '';
+        rend.setStyle(this.tooltip, 'padding', '0px');
       };
 
       view.hitTest(screenPoint)
@@ -31,12 +38,12 @@ export class KindergartensTooltipService {
               const filter = dataStore.mainInfo.filter(data => data.GARDEN_ID === values.graphic.attributes.Garden_Id);
               const textMsg = filter[0].LABEL;
               const text = rend.createText(textMsg);
-              rend.appendChild(tooltip, text);
-              rend.appendChild(element.nativeElement, tooltip);
-              rend.addClass(tooltip, 'buldings-tooltip')
-              rend.setStyle(tooltip, 'top', top);
-              rend.setStyle(tooltip, 'left', left);
-              rend.setStyle(tooltip, 'padding', '5px');
+              rend.appendChild(this.tooltip, text);
+              rend.appendChild(element.nativeElement, this.tooltip);
+              rend.addClass(this.tooltip, 'buldings-tooltip')
+              rend.setStyle(this.tooltip, 'top', top);
+              rend.setStyle(this.tooltip, 'left', left);
+              rend.setStyle(this.tooltip, 'padding', '5px');
               rend.setProperty(document.body.style, 'cursor', 'pointer');
             } else {
               rend.setProperty(document.body.style, 'cursor', 'auto');
@@ -48,8 +55,11 @@ export class KindergartensTooltipService {
 
         });
     });
-
-    return [tooltipEvent, tooltip];
   }
+
+	clearMemoryAndNodes(rend) {
+		this.tooltipEvent.remove();
+		rend.removeChild(this.parentNode, this.tooltip);
+	}
 
 }

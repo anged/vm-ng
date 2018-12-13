@@ -144,15 +144,8 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
 
   maintenanceOn = false;
 
-  //dojo on map click event handler
-  identifyEvent: any;
-
   //dojo events
-  tooltipEvent: any;
   clickEvent: any;
-
-  // tooltip dom
-  tooltip: any;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -203,10 +196,7 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     const mainContainerDom = this.viewService.getMapElementRef();
     const rend = this.renderer2;
 
-    const [tooltipEvent, tooltip] = this.kindergartensTooltipService.addTooltip(view, this.view, mainContainerDom, rend, this.dataStore);
-
-    this.tooltipEvent = tooltipEvent;
-    this.tooltip = tooltip;
+    this.kindergartensTooltipService.addTooltip(view, this.view, mainContainerDom, rend, this.dataStore);
 
     this.cdr.detectChanges();
 
@@ -321,7 +311,7 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
       });
 
       //init identification of default or sub layers on MapView
-      this.identifyEvent = this.identify.identifyLayers(view);
+      this.identify.identifyLayers(view);
 
       if (snapshotUrl) {
         this.kindergartensLayersService.addCustomLayers(this.queryParams, snapshotUrl)
@@ -350,12 +340,9 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     }
 
     // dojo on remove event handler
-    this.identifyEvent.remove();
-    this.tooltipEvent.remove();
+		this.identify.removeEvent();
+		this.kindergartensTooltipService.clearMemoryAndNodes(this.renderer2);
     this.clickEvent.remove();
-
-    // destroy tooltip dom
-    this.tooltip.remove();
 
     //remove theme layers, exclude allLayers (JS API performance BUG)
     this.map.removeAll();

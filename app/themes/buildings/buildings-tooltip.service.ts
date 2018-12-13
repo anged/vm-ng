@@ -2,15 +2,23 @@ import { Injectable, ElementRef, Renderer2 } from '@angular/core';
 
 @Injectable()
 export class BuildingsTooltipService {
+	parentNode: ElementRef;
+
+	//dojo events
+	tooltipEvent: any;
+
+	// tooltip dom
+	tooltip: any;
 
   constructor() { }
 
   addTooltip(view, mapView, element: ElementRef, rend: Renderer2) {
-		const tooltip = rend.createElement('div');
-		rend.appendChild(element.nativeElement, tooltip);
+		this.tooltip = rend.createElement('div');
+		this.parentNode = element;
+		rend.appendChild(element.nativeElement, this.tooltip);
 		const requestAnimationFrame = window.requestAnimationFrame.bind(window)
 		let stop = true;
-    const tooltipEvent = mapView.on("pointer-move", (event) => {
+    this.tooltipEvent = mapView.on("pointer-move", (event) => {
       const screenPoint = {
         // hitTest BUG, as browser fails to execute 'elementFromPoint' on 'Document'
         // FIXME bug with x coordinate value, when menu icon is in view, temp solution: change x value from 0 to any value
@@ -18,9 +26,9 @@ export class BuildingsTooltipService {
         y: event.y
       };
 
-      if (tooltip.textContent.length > 0) {
-        tooltip.textContent = '';
-        rend.setStyle(tooltip, 'padding', '0px');
+      if (this.tooltip.textContent.length > 0) {
+        this.tooltip.textContent = '';
+        rend.setStyle(this.tooltip, 'padding', '0px');
       };
 
       view.hitTest(screenPoint)
@@ -55,11 +63,11 @@ export class BuildingsTooltipService {
 				// or in case we hit graphic object with no attributes
 				if (!stop && values.graphic.attributes) {
 					const textMsg = `${values.graphic.attributes.ADRESAS}`;
-					tooltip.innerHTML  = textMsg;
-					rend.addClass(tooltip, 'buldings-tooltip');
-					rend.setStyle(tooltip, 'transform', "translate3d(" + left + ", -" + top + ", 0)");
-					rend.setStyle(tooltip, 'padding', '5px');
-					rend.setStyle(tooltip, 'display', 'block');
+					this.tooltip.innerHTML  = textMsg;
+					rend.addClass(this.tooltip, 'buldings-tooltip');
+					rend.setStyle(this.tooltip, 'transform', "translate3d(" + left + ", -" + top + ", 0)");
+					rend.setStyle(this.tooltip, 'padding', '5px');
+					rend.setStyle(this.tooltip, 'display', 'block');
 					rend.setProperty(document.body.style, 'cursor', 'pointer');
 					if (((Math.abs(x - event.x ) < 1) && (Math.abs(y - event.y ) < 1))) {
 						x = event.x;
@@ -70,12 +78,18 @@ export class BuildingsTooltipService {
 					}
 				}
 			}
+
 			if (!0) {
 				moveRaFTimer = requestAnimationFrame(draw);
 			}
+
     }
 
-    return [tooltipEvent, tooltip];
   }
+
+	clearMemoryAndNodes(rend) {
+		this.tooltipEvent.remove();
+		rend.removeChild(this.parentNode, this.tooltip);
+	}
 
 }
