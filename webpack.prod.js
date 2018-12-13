@@ -98,5 +98,5 @@ module.exports = {
       callback();
     }
   ],
-  devtool: 'none'
+  devtool: 'source-map'
 };

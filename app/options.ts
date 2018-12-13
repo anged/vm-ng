@@ -350,7 +350,7 @@ export const MapOptions: any = {
       imgAlt: "Vilniaus 3D modelis" // image alt attribute
     },
     bpCompareExternal: {
-      url: "https://atviras.vplanas.lt/portal/apps/webappviewer3d/index.html?id=49e0fb95c0ed45d6ae1c5533176f63f3",
+      url: "https://atviras.vplanas.lt/BP1/",
       production: true, //if theme is ready for production
       external: true, // external application
       custom: true, // true if theme funcionality is custom
