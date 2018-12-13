@@ -24,15 +24,13 @@ import * as Raven from 'raven-js';
 
 if (environment.production) {
   Raven
-    .config(`https://${MapOptions.sentry.dns}@sentry9.vilnius.lt/4`, {
-      captureUnhandledRejections: true
-    })
+    .config(`https://${MapOptions.sentry.dns}@sentry9.vilnius.lt/4`)
     .install();
 }
 
 export class RavenErrorHandler implements ErrorHandler {
   handleError(err: any): void {
-    Raven.captureException(err.originalError);
+    Raven.captureException(err);
   }
 }
 
