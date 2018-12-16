@@ -23,12 +23,14 @@ const styles = {
   test: /\.(css|scss)$/,
   use: [
    {
-    loader: "style-loader"
+    loader: 'style-loader'
   }, {
-    loader: "css-loader",
+    loader: 'css-loader',
     options: {
       sourceMap: true
     }
+  }, {
+   loader: 'resolve-url-loader'
   }, {
     loader: 'sass-loader',
     options: {
@@ -63,7 +65,8 @@ module.exports = {
     }
   },
   module: {
-    rules: [{
+    rules: [
+     {
         test: /\.tsx?$/,
         use: [
           'ts-loader',
