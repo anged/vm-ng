@@ -14,7 +14,7 @@
   "keywords": [
     "angular-6",
     "esri-api-4",
-		"webpack"
+    "webpack"
   ],
   "dependencies": {
     "@angular/animations": "^6.0.3",
@@ -54,6 +54,7 @@
     "@types/lodash-es": "^4.17.1",
     "@types/node": "^10.1.4",
     "angular-router-loader": "^0.8.5",
+    "bootstrap-sass": "^3.4.0",
     "chart.js": "^2.7.1",
     "clean-webpack-plugin": "^0.1.19",
     "concurrently": "^3.5.1",
@@ -61,6 +62,7 @@
     "css-loader": "^0.28.11",
     "dojo-typings": "^1.11.9",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^2.0.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "lite-server": "^2.4.0",
@@ -69,6 +71,7 @@
     "optimize-css-assets-webpack-plugin": "^4.0.2",
     "reflect-metadata": "^0.1.10",
     "rimraf": "^2.6.1",
+    "sass-loader": "^7.1.0",
     "style-loader": "^0.13.2",
     "ts-loader": "^4.3.0",
     "typescript": "^2.9.1",
