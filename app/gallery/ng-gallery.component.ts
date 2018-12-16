@@ -1,7 +1,8 @@
 import { Component, Input, OnDestroy, AfterViewInit } from '@angular/core';
 
 const baguetteBox = require('baguettebox.js');
-require('baguettebox.js/dist/baguetteBox.min.css');
+//require('baguettebox.js/dist/baguetteBox.min.css');
+import '../styles/baguetteBox.min.css';
 
 @Component({
   selector: 'ng-gallery',
