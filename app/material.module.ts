@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 
+import { MATERIAL_SANITY_CHECKS } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -29,6 +30,7 @@ import { MatIconModule } from '@angular/material/icon';
 		MatCheckboxModule,
 		MatProgressSpinnerModule,
 		MatIconModule,
-  ]
+  ],
+	providers: [{provide: MATERIAL_SANITY_CHECKS, useValue: false}]
 })
 export class MaterialModule {}
