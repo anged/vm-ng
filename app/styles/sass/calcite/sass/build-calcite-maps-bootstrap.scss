@@ -23,29 +23,29 @@ $headings-font-weight:    400 !default;
 // Core CSS
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/scaffolding";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/type";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/code";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/code";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/grid";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/tables";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/tables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/forms";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/buttons";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/buttons";
 
 // Components
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/component-animations";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/dropdowns";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/button-groups";
+//@import "~bootstrap-sass/sassets/stylesheets/bootstrap/component-animations";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/dropdowns";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/button-groups";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/input-groups";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/navs";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/navbar";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/jumbotron";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/panels";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-embed";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/navs";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/navbar";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/jumbotron";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/panels";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-embed";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/close";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/list-group";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/list-group";
 
 // Components w/ JavaScript
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/modals";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/modals";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/carousel";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/carousel";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/alerts";
 
 // Utility classes

@@ -1786,6 +1786,25 @@ measure-map {
   bottom: 0;
 }
 
+#layers:after {
+    content: "";
+    width: 100%;
+    height: 30px;
+    position: absolute;
+    bottom: 0px;
+    background: rgba(233,233,233,0);
+    background: -moz-linear-gradient(top, rgba(233,233,233,0) 0%, rgba(233,233,233,1) 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(233,233,233,0)), color-stop(100%, rgba(233,233,233,1)));
+    background: -webkit-linear-gradient(top, rgba(233,233,233,0) 0%, rgba(233,233,233,1) 100%);
+    background: -o-linear-gradient(top, rgba(233,233,233,0) 0%, rgba(233,233,233,1) 100%);
+    background: -ms-linear-gradient(top, rgba(233,233,233,0) 0%, rgba(233,233,233,1) 100%);
+    background: linear-gradient(to bottom, rgba(233,233,233,0) 0%, #e9e9e9 100%);
+}
+
+.map-projects #layers:after {
+    height: 0;
+}
+
 .sub-menu {
   padding: 10px 20px;
 }
@@ -1966,6 +1985,7 @@ menu-map {
   border-radius: 2px;
   font-size: 20px;
   color: #C1272D;
+	line-height: 20px;
 }
 
 .button.close {

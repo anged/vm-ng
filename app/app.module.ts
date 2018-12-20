@@ -48,7 +48,7 @@ export function VilniusMapsErrorHandler() {
     BrowserModule,
     HttpClientModule,
     Routing,
-    ShareModule,
+    ShareModule.forRoot(),
     MenuModule,
     BrowserAnimationsModule
   ],
