@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, ChangeDetectorRef, NgZone, OnInit,  OnDestroy, ViewChild, ElementRef } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { MeasureMapService } from './measure-map.service';
@@ -67,6 +67,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private zone: NgZone,
     private mapService: MapService,
     private measureMapService: MeasureMapService
   ) { }
@@ -153,7 +154,6 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
 
     // reset eventHandler events
     this.removeEventHandlers();
-
   }
 
   // activate measure tools based on id
@@ -180,7 +180,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     }));
 
     //set active tool to empty string
-    this.activeTool = "";
+    this.zone.run(() => {this.activeTool = ""});
 
     // unsuspend layers
     if (this.mapService.getSuspendedIdentitication()) {

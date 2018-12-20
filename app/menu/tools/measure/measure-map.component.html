@@ -8,7 +8,7 @@
 	Matuoti / Analizuoti
 </button>
 
-<div id="measure-container" class="measure-tool buffer-tool">
+<div *ngIf="measureActive" id="measure-container" class="measure-tool buffer-tool">
   <div id="measure-menu" class="measure" [class.measure-active]="measureActive" draggable="true">
     <span id="close-measure" (click)="toggleMeasure()" [class.measure-active]="measureActive">
       <svg xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" height="612px" id="Capa_1"  version="1.1" viewBox="0 0 612 612" width="612px" x="0px" xmlns="http://www.w3.org/2000/svg" y="0px">
@@ -28,7 +28,7 @@
 		<span title="Keiskite padėti pelės pagalba">- keiskite padėti</span>
 		</span>
 
-		<measure-container *ngIf="measureActive"></measure-container>
+		<measure-container></measure-container>
 
   </div>
 </div>

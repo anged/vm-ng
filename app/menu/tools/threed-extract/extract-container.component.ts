@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatStepper } from '@angular/material';
 import { Subscription } from 'rxjs';
 ;
@@ -37,6 +37,7 @@ export class ExtractContainerComponent implements OnInit {
 
   constructor(
     private mapService: MapService,
+		private cdr: ChangeDetectorRef,
     private extractService: ThreeDExtractService,
   ) { }
 
@@ -82,6 +83,7 @@ export class ExtractContainerComponent implements OnInit {
     this.stepper.selected.completed = true
     this.isLinear = true;
     this.stepper.next();
+		this.cdr.detectChanges();
   }
 
   resetDraw(): void {
@@ -113,6 +115,7 @@ export class ExtractContainerComponent implements OnInit {
         this.toggleDraw();
       }
 
+			this.removeEventHandlers();
     }));
   }
 
