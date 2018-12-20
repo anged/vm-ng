@@ -13,8 +13,9 @@ export class KindergartensTooltipService {
   constructor() { }
 
   addTooltip(view, mapView, element: ElementRef, rend: Renderer2, dataStore): void {
+		const tooltip = rend.createElement('div');
+		this.tooltip = tooltip;
 		this.parentNode = element;
-    this.tooltip = rend.createElement('div');
     this.tooltipEvent = mapView.on("pointer-move", (event) => {
       const screenPoint = {
         // hitTest BUG, as browser fails to execute 'elementFromPoint' on 'Document'
@@ -23,9 +24,9 @@ export class KindergartensTooltipService {
         y: event.y
       };
 
-      if (this.tooltip.textContent.length > 0) {
-        this.tooltip.textContent = '';
-        rend.setStyle(this.tooltip, 'padding', '0px');
+      if (tooltip.textContent.length > 0) {
+        tooltip.textContent = '';
+        rend.setStyle(tooltip, 'padding', '0px');
       };
 
       view.hitTest(screenPoint)
@@ -38,12 +39,12 @@ export class KindergartensTooltipService {
               const filter = dataStore.mainInfo.filter(data => data.GARDEN_ID === values.graphic.attributes.Garden_Id);
               const textMsg = filter[0].LABEL;
               const text = rend.createText(textMsg);
-              rend.appendChild(this.tooltip, text);
-              rend.appendChild(element.nativeElement, this.tooltip);
-              rend.addClass(this.tooltip, 'buldings-tooltip')
-              rend.setStyle(this.tooltip, 'top', top);
-              rend.setStyle(this.tooltip, 'left', left);
-              rend.setStyle(this.tooltip, 'padding', '5px');
+              rend.appendChild(tooltip, text);
+              rend.appendChild(element.nativeElement, tooltip);
+              rend.addClass(tooltip, 'buldings-tooltip')
+              rend.setStyle(tooltip, 'top', top);
+              rend.setStyle(tooltip, 'left', left);
+              rend.setStyle(tooltip, 'padding', '5px');
               rend.setProperty(document.body.style, 'cursor', 'pointer');
             } else {
               rend.setProperty(document.body.style, 'cursor', 'auto');
@@ -58,7 +59,9 @@ export class KindergartensTooltipService {
   }
 
 	clearMemoryAndNodes(rend) {
-		this.tooltipEvent.remove();
+		if (this.tooltipEvent) {
+			this.tooltipEvent.remove();
+		}
 		rend.removeChild(this.parentNode, this.tooltip);
 	}
 

@@ -89,7 +89,9 @@ export class BuildingsTooltipService {
   }
 
   clearMemoryAndNodes(rend) {
-    this.tooltipEvent.remove();
+		if (this.tooltipEvent) {
+			this.tooltipEvent.remove();
+		} 
     rend.removeChild(this.parentNode, this.tooltip);
   }
 
