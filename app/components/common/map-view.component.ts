@@ -13,7 +13,7 @@ import watchUtils = require("esri/core/watchUtils");
   templateUrl: './app/components/common/map-view.component.html',
   styles: [`
 		.alert {
-	    padding: 5px 10px;
+	    padding: 6px 10px;
 	    margin-top: 10px;
 			font-size: 14px;
 	}

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material.module';
 import { FormsModule } from '@angular/forms';
@@ -31,14 +31,14 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 @NgModule({
   imports: [
     CommonModule,
-		FormsModule,
+    FormsModule,
     PerfectScrollbarModule,
     //3rd party imports
-		MaterialModule,
+    MaterialModule,
     NgxPopperModule
   ],
   declarations: [
-		HideElementseDirective,
+    HideElementseDirective,
     ScaleAndLogoComponent,
     BasemapToggle,
     CreditsCompponent,
@@ -47,11 +47,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MaintenanceComponent
   ],
   exports: [
-		HideElementseDirective,
+    HideElementseDirective,
     CommonModule,
-		FormsModule,
+    FormsModule,
     PerfectScrollbarModule,
-		MaterialModule,
+    MaterialModule,
     NgxPopperModule,
     ScaleAndLogoComponent,
     BasemapToggle,
@@ -59,23 +59,29 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     CompassComponent,
     SidebarComponent,
     MaintenanceComponent,
-  ],
-  providers: [
-    MetaService,
-    MapDefaultService,
-    ProjectsListService,
-    ProjectsFilterService,
-    SearchService,
-    SelectorsService,
-    MapWidgetsService,
-    FeatureQueryService,
-    IdentifyService,
-    ShareButtonService,
-    PointAddRemoveService,
-    {
-      provide: PERFECT_SCROLLBAR_CONFIG,
-      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    }
   ]
 })
-export class ShareModule { }
+export class ShareModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: ShareModule,
+      providers: [
+        MetaService,
+        MapDefaultService,
+        ProjectsListService,
+        ProjectsFilterService,
+        SearchService,
+        SelectorsService,
+        MapWidgetsService,
+        FeatureQueryService,
+        IdentifyService,
+        ShareButtonService,
+        PointAddRemoveService,
+        {
+          provide: PERFECT_SCROLLBAR_CONFIG,
+          useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+        }
+      ]
+    }
+  }
+}
