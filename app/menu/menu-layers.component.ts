@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { MapService } from '../map.service';
 import { ToolsNameService } from './tools-name.service';
 import { MapOptions } from '../options';
+import { Utils } from '../services/utils/utils';
 
 @Component({
   selector: 'menu-layers',
@@ -28,6 +29,8 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
   name: string;
   isChecked = true;
   listWidget: any;
+  viewCreateEvent: any;
+  listEvent: any;
 
   constructor(
     private mapService: MapService,
@@ -35,7 +38,6 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
   ) { }
 
   toggleLayerVisibility(event) {
-    //or use [change]="isChecked" and (change)="toggleLayerVisibility($event)" with event.target.value instead
     this.isChecked = event;
     this.isChecked ? this.mapService.returnFeatureLayers().map(feature => { feature.visible = true }) : this.mapService.returnFeatureLayers().map(feature => { feature.visible = false; });
   }
@@ -58,15 +60,21 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
       // reorder layers in map and view
       // allLayers layer must be always last in map array,
       // as we are hiding layer list manualy with css
-      // TODO remove event on destroy
-      view.on("layerview-create", (event) => {
+      // as we will be using static component in theme
+      this.viewCreateEvent = view.on("layerview-create", (event) => {
         //console.log('ONN', this.listWidget)
         const index = map.layers.items.length - 1;
+        //console.log('%c LOADED', "color: red; font-size: 18px",event.layer.id, map.layers.items.length, event, map)
         // reorder only if allLayers layer comes before theme layers
-        if (event.layer.id !== "allLayers" && index > 0) {
+        if (index > 0) {
           const subLayer = map.findLayerById("allLayers");
-          map.reorder(subLayer, index)
-          //console.log('%c LOADED', "color: red; font-size: 22px", event.layer.id)
+          if (typeof subLayer !== undefined) {
+            map.reorder(subLayer, index);
+
+            // simply activate :target speudo class with location href
+            Utils.setMenuLayersAnchor();
+          }
+
         }
 
         // set tool name Obs, to close tools boxes if opened
@@ -77,18 +85,15 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
       this.listWidget = this.mapService.initLayerListWidget(view, this.list.nativeElement);
 
       // TODO remove event on destroy
-      this.listWidget.on('trigger-action', (event) => {
+      this.listEvent = this.listWidget.on('trigger-action', (event) => {
         this.mapService.updateOpacity(event);
       });
     });
   }
 
-  ngDoCheck() {
-    //console.log("do check")
-  }
-
   ngOnDestroy() {
-    //console.log('Destroy Layers');
     this.listWidget.destroy();
+    this.viewCreateEvent.remove();
+    this.listEvent.remove();
   }
 }

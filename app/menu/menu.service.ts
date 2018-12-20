@@ -52,13 +52,16 @@ export class MenuService {
 		// remove layers
 		const map = this.mapService.returnMap();
 		const layer = map.findLayerById("allLayers");
-		//console.log('%c layer', 'color: green; font-size:20px', layer, map)
-		//layer.sublayers.removeAll();
-		layer.allSublayers.items.forEach(layer =>  {
-			if (!layer.sublayers) {
-				layer.visible = false;
-			}
-		});
+
+		if (layer) {
+			layer.allSublayers.items.forEach(layer =>  {
+				if (!layer.sublayers) {
+					layer.visible = false;
+				}
+
+			});
+		}
+
 	}
 
   setSubLayersState() {
