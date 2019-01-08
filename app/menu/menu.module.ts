@@ -24,8 +24,10 @@ import {
   ProfileToolComponent,
   ProfileToolContainerComponent,
   ProfileContainerComponent,
-  ProfileElevationComponent//,
-  //PrintMapComponent
+  ProfileElevationComponent,
+  //PrintMapComponent,
+	SwipeToolComponent,
+	SwipeToolContainerComponent
 } from '../menu';
 
 import { NgDraggableModule } from 'angular-draggable';
@@ -49,8 +51,9 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MenuLegendItvComponent, MenuLegendComponent,
     ThreeDExtractComponent, ExtractContainerComponent,
     MeasureMapComponent, MeasureContainerComponent,
-    ProfileToolComponent, ProfileToolContainerComponent, ProfileContainerComponent, ProfileElevationComponent//,
-    //PrintMapComponent
+    ProfileToolComponent, ProfileToolContainerComponent, ProfileContainerComponent, ProfileElevationComponent,
+    //PrintMapComponent,
+		SwipeToolComponent, SwipeToolContainerComponent
   ],
   exports: [MenuComponent, MenuThemesComponent],
   providers: [

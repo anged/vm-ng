@@ -9,12 +9,13 @@ import { MapService } from '../map.service';
 import { ShareButtonService } from '../services/share-button.service';
 import { MenuService } from './menu.service';
 import { ProfileToolContainerComponent } from './tools/profile/profile-tool-container.component'; // re-export the named thing
+import { SwipeToolContainerComponent } from './tools/swipe/swipe-tool-container.component'; // re-export the named thing
 
 import watchUtils = require("esri/core/watchUtils");
 
 @Component({
   selector: 'menu-map',
-  entryComponents: [ProfileToolContainerComponent],
+  entryComponents: [ProfileToolContainerComponent, SwipeToolContainerComponent],
   templateUrl: './app/menu/menu.component.html'//,
 })
 export class MenuComponent implements OnInit, OnDestroy {
@@ -22,6 +23,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   @Input() allLayerslayer: any;
   //@ViewChild(ProfileElevationComponent) profileElevationComponent: ProfileElevationComponent;
   ProfileToolContainerComponent = ProfileToolContainerComponent;
+  SwipeToolContainerComponent = SwipeToolContainerComponent;
 
   mobileActive: boolean = false;
 
