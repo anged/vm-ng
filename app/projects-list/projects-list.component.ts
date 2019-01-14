@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, OnInit, OnDestroy, NgZone, ChangeDetectionStrategy } from '@angular/core';
 
 import { MapService } from '../map.service';
 import { FeatureQueryService } from '../query/feature-query.service';
@@ -18,7 +18,8 @@ import all = require("dojo/promise/all");
     '(document:click)': 'handleClick($event)',
   },
   providers: [ProjectsFilterService],
-  templateUrl: './app/projects-list/projects-list.component.html'
+  templateUrl: './app/projects-list/projects-list.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ProjectsListComponent implements OnInit, OnDestroy {
@@ -68,6 +69,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     myElement: ElementRef,
     private _mapService: MapService,
     private filterThemes: FeatureQueryService,
+    private ngZone: NgZone,
     private projectsFilter: ProjectsFilterService,
     private projectsListService: ProjectsListService,
     private identify: IdentifyService,
@@ -75,6 +77,28 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     this.elementRef = myElement;
     this.selectedIdx = -1;
   }
+
+	ngOnInit() {
+		// get full list binding and then proceed
+		// set projetcs unique final years for filtering
+		// Observable unsubscribes with first operator
+		this.projectsListService.fullListItem.subscribe(fullList => {
+			console.log(this.projectsList )
+			this.fullList = fullList;
+			this.projectsFinalYears = this.projectsFilter.getUniqueAttributeSubStr(fullList, "Igyvend_IKI", 4);
+
+			//filter by TemaID
+			this.projectsThemes = this.projectsFilter.getUniqueAttribute(fullList, "TemaID");
+
+			//send years and themes array to Map object in feature query service
+			this.filterThemes.sendToMap(this.projectsFinalYears, this.projectsThemes);
+
+			//set active class on init
+			this.activeTheme = this.filterThemes.getFilterStatusTheme();
+			this.activeYear = this.filterThemes.getFilterStatusYear();
+		}
+		);
+	}
 
   //activate word or map list item
   activateList(e = null, listName: string = null) {
@@ -134,18 +158,21 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   // list item identify
   identifyAttributes(project: any) {
-    let query = this.projectsListService.Query();
-    let queryTask = this.projectsListService.QueryTask(MapOptions.themes.itvTheme.layers.uniqueProjects + "/0");
+		this.ngZone.runOutsideAngular(() => {
+			let query = this.projectsListService.Query();
+	    let queryTask = this.projectsListService.QueryTask(MapOptions.themes.itvTheme.layers.uniqueProjects + "/0");
 
-    // remove any selection layers
-    this.removeSelectionLayers();
+	    // remove any selection layers
+	    this.removeSelectionLayers();
 
-    // TODO remove old graphic if exists
-    this.view.graphics.items = [];
-    query.where = "UNIKALUS_NR=" + project.attributes.UNIKALUS_NR;
-    query.outFields = ["*"];
-    query.returnGeometry = true;
-    queryTask.execute(query).then(this.queryTaskExecution.bind(this, project), (err) => console.log(err))
+	    // TODO remove old graphic if exists
+	    this.view.graphics.items = [];
+	    query.where = "UNIKALUS_NR=" + project.attributes.UNIKALUS_NR;
+	    query.outFields = ["*"];
+	    query.returnGeometry = true;
+	    queryTask.execute(query).then(this.queryTaskExecution.bind(this, project), (err) => console.log(err))
+		});
+
   }
 
   queryTaskExecution(project, results) {
@@ -361,27 +388,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   countActivatedFilter() {
     // Objects.values exists as we using es2017 lib (tsconfig.json)
     this.activatedFiltersNumber = Object.values(this.activeYear).reduce((acc, cur) => { !cur ? acc += 1 : acc; return acc; }, 0) + Object.values(this.activeTheme).reduce((acc, cur) => { !cur ? acc += 1 : acc; return acc; }, 0);
-  }
-
-  ngOnInit() {
-    // get full list binding and then proceed
-    // set projetcs unique final years for filtering
-    // Observable unsubscribes with first operator
-    this.projectsListService.fullListItem.subscribe(fullList => {
-      this.fullList = fullList;
-      this.projectsFinalYears = this.projectsFilter.getUniqueAttributeSubStr(fullList, "Igyvend_IKI", 4);
-
-      //filter by TemaID
-      this.projectsThemes = this.projectsFilter.getUniqueAttribute(fullList, "TemaID");
-
-      //send years and themes array to Map object in feature query service
-      this.filterThemes.sendToMap(this.projectsFinalYears, this.projectsThemes);
-
-      //set active class on init
-      this.activeTheme = this.filterThemes.getFilterStatusTheme();
-      this.activeYear = this.filterThemes.getFilterStatusYear();
-    }
-    );
   }
 
   ngOnDestroy() {

@@ -1,9 +1,18 @@
 import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { ToolsNameService } from '../../tools-name.service';
+import { SwipeToolService } from './swipe-tool.service';
+import { MapService } from '../../../map.service';
+
 import { ToolsList } from '../../tools.list';
 
-import { Subscription } from 'rxjs';
+import { Subscription, Subject, Observable, of } from 'rxjs';
+import { throttleTime, merge, delay, debounceTime, switchMap, switchMapTo, tap, filter, takeUntil, first } from 'rxjs/operators';
+
+
+// id for raster layer in projects theme
+export const projectRasterLayerID = "projects-mil";
 
 @Component({
   selector: 'swipe-tool',
@@ -15,7 +24,7 @@ import { Subscription } from 'rxjs';
 					<ng-template #svgToolW><image xlink:href="../../app/img/svg/swipe-w.svg" x="0" y="0" height="22px" width="16px"/></ng-template>
 				</svg>
 			</span>
-			Palyginimas
+			Sprendinių palyginimas
 		</button>
 	`,
   styles: [`
@@ -34,43 +43,70 @@ import { Subscription } from 'rxjs';
 	`]
 })
 
-export class SwipeToolComponent implements AfterViewInit {
+export class SwipeToolComponent {
   private toolActive = false;
   s: Subscription;
+  b: Subscription;
+  stop$: Observable<string>;
 
-  constructor(private cdr: ChangeDetectorRef, private toolsNameService: ToolsNameService) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private sts: SwipeToolService,
+    private ms: MapService,
+    private toolsNameService: ToolsNameService
+	) { }
 
   toggleSwipe() {
     this.toolActive = !this.toolActive;
+    console.log('TOGGLE', this.toolActive)
     if (this.toolActive) {
-      // reatatch chnage detaction when we open tool
-      this.cdr.reattach();
+      // destroy tool component if other component containing draw tool got opened
+      this.s = this.toolsNameService.currentToolName.pipe(
+        debounceTime(1000),
+        takeUntil(this.toolsNameService.currentToolName.pipe(
+          filter(name => ToolsList.swipe !== name),
+          tap((name) => {
+            console.log('takeUntil', name);
+            console.log('Subscription', this.s);
+            setTimeout(() => {
+              this.removeRasterLayer();
+              this.toolActive = false;
+              this.sts.closeSwipe();
+            });
+          })
+        ))
+      )
+      .subscribe((name) => {
+        this.sts.toggleSwipe(this.toolActive);
+        console.log('name', name, 'active', this.toolActive)
+      });
 
-			// set tool name Obs
-			this.toolsNameService.setCurentToolName(ToolsList.swipe);
+      // set tool name Obs
+      this.toolsNameService.setCurentToolName(ToolsList.swipe);
+    }
 
-      this.s = this.toolsNameService.currentToolName
-        .subscribe((name) => {
-          if (ToolsList.swipe !== name) { this.closeMeasure() };
-        });
-    } else {
-      this.closeMeasure();
+    if (!this.toolActive) {
+      if (this.s) {
+        console.log('CLOSE ALL')
+        this.sts.toggleSwipe(this.toolActive);
+        this.removeRasterLayer();
+        this.s.unsubscribe();
+        this.s = null;
+      }
+
     }
 
   }
 
-  closeMeasure() {
-    this.toolActive = false;
-    this.s.unsubscribe();
+  removeRasterLayer() {
+    // remove layer
+    const map = this.ms.returnMap();
+    const layer = map.findLayerById(projectRasterLayerID);
 
-    //  detach changes detection
-    // and last time detect changes when closing tool
-    this.cdr.detach();
-    this.cdr.detectChanges();
+    if (layer) {
+      map.remove(layer);
+    }
+
   }
-
-	ngAfterViewInit() {
-		this.cdr.detach();
-	}
 
 }

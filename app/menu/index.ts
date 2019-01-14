@@ -18,3 +18,4 @@ export { ProfileElevationComponent } from './tools/profile/profile-elevation.com
 export { PrintMapComponent } from './tools/print/print-map.component'; // re-export the named thing
 export { SwipeToolComponent } from './tools/swipe/swipe-tool.component'; // re-export the named thing
 export { SwipeToolContainerComponent } from './tools/swipe/swipe-tool-container.component'; // re-export the named thing
+export { SwipeContainerComponent } from './tools/swipe/swipe-container.component'; // re-export the named thing

@@ -7,6 +7,7 @@ import { MenuToolsService } from './menu-tools.service';
 import { ThreeDExtractService } from "./tools/threed-extract/threed-extract.service";
 import { MeasureMapService } from './tools/measure/measure-map.service'; // re-export the named thing
 import { ProfileToolService } from './tools/profile/profile-tool.service'; // re-export the named thing
+import { SwipeToolService } from './tools/swipe/swipe-tool.service'; // re-export the named thing
 import { ToolsNameService } from './tools-name.service'; // re-export the named thing
 import { MenuComponent } from './menu.component';
 import {
@@ -27,7 +28,8 @@ import {
   ProfileElevationComponent,
   //PrintMapComponent,
 	SwipeToolComponent,
-	SwipeToolContainerComponent
+	SwipeToolContainerComponent,
+	SwipeContainerComponent
 } from '../menu';
 
 import { NgDraggableModule } from 'angular-draggable';
@@ -53,7 +55,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MeasureMapComponent, MeasureContainerComponent,
     ProfileToolComponent, ProfileToolContainerComponent, ProfileContainerComponent, ProfileElevationComponent,
     //PrintMapComponent,
-		SwipeToolComponent, SwipeToolContainerComponent
+		SwipeToolComponent, SwipeToolContainerComponent, SwipeContainerComponent
   ],
   exports: [MenuComponent, MenuThemesComponent],
   providers: [
@@ -61,6 +63,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     ThreeDExtractService,
     MeasureMapService,
     ProfileToolService,
+    SwipeToolService,
     ToolsNameService
   ]
 })
