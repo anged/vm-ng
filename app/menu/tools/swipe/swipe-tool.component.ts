@@ -1,5 +1,4 @@
-import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Component } from '@angular/core';
 
 import { ToolsNameService } from '../../tools-name.service';
 import { SwipeToolService } from './swipe-tool.service';
@@ -7,8 +6,8 @@ import { MapService } from '../../../map.service';
 
 import { ToolsList } from '../../tools.list';
 
-import { Subscription, Subject, Observable, of } from 'rxjs';
-import { throttleTime, merge, delay, debounceTime, switchMap, switchMapTo, tap, filter, takeUntil, first } from 'rxjs/operators';
+import { Subscription, Observable } from 'rxjs';
+import { debounceTime, tap, filter, takeUntil } from 'rxjs/operators';
 
 
 // id for raster layer in projects theme
@@ -50,7 +49,6 @@ export class SwipeToolComponent {
   stop$: Observable<string>;
 
   constructor(
-    private cdr: ChangeDetectorRef,
     private sts: SwipeToolService,
     private ms: MapService,
     private toolsNameService: ToolsNameService
@@ -58,16 +56,15 @@ export class SwipeToolComponent {
 
   toggleSwipe() {
     this.toolActive = !this.toolActive;
-    console.log('TOGGLE', this.toolActive)
     if (this.toolActive) {
       // destroy tool component if other component containing draw tool got opened
       this.s = this.toolsNameService.currentToolName.pipe(
         debounceTime(1000),
         takeUntil(this.toolsNameService.currentToolName.pipe(
           filter(name => ToolsList.swipe !== name),
-          tap((name) => {
-            console.log('takeUntil', name);
-            console.log('Subscription', this.s);
+          tap(() => {
+            //console.log('takeUntil');
+            //console.log('Subscription');
             setTimeout(() => {
               this.removeRasterLayer();
               this.toolActive = false;
@@ -76,9 +73,8 @@ export class SwipeToolComponent {
           })
         ))
       )
-      .subscribe((name) => {
+      .subscribe(() => {
         this.sts.toggleSwipe(this.toolActive);
-        console.log('name', name, 'active', this.toolActive)
       });
 
       // set tool name Obs
@@ -87,8 +83,7 @@ export class SwipeToolComponent {
 
     if (!this.toolActive) {
       if (this.s) {
-        console.log('CLOSE ALL')
-        this.sts.toggleSwipe(this.toolActive);
+        this.sts.closeSwipe();
         this.removeRasterLayer();
         this.s.unsubscribe();
         this.s = null;

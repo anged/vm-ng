@@ -687,6 +687,8 @@ export class MapService {
   //update certain features of Listlayer ListItems
   updateListItem(listItem) {
     listItem.item.open = true;
+		listItem.item.actionsOpen = true;
+
     if (listItem.item.parent == null) {
       listItem.item.actionsSections = [
         [],

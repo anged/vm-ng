@@ -193,7 +193,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     //subscribe to sub layer list button activation
     this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
-      //console.log("STATE SUBLAYERS", activeState)
       this.subLayersActive = activeState;
       //get state after subscribe, if help box is closed initiate it
       if ((!this.menuService.getVisibleSubLayerNumberState()) && activeState) {
@@ -207,7 +206,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       .pipe(
         filter(event => event instanceof NavigationEnd)
       )
-      .subscribe((event) => {
+      .subscribe(() => {
         // split # if using menuService
         // split ? if using url query params
         this.themeName = this.router.url.slice(1).split('#')[0].split('?')[0];
@@ -223,10 +222,6 @@ export class MenuComponent implements OnInit, OnDestroy {
         }
 
       });
-  }
-
-  ngOnChanges() {
-    console.log('MENU', this.themeName)
   }
 
   ngOnDestroy() {

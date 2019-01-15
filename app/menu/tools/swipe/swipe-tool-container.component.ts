@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { SwipeToolService } from './swipe-tool.service';
 
@@ -13,17 +13,13 @@ import { SwipeToolService } from './swipe-tool.service';
   styleUrls: ['app/menu/tools/swipe/swipe-tool-container.component.css']
 })
 
-export class SwipeToolContainerComponent implements OnDestroy {
+export class SwipeToolContainerComponent {
   constructor(
     private sts: SwipeToolService,
   ) { }
 
   closeSwipe() {
     this.sts.closeSwipe();
-  }
-
-  ngOnDestroy() {
-
   }
 
 }

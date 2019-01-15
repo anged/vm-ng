@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, Input, OnDestroy, AfterViewInit, Renderer2, ChangeDetectionStrategy } from '@angular/core';
 
 const baguetteBox = require('baguettebox.js');
 //require('baguettebox.js/dist/baguetteBox.min.css');
@@ -32,24 +32,25 @@ import '../styles/baguetteBox.min.css';
         </a>
       </div>
     </div>
-  `
+  `,
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class NgGalleryCompontent implements OnDestroy, AfterViewInit {
   @Input() gallery: any;
 
-  constructor() { }
+  constructor(private rend: Renderer2) { }
 
   ngAfterViewInit() {
     baguetteBox.run('.gallery');
-    //append Gallery to popup
+
+    // append Gallery to popup
     setTimeout(() => {
-      let gallery = document.getElementById("gallery-ng-projects");
-      let laoder = document.getElementById("gallery-loader");
-      if ((gallery !== null) && (laoder !== null)) {
-        laoder.setAttribute("style", "display: none;");
-        //console.log(gallery )
-        document.getElementById("gallery-container").appendChild(gallery);
+      const gallery = document.getElementById("gallery-ng-projects");
+      const loader = document.getElementById("gallery-loader");
+      if ((gallery !== null) && (loader !== null)) {
+        this.rend.setStyle(loader, 'display', 'none');
+        this.rend.appendChild(document.getElementById("gallery-container"), gallery);
       }
     }, 1000);
   }

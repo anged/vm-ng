@@ -83,7 +83,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 		// set projetcs unique final years for filtering
 		// Observable unsubscribes with first operator
 		this.projectsListService.fullListItem.subscribe(fullList => {
-			console.log(this.projectsList )
 			this.fullList = fullList;
 			this.projectsFinalYears = this.projectsFilter.getUniqueAttributeSubStr(fullList, "Igyvend_IKI", 4);
 
@@ -102,19 +101,22 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   //activate word or map list item
   activateList(e = null, listName: string = null) {
-    if (listName === "word") {
-      this.wordListActive = e.target.id;
-      //deactivate mapListActive
-      this.mapListActive = null;
-    } else if (listName === "map") {
-      this.mapListActive = e.target.id;
-      //deactivate wordListActive
-      this.wordListActive = null;
-    } else {
-      //deactivate list selection
-      this.wordListActive = null;
-      this.mapListActive = null;
-    }
+		this.ngZone.run(() => {
+			if (listName === "word") {
+				this.wordListActive = e.target.id;
+				//deactivate mapListActive
+				this.mapListActive = null;
+			} else if (listName === "map") {
+				this.mapListActive = e.target.id;
+				//deactivate wordListActive
+				this.wordListActive = null;
+			} else {
+				//deactivate list selection
+				this.wordListActive = null;
+				this.mapListActive = null;
+			}
+		});
+
   }
 
   //getactivatedListName
@@ -158,7 +160,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   // list item identify
   identifyAttributes(project: any) {
-		this.ngZone.runOutsideAngular(() => {
 			let query = this.projectsListService.Query();
 	    let queryTask = this.projectsListService.QueryTask(MapOptions.themes.itvTheme.layers.uniqueProjects + "/0");
 
@@ -170,9 +171,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 	    query.where = "UNIKALUS_NR=" + project.attributes.UNIKALUS_NR;
 	    query.outFields = ["*"];
 	    query.returnGeometry = true;
-	    queryTask.execute(query).then(this.queryTaskExecution.bind(this, project), (err) => console.log(err))
-		});
-
+	    queryTask.execute(query).then(this.queryTaskExecution.bind(this, project), (err) => console.warn(err))
   }
 
   queryTaskExecution(project, results) {
@@ -300,22 +299,18 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   getList() {
-    //console.log("FEATURES: ", this.projectsListOriginal)
     return this.fullList;
   }
 
   filter(event: any) {
     //add setTimeout and clearTimeout
     this.keyUpDelay(() => {
-      //console.log("EVENTAS: ", event.code)
       if (this.query !== "") {
         this.filteredList = this.getList().filter(function(project) {
           const projectsName = project.attributes.Pavadinimas.toLowerCase();
           return projectsName.indexOf(this.query.toLowerCase()) > -1;
         }.bind(this));
 
-        //console.log(event.target.value)
-        //console.log("SARASAS: ", this.filteredList)
         //emit filter list and input value for additional query task if any additional filtering occurs
         this.onFilter.emit([this.filteredList, event.target.value]);
 
@@ -325,26 +320,21 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
         if (event.code == "ArrowDown" && this.selectedIdx < this.filteredList.length) {
 
           this.selectedIdx++;
-          //console.log(this.selectedIdx);
         } else if (event.code == "ArrowUp" && this.selectedIdx > 0) {
           this.selectedIdx--;
-          //console.log(this.selectedIdx);
         }
       } else {
         this.filteredList = [];
         //emit filter list and input value for additional query task if any additional filtering occurs
-        //console.log("SARASAS: ", this.filteredList)
         this.onFilter.emit([this.filteredList, event.target.value]);
       }
     }, 200);
   }
 
   select(item) {
-    //console.log(item);
     this.query = item;
     this.filteredList = [];
     this.selectedIdx = -1;
-    //this.onFilter.emit(item);
   }
 
   handleBlur() {
