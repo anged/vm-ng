@@ -4,17 +4,23 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
+import { ToolsNameService } from './tools-name.service';
+
 import { MapOptions } from '../options';
 import { MapService } from '../map.service';
 import { ShareButtonService } from '../services/share-button.service';
 import { MenuService } from './menu.service';
 import { ProfileToolContainerComponent } from './tools/profile/profile-tool-container.component'; // re-export the named thing
+import { SwipeToolContainerComponent } from './tools/swipe/swipe-tool-container.component'; // re-export the named thing
+import { SwipeToolService } from './tools/swipe/swipe-tool.service';
 
 import watchUtils = require("esri/core/watchUtils");
 
+import { Observable } from 'rxjs';
+
 @Component({
   selector: 'menu-map',
-  entryComponents: [ProfileToolContainerComponent],
+  entryComponents: [ProfileToolContainerComponent, SwipeToolContainerComponent],
   templateUrl: './app/menu/menu.component.html'//,
 })
 export class MenuComponent implements OnInit, OnDestroy {
@@ -22,6 +28,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   @Input() allLayerslayer: any;
   //@ViewChild(ProfileElevationComponent) profileElevationComponent: ProfileElevationComponent;
   ProfileToolContainerComponent = ProfileToolContainerComponent;
+  SwipeToolContainerComponent = SwipeToolContainerComponent;
 
   mobileActive: boolean = false;
 
@@ -46,6 +53,10 @@ export class MenuComponent implements OnInit, OnDestroy {
   // using for progressBar
   route: string;
 
+	get swipeToolOn(): Observable<boolean> {
+		return this.sts.getSwipeStatus();
+	};
+
   //Listen to tools component close event
   onClose(event: boolean) {
     this.toolsActive = event;
@@ -55,7 +66,10 @@ export class MenuComponent implements OnInit, OnDestroy {
   constructor(
     private mapService: MapService,
     private router: Router,
-    private menuService: MenuService, private shareButtonService: ShareButtonService) {
+    private sts: SwipeToolService,
+		private toolsNameService: ToolsNameService,
+    private menuService: MenuService, private shareButtonService: ShareButtonService
+	) {
     // temporary: Hash toggle, reload, new page,
     window.location.hash = '#';
   }
@@ -179,7 +193,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     //subscribe to sub layer list button activation
     this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
-      //console.log("STATE SUBLAYERS", activeState)
       this.subLayersActive = activeState;
       //get state after subscribe, if help box is closed initiate it
       if ((!this.menuService.getVisibleSubLayerNumberState()) && activeState) {
@@ -193,7 +206,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       .pipe(
         filter(event => event instanceof NavigationEnd)
       )
-      .subscribe((event) => {
+      .subscribe(() => {
         // split # if using menuService
         // split ? if using url query params
         this.themeName = this.router.url.slice(1).split('#')[0].split('?')[0];
@@ -201,13 +214,14 @@ export class MenuComponent implements OnInit, OnDestroy {
         // check if route changes completely, because we using hash attribute for menu navigation
         if (this.route !== this.themeName) {
           this.route = this.themeName;
+
+					// remove any tool if active
+					// by passing none existing string
+					this.toolsNameService.setCurentToolName('none');
+
         }
 
       });
-  }
-
-  ngOnChanges() {
-    //console.log('MENU', this.themeName)
   }
 
   ngOnDestroy() {

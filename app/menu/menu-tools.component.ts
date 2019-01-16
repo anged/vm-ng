@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { MenuToolsService } from './menu-tools.service';
 
@@ -9,6 +9,7 @@ import { MenuToolsService } from './menu-tools.service';
 })
 
 export class MenuToolsComponent {
+	@Input() currentTheme: string;
   // set  toolsActive to false in parent component and get back menu wrapper for mobile
   @Output() close: EventEmitter<any> = new EventEmitter();
 

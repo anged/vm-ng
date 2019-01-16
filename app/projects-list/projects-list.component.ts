@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, OnInit, OnDestroy, NgZone, ChangeDetectionStrategy } from '@angular/core';
 
 import { MapService } from '../map.service';
 import { FeatureQueryService } from '../query/feature-query.service';
@@ -18,7 +18,8 @@ import all = require("dojo/promise/all");
     '(document:click)': 'handleClick($event)',
   },
   providers: [ProjectsFilterService],
-  templateUrl: './app/projects-list/projects-list.component.html'
+  templateUrl: './app/projects-list/projects-list.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ProjectsListComponent implements OnInit, OnDestroy {
@@ -68,6 +69,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     myElement: ElementRef,
     private _mapService: MapService,
     private filterThemes: FeatureQueryService,
+    private ngZone: NgZone,
     private projectsFilter: ProjectsFilterService,
     private projectsListService: ProjectsListService,
     private identify: IdentifyService,
@@ -76,21 +78,45 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     this.selectedIdx = -1;
   }
 
+	ngOnInit() {
+		// get full list binding and then proceed
+		// set projetcs unique final years for filtering
+		// Observable unsubscribes with first operator
+		this.projectsListService.fullListItem.subscribe(fullList => {
+			this.fullList = fullList;
+			this.projectsFinalYears = this.projectsFilter.getUniqueAttributeSubStr(fullList, "Igyvend_IKI", 4);
+
+			//filter by TemaID
+			this.projectsThemes = this.projectsFilter.getUniqueAttribute(fullList, "TemaID");
+
+			//send years and themes array to Map object in feature query service
+			this.filterThemes.sendToMap(this.projectsFinalYears, this.projectsThemes);
+
+			//set active class on init
+			this.activeTheme = this.filterThemes.getFilterStatusTheme();
+			this.activeYear = this.filterThemes.getFilterStatusYear();
+		}
+		);
+	}
+
   //activate word or map list item
   activateList(e = null, listName: string = null) {
-    if (listName === "word") {
-      this.wordListActive = e.target.id;
-      //deactivate mapListActive
-      this.mapListActive = null;
-    } else if (listName === "map") {
-      this.mapListActive = e.target.id;
-      //deactivate wordListActive
-      this.wordListActive = null;
-    } else {
-      //deactivate list selection
-      this.wordListActive = null;
-      this.mapListActive = null;
-    }
+		this.ngZone.run(() => {
+			if (listName === "word") {
+				this.wordListActive = e.target.id;
+				//deactivate mapListActive
+				this.mapListActive = null;
+			} else if (listName === "map") {
+				this.mapListActive = e.target.id;
+				//deactivate wordListActive
+				this.wordListActive = null;
+			} else {
+				//deactivate list selection
+				this.wordListActive = null;
+				this.mapListActive = null;
+			}
+		});
+
   }
 
   //getactivatedListName
@@ -134,18 +160,18 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   // list item identify
   identifyAttributes(project: any) {
-    let query = this.projectsListService.Query();
-    let queryTask = this.projectsListService.QueryTask(MapOptions.themes.itvTheme.layers.uniqueProjects + "/0");
+			let query = this.projectsListService.Query();
+	    let queryTask = this.projectsListService.QueryTask(MapOptions.themes.itvTheme.layers.uniqueProjects + "/0");
 
-    // remove any selection layers
-    this.removeSelectionLayers();
+	    // remove any selection layers
+	    this.removeSelectionLayers();
 
-    // TODO remove old graphic if exists
-    this.view.graphics.items = [];
-    query.where = "UNIKALUS_NR=" + project.attributes.UNIKALUS_NR;
-    query.outFields = ["*"];
-    query.returnGeometry = true;
-    queryTask.execute(query).then(this.queryTaskExecution.bind(this, project), (err) => console.log(err))
+	    // TODO remove old graphic if exists
+	    this.view.graphics.items = [];
+	    query.where = "UNIKALUS_NR=" + project.attributes.UNIKALUS_NR;
+	    query.outFields = ["*"];
+	    query.returnGeometry = true;
+	    queryTask.execute(query).then(this.queryTaskExecution.bind(this, project), (err) => console.warn(err))
   }
 
   queryTaskExecution(project, results) {
@@ -273,22 +299,18 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   getList() {
-    //console.log("FEATURES: ", this.projectsListOriginal)
     return this.fullList;
   }
 
   filter(event: any) {
     //add setTimeout and clearTimeout
     this.keyUpDelay(() => {
-      //console.log("EVENTAS: ", event.code)
       if (this.query !== "") {
         this.filteredList = this.getList().filter(function(project) {
           const projectsName = project.attributes.Pavadinimas.toLowerCase();
           return projectsName.indexOf(this.query.toLowerCase()) > -1;
         }.bind(this));
 
-        //console.log(event.target.value)
-        //console.log("SARASAS: ", this.filteredList)
         //emit filter list and input value for additional query task if any additional filtering occurs
         this.onFilter.emit([this.filteredList, event.target.value]);
 
@@ -298,26 +320,21 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
         if (event.code == "ArrowDown" && this.selectedIdx < this.filteredList.length) {
 
           this.selectedIdx++;
-          //console.log(this.selectedIdx);
         } else if (event.code == "ArrowUp" && this.selectedIdx > 0) {
           this.selectedIdx--;
-          //console.log(this.selectedIdx);
         }
       } else {
         this.filteredList = [];
         //emit filter list and input value for additional query task if any additional filtering occurs
-        //console.log("SARASAS: ", this.filteredList)
         this.onFilter.emit([this.filteredList, event.target.value]);
       }
     }, 200);
   }
 
   select(item) {
-    //console.log(item);
     this.query = item;
     this.filteredList = [];
     this.selectedIdx = -1;
-    //this.onFilter.emit(item);
   }
 
   handleBlur() {
@@ -361,27 +378,6 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   countActivatedFilter() {
     // Objects.values exists as we using es2017 lib (tsconfig.json)
     this.activatedFiltersNumber = Object.values(this.activeYear).reduce((acc, cur) => { !cur ? acc += 1 : acc; return acc; }, 0) + Object.values(this.activeTheme).reduce((acc, cur) => { !cur ? acc += 1 : acc; return acc; }, 0);
-  }
-
-  ngOnInit() {
-    // get full list binding and then proceed
-    // set projetcs unique final years for filtering
-    // Observable unsubscribes with first operator
-    this.projectsListService.fullListItem.subscribe(fullList => {
-      this.fullList = fullList;
-      this.projectsFinalYears = this.projectsFilter.getUniqueAttributeSubStr(fullList, "Igyvend_IKI", 4);
-
-      //filter by TemaID
-      this.projectsThemes = this.projectsFilter.getUniqueAttribute(fullList, "TemaID");
-
-      //send years and themes array to Map object in feature query service
-      this.filterThemes.sendToMap(this.projectsFinalYears, this.projectsThemes);
-
-      //set active class on init
-      this.activeTheme = this.filterThemes.getFilterStatusTheme();
-      this.activeYear = this.filterThemes.getFilterStatusYear();
-    }
-    );
   }
 
   ngOnDestroy() {

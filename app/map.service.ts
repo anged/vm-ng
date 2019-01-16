@@ -80,12 +80,12 @@ export class MapService {
     return this.map;
   }
 
-  viewMap(map: Map): MapView {
+  viewMap(map: Map, container ='map'): MapView {
     // using runOutsideAngular instead of onPush change detection in component o avoid view ESRI UPDATES constanly initaiting change detection
     this.zone.runOutsideAngular(() => {
       const view = new MapView({
         //container: this.elementRef.nativeElement.firstChild, // AG good practis
-        container: 'map',
+        container,
         constraints: {
           snapToZoom: true, //When true, the view snaps to the next LOD when zooming in or out. When false, the zoom is continuous.
           rotationEnabled: true  // Disables map rotation
@@ -290,7 +290,7 @@ export class MapService {
         });
         break;
     }
-		
+
     return symbol;
   }
 
@@ -687,6 +687,8 @@ export class MapService {
   //update certain features of Listlayer ListItems
   updateListItem(listItem) {
     listItem.item.open = true;
+		listItem.item.actionsOpen = true;
+
     if (listItem.item.parent == null) {
       listItem.item.actionsSections = [
         [],
