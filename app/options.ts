@@ -12,10 +12,10 @@ export const MapOptions: any = {
       }
     },
     staticServices: {
-      //for basemaps const check basemaps.ts in map-widgets folder
-      basemapUrl: 'https://atviras.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_light_LKS/MapServer',
-      basemapDarkUrl: 'https://atviras.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_dark_LKS/MapServer',
-      ortofotoUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORT5LT_2016/MapServer',
+			//for basemaps const check basemaps.ts in map-widgets folder
+      basemapUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_LKS_su_rajonu/MapServer',
+      basemapDarkUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_dark_calibrated/MapServer',
+      ortofotoUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORTO2016_GATVES_LKS/MapServer',
       basemapEngineeringUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services//Baziniai_zemelapiai/Vilnius_Inzinerija/MapServer',
       geometryUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Utilities/Geometry/GeometryServer',
       //printServiceUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/ITV_teritorijos/ITV_teritorijos_spausdinimas/GPServer/Export%20Web%20Map"
@@ -223,6 +223,24 @@ export const MapOptions: any = {
         }
       }
     },
+    safeCity: {
+      //url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
+      production: true, //if theme is ready for production
+      name: "Saugus miestas", //theme name
+      //id: "civ-sauga", //theme id class and theme URL query name
+      description: "Saugaus miesto temoje rasite informaciją apie vaizdo stebėjimo kameras, bešeimininkių kačių kastravimo programų vykdymą",
+      id: "saugus-miestas", //theme id class and theme URL query name
+      imgUrl: "./app/img/saugus-miestas.png", //image URL
+      imgAlt: "Saugus miestas", // image alt attribute
+      layers: {
+        elderships: { // layer unique name //
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Saugus_miestas/MapServer",
+          opacity: 1,
+          name: "Saugus miestas" // dynamicLayers group name
+        }
+      }
+    },
     buildings: {
       production: true, //if theme is ready for production
       custom: true, // true if theme funcionality is custom
@@ -263,6 +281,23 @@ export const MapOptions: any = {
         name: 'Investiciniai projektai'
       }
     },
+		publicOffices: {
+		  //url: "https://maps.vilnius.lt/maps_vilnius/?theme=public-offices",
+		  production: false, //if theme is ready for production
+		  name: "Viešos įstaigos", //theme name
+		  //id: "public-offices", //theme id class and theme URL query name
+		  id: "viesosios-istaigos", //theme id class and theme URL query name
+		  imgUrl: "./app/img/tvarkymas.png", //image URL
+		  imgAlt: "Viešos įstaigos", // image alt attribute
+		  layers: {
+		    viesosIstaigos: { // layer unique name //
+		      dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+		        "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Viesos_istaigos/MapServer",
+		      opacity: 0.6,
+		      name: "Viešos įstaigos" // dynamicLayers group name
+		    }
+		  }
+		},
     kindergartens: {
       production: true, //if theme is ready for production
       custom: true, // true if theme funcionality is custom
@@ -379,23 +414,6 @@ export const MapOptions: any = {
       imgUrl: "./app/img/od.png", //image URL
       imgAlt: "Vilniaus atviri duomenys" // image alt attribute
     },
-    publicOffices: {
-      //url: "https://maps.vilnius.lt/maps_vilnius/?theme=public-offices",
-      production: false, //if theme is ready for production
-      name: "Viešos įstaigos", //theme name
-      //id: "public-offices", //theme id class and theme URL query name
-      id: "viesosios-istaigos", //theme id class and theme URL query name
-      imgUrl: "./app/img/tvarkymas.png", //image URL
-      imgAlt: "Viešos įstaigos", // image alt attribute
-      layers: {
-        viesosIstaigos: { // layer unique name //
-          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-            "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Viesos_istaigos/MapServer",
-          opacity: 0.6,
-          name: "Viešos įstaigos" // dynamicLayers group name
-        }
-      }
-    },
 		emptyTeam: {
 			//url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
 			production: true, //if theme is ready for production
@@ -406,15 +424,15 @@ export const MapOptions: any = {
 			imgUrl: "./app/img/civiline-sauga.png", //image URL
 			imgAlt: "Tuščia tema" // image alt attribute
 		},
-    legacyMap: {
-      production: false, //if theme is ready for production
-      custom: true, // true if theme funcionality is custom
-      name: "Senoji žemėlapio versija", //theme name
-      id: "legacy", //theme id class and theme URL query name
-      imgUrl: "/app/img/old_version.png", //image URL
-      imgAlt: "Senoji versija", // image alt attribute
-      url: "http://www.vilnius.lt/vmap/t1.php" // external url if required, if not - gets internal url depending on id property
-    }
+    // legacyMap: {
+    //   production: false, //if theme is ready for production
+    //   custom: true, // true if theme funcionality is custom
+    //   name: "Senoji žemėlapio versija", //theme name
+    //   id: "legacy", //theme id class and theme URL query name
+    //   imgUrl: "/app/img/old_version.png", //image URL
+    //   imgAlt: "Senoji versija", // image alt attribute
+    //   url: "http://www.vilnius.lt/vmap/t1.php" // external url if required, if not - gets internal url depending on id property
+    // }
 
   },
   animation: {
