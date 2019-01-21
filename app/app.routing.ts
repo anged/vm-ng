@@ -26,6 +26,7 @@ const MAP_ROUTES: Routes = [
 		{ path: 'darzeliai', loadChildren: './themes/kindergartens/kindergartens.module#KindergartensModule' },
 		{ path: 'projektai', loadChildren: './themes/projects/projects.module#ProjectsModule' },
 		{ path: 'pastatai', loadChildren: './themes/buildings/buildings.module#BuildingsModule' },
+		{ path: 'kvartaline-renovacija', loadChildren: './themes/quarters/quarters.module#QuartersModule' },
 		...defaultThemesRoutes,
 	]},
   //add page not found component (only in development)

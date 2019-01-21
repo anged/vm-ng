@@ -16,8 +16,8 @@ export const MapOptions: any = {
       basemapUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_LKS_su_rajonu/MapServer',
       basemapDarkUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_dark_calibrated/MapServer',
       ortofotoUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORTO2016_GATVES_LKS/MapServer',
-      basemapEngineeringUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services//Baziniai_zemelapiai/Vilnius_Inzinerija/MapServer',
-      geometryUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Utilities/Geometry/GeometryServer',
+      basemapEngineeringUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_Inzinerija/MapServer',
+      geometryUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Utilities/Geometry/GeometryServer',
       //printServiceUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/ITV_teritorijos/ITV_teritorijos_spausdinimas/GPServer/Export%20Web%20Map"
       printServiceUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Interaktyvus_Default/GPServer/Export%20Web%20Map',
       extract3DGP: {
@@ -238,6 +238,25 @@ export const MapOptions: any = {
             "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Saugus_miestas/MapServer",
           opacity: 1,
           name: "Saugus miestas" // dynamicLayers group name
+        }
+      }
+    },
+    quarterlyRenovation: {
+      //url: "https://maps.vilnius.lt/maps_vilnius/?theme=civ-sauga",
+			custom: true, // true if theme funcionality is custom
+      production: true, //if theme is ready for production
+      name: "Kvartalinė renovacija", //theme name
+      //id: "civ-sauga", //theme id class and theme URL query name
+      description: "Kvartalinės renovacijos temoje rasite informaciją apie Vilniaus miesto kvartalų palyginimą įvairiais pjūviais",
+      id: "kvartaline-renovacija", //theme id class and theme URL query name
+      imgUrl: "./app/img/kvart-renovacija.png", //image URL
+      imgAlt: "Kvartalinė renovacija", // image alt attribute
+      layers: {
+        elderships: { // layer unique name //
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Kvartaline_renovacija/MapServer",
+          opacity: 1,
+          name: "Vilniaus miesto kvartalai" // dynamicLayers group name
         }
       }
     },
