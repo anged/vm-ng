@@ -181,6 +181,7 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
   }
 
   initView(view) {
+		console.log('View', view)
     const mainContainerDom = this.viewService.getMapElementRef();
 
     // add tooltip on mouse move

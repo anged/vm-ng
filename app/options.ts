@@ -252,7 +252,7 @@ export const MapOptions: any = {
       imgUrl: "./app/img/kvart-renovacija.png", //image URL
       imgAlt: "Kvartalinė renovacija", // image alt attribute
       layers: {
-        elderships: { // layer unique name //
+        quarters: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
             "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Kvartaline_renovacija/MapServer",
           opacity: 1,

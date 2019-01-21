@@ -294,8 +294,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   //get radio button value on selection
   change(e) {
-    this.mainFilterCheck = e.target.value;
-    this.projectsListService.setFilterListName(e.target.value)
+    this.mainFilterCheck = e.value;
+    this.projectsListService.setFilterListName(e.value)
   }
 
   getList() {

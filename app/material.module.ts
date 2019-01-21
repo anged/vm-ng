@@ -9,6 +9,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
 		MatCheckboxModule,
 		MatProgressSpinnerModule,
 		MatIconModule,
+		MatRadioModule
   ],
   exports: [
 		MatSelectModule,
@@ -30,6 +32,7 @@ import { MatIconModule } from '@angular/material/icon';
 		MatCheckboxModule,
 		MatProgressSpinnerModule,
 		MatIconModule,
+		MatRadioModule
   ],
 	providers: [{provide: MATERIAL_SANITY_CHECKS, useValue: false}]
 })
