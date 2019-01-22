@@ -3827,7 +3827,9 @@ perfect-scrollbar.list-by-word {
 }
 
 .buldings-theme .esri-legend__service.esri-legend__group-layer-child .esri-legend__service-label,
-.buldings-theme .esri-legend__group-layer .esri-legend__service.esri-legend__group-layer .esri-legend__service-label {
+.buldings-theme .esri-legend__group-layer .esri-legend__service.esri-legend__group-layer .esri-legend__service-label,
+.quarters-theme .esri-legend__service.esri-legend__group-layer-child .esri-legend__service-label,
+.quarters-theme .esri-legend__group-layer .esri-legend__service.esri-legend__group-layer .esri-legend__service-label {
   display: none;
 }
 
@@ -3975,6 +3977,14 @@ mat-spinner {
 
 .alert .close:hover {
   color: #e61c24;
+}
+
+.mat-bottom-sheet-container {
+	background: #696e73;
+	text-align: center;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* bootstrap */

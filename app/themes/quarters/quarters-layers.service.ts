@@ -3,12 +3,15 @@ import { Injectable } from '@angular/core';
 import { MapOptions } from '../../options';
 import { MapService } from '../../map.service';
 
+import FeatureLayer = require("esri/layers/FeatureLayer");
+
 import findKey from 'lodash-es/findKey';
 import pick from 'lodash-es/pick';
 import forIn from 'lodash-es/forIn';
 
 @Injectable()
 export class QuartersLayersService {
+	quartersLayers: FeatureLayer;
 
   constructor(private mapService: MapService) { }
 
@@ -39,5 +42,10 @@ export class QuartersLayersService {
     const rasterLayers = this.mapService.getRasterLayers();
     this.mapService.setRasterLayers(rasterLayers);
   }
+
+	// TODO add quarters layers cache
+	setQuartersLayer(layer) {
+		this.quartersLayers =  layer;
+	}
 
 }

@@ -20,41 +20,6 @@ import { Subscription } from 'rxjs';
   selector: 'esri-map-quarters',
   templateUrl: './app/themes/quarters/map-quarters.component.html',
   styles: [`
-    .sidebar-common {
-      position: absolute;
-      position: fixed;
-      height: 100%;
-    }
-    .sidebar-common p {
-			padding: 6px 20px;
-	    letter-spacing: -.4px;
-	    margin: 0;
-	    padding-left: 70px;
-	    line-height: 34px;
-	    background: #e61c24;
-	    color: #fff;
-	    font-size: 16px;
-    }
-    .button.close.build-close {
-      padding: 14px 16px;
-      height: 46px;
-      width: 50px;
-      overflow-y: hidden;
-    }
-    .button.close {
-      position: relative;
-			float: left;
-			right: auto;
-			left: 0;
-      top: 0;
-      background-color: #A80C0D;
-      font-size: 20px;
-      color: #fff;
-      border-radius: 0;
-    }
-    .button.close .fa {
-        padding: 0;
-    }
     .buldings-tooltip {
       max-width: 120px;
       width: auto;
@@ -70,31 +35,7 @@ import { Subscription } from 'rxjs';
       color: #000;
       line-height: 1.4;
     }
-    `],
-  animations: [
-    trigger('sidebarState', [
-      state('s-close', style({
-        transform: 'translateX(326px)'
-      })),
-      state('s-open', style({
-        transform: 'translateX(0px)'
-      })),
-      transition('s-open => s-close', animate('100ms ease-in')),
-      transition('s-close => s-open', animate('100ms ease-out'))
-    ]),
-    trigger('mapState', [
-      state('s-close', style({
-        width: '100%'
-      })),
-      state('s-open', style({
-        width: 'calc(100% - 326px)'
-      })),
-      transition('s-open => s-close', animate('100ms ease-in')),
-      transition('s-close => s-open', animate('100ms ease-out'))
-    ])
-  ]//,
-  //changeDetection: ChangeDetectionStrategy.OnPush
-
+    `]
 })
 export class MapQuartersComponent implements OnInit, OnDestroy {
   //execution of an Observable,
@@ -242,7 +183,7 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
     );
     this.queryUrlSubscription.unsubscribe();
 
-    this.renderer2.addClass(document.body, 'buldings-theme');
+    this.renderer2.addClass(document.body, 'quarters-theme');
 
     //add snapshot url and pass path name ta Incetable map service
     //FIXME ActivatedRoute issues
@@ -257,10 +198,6 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
 
     // return view
     this.view = this._mapService.getView();
-
-    //create theme main layers grouped
-    // FIXME seem to bee obsolete
-    //this._mapService.initGroupLayer("theme-group", "Main theme layers", "show");
 
     // set active basemaps based on url query params
     if (this.queryParams.basemap) {
@@ -285,15 +222,18 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
       });
 
       //init identification of default or sub layers on MapView
-      this.identifyEvent = this.identify.identifyLayers(view);
+			const quartersLayers = this.map.findLayerById('quarters').sublayers.items.sort((a, b) => a.id - b.id);
+			quartersLayers.map((layer) => {
+				layer.id === 0 ? layer.visible = true : layer.visible = false;
+				return (layer);
+			})
+			this.quartersLayersService.setQuartersLayer(quartersLayers);
+			console.log('Q',quartersLayers)
+			this.identifyEvent = this.identify.identifyLayers(view, 'visible', 'quarters');
 
       //init view and get projects on vie stationary property changes
       this.initView(view);
     });
-  }
-
-  ngDoCheck() {
-    //console.log('Do Check');
   }
 
   ngOnDestroy() {
@@ -322,7 +262,7 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
     // cursor style auto
     this.renderer2.setProperty(document.body.style, 'cursor', 'auto');
 
-    this.renderer2.removeClass(document.body, 'buldings-theme');
+    this.renderer2.removeClass(document.body, 'quarters-theme');
   }
 
 }

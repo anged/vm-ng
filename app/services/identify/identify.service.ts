@@ -29,7 +29,7 @@ export class IdentifyService {
   }
 
   //identify dafault theme layers
-  identifyLayers(view) {
+  identifyLayers(view,layerOption = 'all', specialLayer = '') {
     const identifyParams = this.identifyParams();
     view.popup.dockOptions = {
       position: 'bottom-left'
@@ -54,21 +54,32 @@ export class IdentifyService {
       identifyParams.tolerance = 10;
       identifyParams.width = view.width;
       identifyParams.height = view.height;
-      identifyParams.layerOption = 'all';
+      identifyParams.layerOption = layerOption;
 
+			let nu = 0;
+			let identificationLayers: any[]
       //foreach item execute task
-      view.layerViews.items.forEach(item => {
+			if (specialLayer === 'quarters') {
+				identificationLayers = this.mapService.returnMap().findLayerById('quarters').sublayers.items.sort((a, b) => a.id - b.id);
+			} else {
+				identificationLayers = view.layerViews.items
+			}
+			console.log('identificationLayers', identificationLayers);
+      identificationLayers.forEach(item => {
+				console.log( nu ++ )
         // do not execute if layer is for buffer graphics and if layer is GroupLayer with list mnode 'hide-children' or type is group which means it is dedicated for retrieving data to custom sidebar via feature layer hitTest method
         // skip FeatureSelection layer as well wich is created only for Feature selection graphics
 				// TODO remove or refactor allLayers identification
-        if ((item.layer.id !== "bufferPolygon") && (item.layer.id !== "allLayers_") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group') && (item.layer.id !== 'FeatureSelection') && (item.layer.id !== 'AreaSelection') && (item.layer.popupEnabled)) {
+        if ((item.layer.id !== "bufferPolygon") && (item.layer.id !== "allLayers_") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group') && (item.layer.id !== 'FeatureSelection') && (item.layer.id !== 'AreaSelection') && (item.layer.popupEnabled) && item.visible) {
           //if layer is buffer result, add custom visibility
           if (item.layer.id === "bufferLayers") {
             identifyParams.layerIds = [0];
+          } else if (specialLayer === 'quarters') {
+            identifyParams.layerIds = [item.id];
           } else {
             identifyParams.layerIds = [visibleLayersIds[item.layer.id]];
           }
-
+					console.log('url', item.layer.url)
           let defferedList = this.identify(item.layer.url).execute(identifyParams).then((response) => {
             //console.log("RSP", response);
             //console.log("ids",ids);
@@ -97,7 +108,7 @@ export class IdentifyService {
       //using dojo/promise/all function that takes multiple promises and returns a new promise that is fulfilled when all promises have been resolved or one has been rejected.
       all(def).then(function(response) {
         let resultsMerge = [].concat.apply([], response.reverse()); //merger all results
-        //console.log('response resultsMerge', resultsMerge)
+        console.log('response resultsMerge', resultsMerge)
         //remove emtpy Values
         resultsMerge = resultsMerge.filter((value) => value);
         if (resultsMerge.length > 0) {
