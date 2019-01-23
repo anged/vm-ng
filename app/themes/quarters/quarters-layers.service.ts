@@ -43,9 +43,11 @@ export class QuartersLayersService {
     this.mapService.setRasterLayers(rasterLayers);
   }
 
-	// TODO add quarters layers cache
+	// add quarters layers cache
 	setQuartersLayer(layer) {
-		this.quartersLayers =  layer;
+		if (!this.quartersLayers) {
+			this.quartersLayers =  layer;
+		}
 	}
 
 }

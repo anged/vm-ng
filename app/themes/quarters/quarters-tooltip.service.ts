@@ -19,7 +19,10 @@ export class QuartersTooltipService {
     rend.appendChild(element.nativeElement, this.tooltip);
     const requestAnimationFrame = window.requestAnimationFrame.bind(window)
     let stop = true;
+		console.log('tooltipEvent 0', this.tooltipEvent)
     this.tooltipEvent = mapView.on("pointer-move", (event) => {
+			console.log(' event: ', event)
+
       const screenPoint = {
         // hitTest BUG, as browser fails to execute 'elementFromPoint' on 'Document'
         // FIXME bug with x coordinate value, when menu icon is in view, temp solution: change x value from 0 to any value
@@ -36,12 +39,16 @@ export class QuartersTooltipService {
         .then((response) => {
 
           if (response.results.length > 0) {
+						console.log(' stop: ' + false)
             stop = false;
             drawTooltip(response, event)
           } else {
+						console.log(' stop: ' + true)
             stop = true;
+						drawTooltip(response, event)
             rend.setProperty(document.body.style, 'cursor', 'auto');
           }
+
         });
     });
 
@@ -50,6 +57,8 @@ export class QuartersTooltipService {
     let y = 0;
 
     function drawTooltip(response, event) {
+			console.log(' stop drawTooltip: ' + stop)
+
       if (stop) {
         return;
       }
@@ -91,8 +100,10 @@ export class QuartersTooltipService {
   clearMemoryAndNodes(rend) {
 		if (this.tooltipEvent) {
 			this.tooltipEvent.remove();
+			this.tooltipEvent = null;
 		}
     rend.removeChild(this.parentNode, this.tooltip);
+		console.log('tooltipEvent', this.tooltipEvent)
   }
 
 }

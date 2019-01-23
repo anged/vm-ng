@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
-import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { MapService } from '../../map.service';
 import { MenuService } from '../../menu/menu.service';
@@ -126,7 +125,6 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
   }
 
   initView(view) {
-		console.log('View', view)
     const mainContainerDom = this.viewService.getMapElementRef();
 
     // add tooltip on mouse move
@@ -232,7 +230,6 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
 				return (layer);
 			})
 			this.quartersLayersService.setQuartersLayer(quartersLayers);
-			console.log('Q',quartersLayers)
 			this.identifyEvent = this.identify.identifyLayers(view, 'visible', 'quarters');
 
       //init view and get projects on vie stationary property changes

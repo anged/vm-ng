@@ -1,20 +1,8 @@
-import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
-import { trigger, state, style, animate, transition } from '@angular/animations';
-import { MatBottomSheet, MatBottomSheetRef } from '@angular/material';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { MatBottomSheet } from '@angular/material';
 
 import { MapService } from '../../map.service';
-import { MenuService } from '../../menu/menu.service';
-import { MetaService } from '../../services/meta.service';
-import { QuartersTooltipService } from './quarters-tooltip.service';
 import { QuartersLayersService } from './quarters-layers.service';
-import { SearchService } from '../../search/search.service';
-import { BasemapsService } from '../../map-widgets/basemaps.service';
-import { ViewService } from '../default/view.service';
-import { ShareButtonService } from '../../services/share-button.service';
-import { IdentifyService } from '../../services/identify/identify.service';
-
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'quarters-criteria',
@@ -45,15 +33,14 @@ import { Subscription } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 
 })
-export class QuartersCriteriaComponent implements OnInit, OnDestroy {
+export class QuartersCriteriaComponent implements OnInit {
 	get t() {
 		console.log("Changes Criteria")
 		return '';
 	}
-  //execu
-  constructor(
-		private bottomSheet: MatBottomSheet
-	) {}
+
+
+  constructor(private bottomSheet: MatBottomSheet) { }
 
   ngOnInit() {
   }
@@ -61,13 +48,6 @@ export class QuartersCriteriaComponent implements OnInit, OnDestroy {
 	openBottomSheet(): void {
 		this.bottomSheet.open(CriteriaSelectionComponent);
 	}
-
-  ngDoCheck() {
-    //console.log('Do Check');
-  }
-
-  ngOnDestroy() {
-  }
 
 }
 
@@ -101,20 +81,19 @@ export class QuartersCriteriaComponent implements OnInit, OnDestroy {
 	`,
 })
 export class CriteriaSelectionComponent implements OnInit {
-	quartersLayers: any[];
+	quartersLayers: any;
 	activeId: number;
 	view: any;
 
   constructor(
-		private bottomSheetRef: MatBottomSheetRef<CriteriaSelectionComponent>,
+		//private bottomSheetRef: MatBottomSheetRef<CriteriaSelectionComponent>,
 		private mapService: MapService,
 		private quartersLayersService: QuartersLayersService
 	) {}
 
 	ngOnInit() {
-		const map = this.mapService.returnMap();
 		this.view = this.mapService.getView();
-		this.quartersLayers = this.quartersLayersService.quartersLayers;
+		this.quartersLayers = this.quartersLayersService.quartersLayers as any;
 
 		// set id using some() method
 		this.quartersLayers.some((layer) => {
@@ -122,9 +101,7 @@ export class CriteriaSelectionComponent implements OnInit {
 				this.activeId = layer.id;
 				return true;
 			}
-		})
-		//this.quartersLayers = map.findLayerById('quarters').sublayers.items.sort((a, b) => a.id - b.id);
-		console.log('quartersLayer', this.quartersLayersService.quartersLayers)
+		});
 
 	}
 
@@ -134,7 +111,7 @@ export class CriteriaSelectionComponent implements OnInit {
 			layer.id === id ? layer.visible = true : layer.visible = false;
 			return layer;
 		})
-		
+
 		this.view.popup.close();
     //this.bottomSheetRef.dismiss();
     event.preventDefault();

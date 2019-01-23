@@ -40,6 +40,7 @@ export class BuildingsTooltipService {
             drawTooltip(response, event)
           } else {
             stop = true;
+						drawTooltip(response, event)
             rend.setProperty(document.body.style, 'cursor', 'auto');
           }
         });
@@ -91,7 +92,7 @@ export class BuildingsTooltipService {
   clearMemoryAndNodes(rend) {
 		if (this.tooltipEvent) {
 			this.tooltipEvent.remove();
-		} 
+		}
     rend.removeChild(this.parentNode, this.tooltip);
   }
 
