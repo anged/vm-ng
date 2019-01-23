@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, Renderer2, ViewChild } from '@angular/core';
 
 import { MapService } from '../../map.service';
 import { ViewService } from '../../themes/default/view.service';
@@ -29,9 +29,9 @@ import watchUtils = require("esri/core/watchUtils");
 	}
 `]
 })
-export class MapViewComponent implements OnInit {
+export class MapViewComponent implements OnInit, AfterViewInit {
   @ViewChild('mainContainer') mainContainer: ElementRef;
-  @ViewChild('bar') bar: ElementRef;
+  @ViewChild('bar', {read: ElementRef}) private bar: ElementRef;
 
   queryParams = { basemap: null };
   maintenanceOn = false;
@@ -45,7 +45,7 @@ export class MapViewComponent implements OnInit {
 	isCopiedToClipboard = false;
 
   constructor(
-    private el: ElementRef,
+    private rend: Renderer2,
     private mapService: MapService,
     private viewService: ViewService,
     private basemapsService: BasemapsService,
@@ -94,37 +94,42 @@ export class MapViewComponent implements OnInit {
     //set map ref
     this.viewService.setmapElementRef(this.mainContainer);
 
-    this.mapService.setProgressBar(this.bar);
 
-    this.view.then((view) => {
-      watchUtils.whenTrue(view, "updating", () => {
-        //console.log('%c VIEW', ' color: green;font-size: 23px', this.view)
-        this.el.nativeElement.querySelector('#progress-load').style.display = "block";
-        const intervalProgress = setInterval(() => {
-					if (view) {
-						if (!view.updating) {
-							//console.log('%c intervalProgress', "font-size: 22px", intervalProgress);
-							clearInterval(intervalProgress);
-							this.el.nativeElement.querySelector('#progress-load').style.display = "none";
-							//console.log('%c intervalProgress end', "font-size: 22px", intervalProgress);
+  }
+
+	ngAfterViewInit() {
+		this.mapService.setProgressBar(this.bar);
+
+		this.view.then((view) => {
+			watchUtils.whenTrue(view, "updating", () => {
+				if (this.bar && this.bar.nativeElement) {
+					this.rend.setStyle(this.bar.nativeElement, 'display', 'block');
+					const intervalProgress = setInterval(() => {
+						if (view) {
+							if (!view.updating) {
+								clearInterval(intervalProgress);
+								this.rend.setStyle(this.bar.nativeElement, 'display', 'none');
+							}
+
 						}
 
-					}
+					}, 50)
 
-        }, 50)
-      });
+				}
+
+			});
 
 
-      this.view.on("layerview-create", (event) => {
-        //console.log(event.layer.loadStatus)
-        if (event.layer.id !== "allLayers") {
-          setTimeout(() => {
-            this.el.nativeElement.querySelector('#progress-load').style.display = "none";
-          }, 600);
-          //console.log('%c PROGRESS', "color: red; font-size: 22px", this.el.nativeElement.querySelector('#progress-load'), event.layer.id, this.bar)
-        }
-      });
-    });
-  }
+			this.view.on("layerview-create", (event) => {
+				//console.log(event.layer.loadStatus)
+				if (event.layer.id !== "allLayers" && this.bar) {
+					setTimeout(() => {
+						this.rend.setStyle(this.bar.nativeElement, 'display', 'none');
+					}, 600);
+				}
+
+			});
+		});
+	}
 
 }

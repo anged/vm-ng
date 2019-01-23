@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material';
@@ -20,6 +20,7 @@ import { Subscription } from 'rxjs';
   selector: 'quarters-criteria',
   template: `
 		<button mat-raised-button (click)="openBottomSheet()">Pasirinkite rodiklį</button>
+		{{t}}
 	`,
 	styles: [`
 		:host {
@@ -40,12 +41,16 @@ import { Subscription } from 'rxjs';
 	    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		}
-		`]
-  //changeDetection: ChangeDetectionStrategy.OnPush
+	`],
+  changeDetection: ChangeDetectionStrategy.OnPush
 
 })
 export class QuartersCriteriaComponent implements OnInit, OnDestroy {
-
+	get t() {
+		console.log("Changes Criteria")
+		return '';
+	}
+  //execu
   constructor(
 		private bottomSheet: MatBottomSheet
 	) {}
@@ -98,6 +103,7 @@ export class QuartersCriteriaComponent implements OnInit, OnDestroy {
 export class CriteriaSelectionComponent implements OnInit {
 	quartersLayers: any[];
 	activeId: number;
+	view: any;
 
   constructor(
 		private bottomSheetRef: MatBottomSheetRef<CriteriaSelectionComponent>,
@@ -107,6 +113,7 @@ export class CriteriaSelectionComponent implements OnInit {
 
 	ngOnInit() {
 		const map = this.mapService.returnMap();
+		this.view = this.mapService.getView();
 		this.quartersLayers = this.quartersLayersService.quartersLayers;
 
 		// set id using some() method
@@ -127,6 +134,8 @@ export class CriteriaSelectionComponent implements OnInit {
 			layer.id === id ? layer.visible = true : layer.visible = false;
 			return layer;
 		})
+		
+		this.view.popup.close();
     //this.bottomSheetRef.dismiss();
     event.preventDefault();
   }

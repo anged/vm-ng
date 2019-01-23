@@ -38,6 +38,10 @@ import { Subscription } from 'rxjs';
     `]
 })
 export class MapQuartersComponent implements OnInit, OnDestroy {
+	get t() {
+		console.log("Changes MapQuartersComponent")
+		return '';
+	}
   //execution of an Observable,
   subscription: Subscription;
   queryUrlSubscription: Subscription;
