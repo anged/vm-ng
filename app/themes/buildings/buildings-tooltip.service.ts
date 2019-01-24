@@ -54,7 +54,8 @@ export class BuildingsTooltipService {
       if (stop) {
         return;
       }
-      function draw(now) {
+      //function draw(now) {
+      function draw() {
         const top = (event.y + 100) < window.innerHeight ? window.innerHeight - event.y + 10 + 'px' : window.innerHeight - event.y - 30 + 'px';
         const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
         const values = response.results["0"];
@@ -76,13 +77,15 @@ export class BuildingsTooltipService {
             y = event.y;
           } else {
             moveRaFTimer = null;
-            moveRaFTimer = requestAnimationFrame(draw);
+            //moveRaFTimer = requestAnimationFrame(draw);
+						moveRaFTimer = draw();
           }
         }
       }
 
       if (!0) {
-        moveRaFTimer = requestAnimationFrame(draw);
+        //moveRaFTimer = requestAnimationFrame(draw);
+				moveRaFTimer = draw();
       }
 
     }

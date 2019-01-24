@@ -224,12 +224,6 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
       });
 
       //init identification of default or sub layers on MapView
-			const quartersLayers = this.map.findLayerById('quarters').sublayers.items.sort((a, b) => a.id - b.id);
-			quartersLayers.map((layer) => {
-				layer.id === 0 ? layer.visible = true : layer.visible = false;
-				return (layer);
-			})
-			this.quartersLayersService.setQuartersLayer(quartersLayers);
 			this.identifyEvent = this.identify.identifyLayers(view, 'visible', 'quarters');
 
       //init view and get projects on vie stationary property changes

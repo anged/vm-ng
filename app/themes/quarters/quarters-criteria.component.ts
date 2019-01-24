@@ -1,13 +1,17 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { MatBottomSheet } from '@angular/material';
 
 import { MapService } from '../../map.service';
 import { QuartersLayersService } from './quarters-layers.service';
 
+import { timer, of } from 'rxjs';
+
+import { switchMap, filter, take } from 'rxjs/operators';
+
 @Component({
   selector: 'quarters-criteria',
   template: `
-		<button mat-raised-button (click)="openBottomSheet()">Pasirinkite rodiklį</button>
+		<button #criteriaButton mat-raised-button (click)="openBottomSheet()">Pasirinkite rodiklį</button>
 		{{t}}
 	`,
 	styles: [`
@@ -28,25 +32,63 @@ import { QuartersLayersService } from './quarters-layers.service';
 			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			display: none;
 		}
-	`],
-  changeDetection: ChangeDetectionStrategy.OnPush
-
+	`]
 })
-export class QuartersCriteriaComponent implements OnInit {
+export class QuartersCriteriaComponent implements AfterViewInit {
+	@ViewChild('criteriaButton') criteriaButton: ElementRef;
+	quartersLayers: any[];
 	get t() {
 		console.log("Changes Criteria")
 		return '';
 	}
 
 
-  constructor(private bottomSheet: MatBottomSheet) { }
+  constructor(
+		private bottomSheet: MatBottomSheet,
+		private rend: Renderer2,
+		private mapService: MapService,
+		private quartersLayersService: QuartersLayersService
+	) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
+		console.log('ngAfterViewInit')
+		timer(1000, 1000).pipe(
+			switchMap((e) => {
+				console.log(e)
+				const map = this.mapService.returnMap();
+				return of(map.findLayerById('quarters'))
+			}),
+			filter((feature) => {
+				console.log(feature)
+				return feature && feature.sublayers.items.length > 0;
+			}),
+			take(1)
+		).subscribe((featureLayer) => {
+			this.initFilters(featureLayer);
+		});
   }
 
+	initFilters(featureLayer) {
+		this.quartersLayers = featureLayer.sublayers.items.sort((a, b) => a.id - b.id);
+		this.rend.setStyle(this.criteriaButton.nativeElement, 'display', 'inline-block');
+
+		// set defrault visibility based on mxd document (rest endpoint)
+		// this.quartersLayers.map((layer) => {
+		// 	layer.id === 0 ? layer.visible = true : layer.visible = false;
+		// 	return (layer);
+		// });
+
+		// cache
+		this.quartersLayersService.setQuartersLayer(this.quartersLayers);
+	}
+
 	openBottomSheet(): void {
-		this.bottomSheet.open(CriteriaSelectionComponent);
+		if (this.quartersLayers) {
+			this.bottomSheet.open(CriteriaSelectionComponent);
+		}
+
 	}
 
 }
@@ -93,27 +135,39 @@ export class CriteriaSelectionComponent implements OnInit {
 
 	ngOnInit() {
 		this.view = this.mapService.getView();
-		this.quartersLayers = this.quartersLayersService.quartersLayers as any;
+		this.quartersLayers = this.quartersLayersService.quartersLayers;
+		this.setActiveCriteria(this.quartersLayers);
 
+	}
+
+	setActiveCriteria(quartersLayers) {
 		// set id using some() method
-		this.quartersLayers.some((layer) => {
-			if(layer.visible) {
-				this.activeId = layer.id;
-				return true;
-			}
-		});
+		if (this.quartersLayers) {
+			quartersLayers.some((layer) => {
+				if(layer.visible) {
+					this.activeId = layer.id;
+					return true;
+				}
+
+			});
+		}
 
 	}
 
   openLink(event: MouseEvent, id: number): void {
-		this.activeId = id;
-		this.quartersLayers.map((layer) => {
-			layer.id === id ? layer.visible = true : layer.visible = false;
-			return layer;
-		})
+		if (this.quartersLayers) {
+			this.activeId = id;
+			this.quartersLayers.map((layer) => {
+				layer.id === id ? layer.visible = true : layer.visible = false;
+				return layer;
+			})
+
+		}
 
 		this.view.popup.close();
+
     //this.bottomSheetRef.dismiss();
     event.preventDefault();
   }
+
 }

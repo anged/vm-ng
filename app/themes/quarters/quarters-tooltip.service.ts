@@ -19,9 +19,9 @@ export class QuartersTooltipService {
     rend.appendChild(element.nativeElement, this.tooltip);
     const requestAnimationFrame = window.requestAnimationFrame.bind(window)
     let stop = true;
-		console.log('tooltipEvent 0', this.tooltipEvent)
+		//console.log('tooltipEvent 0', this.tooltipEvent)
     this.tooltipEvent = mapView.on("pointer-move", (event) => {
-			console.log(' event: ', event)
+			//console.log(' event: ', event)
 
       const screenPoint = {
         // hitTest BUG, as browser fails to execute 'elementFromPoint' on 'Document'
@@ -39,11 +39,11 @@ export class QuartersTooltipService {
         .then((response) => {
 
           if (response.results.length > 0) {
-						console.log(' stop: ' + false)
+						//console.log(' stop: ' + false)
             stop = false;
             drawTooltip(response, event)
           } else {
-						console.log(' stop: ' + true)
+						//console.log(' stop: ' + true)
             stop = true;
 						drawTooltip(response, event)
             rend.setProperty(document.body.style, 'cursor', 'auto');
@@ -62,7 +62,7 @@ export class QuartersTooltipService {
       if (stop) {
         return;
       }
-      function draw(now) {
+      function draw() {
         const top = (event.y + 100) < window.innerHeight ? window.innerHeight - event.y + 10 + 'px' : window.innerHeight - event.y - 30 + 'px';
         const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
         const values = response.results["0"];
@@ -84,13 +84,15 @@ export class QuartersTooltipService {
             y = event.y;
           } else {
             moveRaFTimer = null;
-            moveRaFTimer = requestAnimationFrame(draw);
+            moveRaFTimer = draw();
+          	//moveRaFTimer = requestAnimationFrame(draw);
           }
         }
       }
 
       if (!0) {
-        moveRaFTimer = requestAnimationFrame(draw);
+        //moveRaFTimer = requestAnimationFrame(draw);
+        moveRaFTimer = draw();
       }
 
     }
