@@ -365,10 +365,10 @@ export class MapService {
       case 'simple-fill':
         symbol = {
           type,
-          color: [255, 255, 255, 0.01],
+          color: [255, 255, 255, 0.02],
           outline: {  // autocasts as new SimpleLineSymbol()
             width: 1,
-            color: [181, 14, 18, 0.01]
+            color: [181, 14, 18, 0.02]
           }
         };
         break;

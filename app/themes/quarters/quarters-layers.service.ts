@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { MapOptions } from '../../options';
 import { MapService } from '../../map.service';
+import { QuarterLayersMeta } from './QuarterLayersMeta';
 
 import FeatureLayer = require("esri/layers/FeatureLayer");
 
@@ -9,9 +10,13 @@ import findKey from 'lodash-es/findKey';
 import pick from 'lodash-es/pick';
 import forIn from 'lodash-es/forIn';
 
+import { Observable } from 'rxjs';
+import { tap, filter, map } from 'rxjs/operators';
+
 @Injectable()
 export class QuartersLayersService {
 	quartersLayers: FeatureLayer;
+	quarterLayersMeta: Observable<any>;
 
   constructor(private mapService: MapService) { }
 
@@ -36,12 +41,31 @@ export class QuartersLayersService {
       this.mapService.pickCustomThemeLayers(response, layer, key, queryParams, groupLayer, 0);
 
 			this.mapService.pickMainThemeLayers(layer, key, queryParams, popupEnabled, groupLayer);
+
+			this.addQuarterLayersMeta(response);
 		});
 
     //set raster layers
     const rasterLayers = this.mapService.getRasterLayers();
     this.mapService.setRasterLayers(rasterLayers);
   }
+
+	addQuarterLayersMeta(mapLayersMeta$) {
+		this.quarterLayersMeta = mapLayersMeta$.pipe(
+			tap((res) => console.log('tap', res)),
+			map((res: any)=> {
+				return res.layers.map((layer) => {
+					const {id, name, description} = layer;
+					return {id, name, description };
+				})
+			}),
+			tap((res) => console.log('tap', res))
+		)
+		// .subscribe((layers: QuarterLayersMeta[]) => {
+		// 	this.quarterLayersMeta = layers;
+		// 	console.log('QuarterLayersMeta', layers)
+		// })
+	}
 
 	// add quarters layers cache
 	setQuartersLayer(layer) {

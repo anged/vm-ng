@@ -301,23 +301,6 @@ export const MapOptions: any = {
         name: 'Investiciniai projektai'
       }
     },
-		publicOffices: {
-		  //url: "https://maps.vilnius.lt/maps_vilnius/?theme=public-offices",
-		  production: false, //if theme is ready for production
-		  name: "Viešos įstaigos", //theme name
-		  //id: "public-offices", //theme id class and theme URL query name
-		  id: "viesosios-istaigos", //theme id class and theme URL query name
-		  imgUrl: "./app/img/tvarkymas.png", //image URL
-		  imgAlt: "Viešos įstaigos", // image alt attribute
-		  layers: {
-		    viesosIstaigos: { // layer unique name //
-		      dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-		        "https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Viesos_istaigos/MapServer",
-		      opacity: 0.6,
-		      name: "Viešos įstaigos" // dynamicLayers group name
-		    }
-		  }
-		},
     kindergartens: {
       production: true, //if theme is ready for production
       custom: true, // true if theme funcionality is custom

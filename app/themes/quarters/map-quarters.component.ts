@@ -211,6 +211,7 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
     };
 
     this.view.then((view) => {
+			console.log('V', view)
       this.viewService.createSubLayers(this.queryParams, this.map);
 
       //if query paremeteters are defined get zoom and center

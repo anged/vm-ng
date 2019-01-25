@@ -1,17 +1,18 @@
-import { Component, OnInit, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { MatBottomSheet } from '@angular/material';
 
 import { MapService } from '../../map.service';
 import { QuartersLayersService } from './quarters-layers.service';
+import { QuarterLayersMeta } from './QuarterLayersMeta';
 
-import { timer, of } from 'rxjs';
+import { timer, of, Subject, Observable } from 'rxjs';
 
-import { switchMap, filter, take } from 'rxjs/operators';
+import { switchMap, filter, takeUntil, take,tap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'quarters-criteria',
   template: `
-		<button #criteriaButton mat-raised-button (click)="openBottomSheet()">Pasirinkite rodiklį</button>
+		<button #criteriaButton mat-raised-button (click)="openBottomSheet()">Pasirinkite kriterijų</button>
 		{{t}}
 	`,
 	styles: [`
@@ -36,9 +37,10 @@ import { switchMap, filter, take } from 'rxjs/operators';
 		}
 	`]
 })
-export class QuartersCriteriaComponent implements AfterViewInit {
+export class QuartersCriteriaComponent implements AfterViewInit, OnDestroy {
 	@ViewChild('criteriaButton') criteriaButton: ElementRef;
 	quartersLayers: any[];
+	destroyCompoent$ = new Subject();
 	get t() {
 		console.log("Changes Criteria")
 		return '';
@@ -64,7 +66,11 @@ export class QuartersCriteriaComponent implements AfterViewInit {
 				console.log(feature)
 				return feature && feature.sublayers.items.length > 0;
 			}),
-			take(1)
+			take(1),
+			// to avoid memory leaks
+			// when the subscription hasn’t received a value
+			// before the component got destroyed.
+			takeUntil(this.destroyCompoent$)
 		).subscribe((featureLayer) => {
 			this.initFilters(featureLayer);
 		});
@@ -91,6 +97,11 @@ export class QuartersCriteriaComponent implements AfterViewInit {
 
 	}
 
+	ngOnDestroy() {
+		this.destroyCompoent$.next();
+		this.destroyCompoent$.complete();
+	}
+
 }
 
 @Component({
@@ -104,17 +115,32 @@ export class QuartersCriteriaComponent implements AfterViewInit {
 			color: white;
 			border-radius: 2px;
 			font-size: 15px;
+			white-space: pre-wrap;
+			white-space: -moz-pre-wrap;
+			white-space: -pre-wrap;
+			white-space: -o-pre-wrap;
+			word-wrap: break-word;
 		}
 
 		.active-filter {
 			background: #e61c24;
 		}
-
-		.mat-bottom-sheet-container-large {
-
+		.active-filter:before {
+			content: ' ';
+	    position: absolute;
+	    width: 0px;
+	    height: 0px;
+	    border-left: 10px solid transparent;
+	    border-right: 10px solid transparent;
+	    border-bottom: 10px solid #e61c24;
+	    top: -8px;
+	    left: 0;
+	    right: 0;
+	    margin: 0 auto;
 		}
 	`],
   template: `
+			<criteria-description-tag [singleLayersMeta]="singleLayersMeta$ | async"></criteria-description-tag>
 			<ng-container *ngFor="let layer of quartersLayers">
 				<div class="button" [class.active-filter]="activeId === layer.id" (click)="openLink($event, layer.id)">
 				{{ layer.title }}
@@ -126,6 +152,7 @@ export class CriteriaSelectionComponent implements OnInit {
 	quartersLayers: any;
 	activeId: number;
 	view: any;
+	singleLayersMeta$: Observable<any>;
 
   constructor(
 		//private bottomSheetRef: MatBottomSheetRef<CriteriaSelectionComponent>,
@@ -137,7 +164,6 @@ export class CriteriaSelectionComponent implements OnInit {
 		this.view = this.mapService.getView();
 		this.quartersLayers = this.quartersLayersService.quartersLayers;
 		this.setActiveCriteria(this.quartersLayers);
-
 	}
 
 	setActiveCriteria(quartersLayers) {
@@ -146,6 +172,8 @@ export class CriteriaSelectionComponent implements OnInit {
 			quartersLayers.some((layer) => {
 				if(layer.visible) {
 					this.activeId = layer.id;
+					window.location.hash = 'legend';
+					this.passObservable();
 					return true;
 				}
 
@@ -162,12 +190,22 @@ export class CriteriaSelectionComponent implements OnInit {
 				return layer;
 			})
 
+			this.passObservable();
 		}
 
 		this.view.popup.close();
+		window.location.hash = 'legend';
 
     //this.bottomSheetRef.dismiss();
     event.preventDefault();
   }
+
+	passObservable() {
+		this.singleLayersMeta$ = this.quartersLayersService.quarterLayersMeta.pipe(
+			map((meta) => meta.filter((meta: any) => meta.id === this.activeId)[0]),
+			filter(description  => description),
+			tap(meta => console.log('tap meta', meta)),
+		)
+	}
 
 }
