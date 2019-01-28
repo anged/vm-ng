@@ -1,13 +1,6 @@
-import { Component, OnInit,  AfterViewInit, OnDestroy, OnChanges, Renderer2, Input, ViewChild, ElementRef } from '@angular/core';
-import { MatBottomSheet } from '@angular/material';
+import { Component, Input } from '@angular/core';
 
-import { MapService } from '../../map.service';
-import { QuartersLayersService } from './quarters-layers.service';
 import { QuarterLayersMeta } from './QuarterLayersMeta';
-
-import { timer, of, Subject } from 'rxjs';
-
-import { switchMap, filter, takeUntil, take } from 'rxjs/operators';
 
 @Component({
   selector: 'criteria-description-tag',
@@ -15,10 +8,6 @@ import { switchMap, filter, takeUntil, take } from 'rxjs/operators';
 		<div class="description-tag">{{ singleLayersMeta?.description }}</div>
 	`,
 	styles: [`
-		:host {
-
-		}
-
 		.description-tag {
 			background: #d6d6d6;
 	    color: #1e1d1d;
@@ -26,30 +15,14 @@ import { switchMap, filter, takeUntil, take } from 'rxjs/operators';
 	    font-size: 18px;
 	    margin-bottom: 10px;
 		}
+
+		@media only screen and (max-width: 1382px) {
+			.description-tag {
+				font-size: 15px;
+			} 
+		}
 	`]
 })
-export class CriteriaDescriptionTagComponent implements AfterViewInit, OnDestroy, OnChanges {
+export class CriteriaDescriptionTagComponent {
 	@Input() singleLayersMeta: QuarterLayersMeta;
-
-  constructor(
-		private bottomSheet: MatBottomSheet,
-		private rend: Renderer2,
-		private mapService: MapService,
-		private quartersLayersService: QuartersLayersService
-	) { }
-
-	ngOnInit() {
-
-	}
-
-  ngOnChanges() {
-		console.log('changes')
-  }
-
-  ngAfterViewInit() {
-  }
-
-	ngOnDestroy() {
-	}
-
 }

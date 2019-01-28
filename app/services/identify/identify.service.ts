@@ -56,7 +56,6 @@ export class IdentifyService {
       identifyParams.height = view.height;
       identifyParams.layerOption = layerOption;
 
-			let nu = 0;
 			let identificationLayers: any[]
       //foreach item execute task
 			if (specialLayer === 'quarters') {
@@ -64,9 +63,7 @@ export class IdentifyService {
 			} else {
 				identificationLayers = view.layerViews.items
 			}
-			console.log('identificationLayers', identificationLayers);
       identificationLayers.forEach(item => {
-				console.log( nu ++ )
         // do not execute if layer is for buffer graphics and if layer is GroupLayer with list mnode 'hide-children' or type is group which means it is dedicated for retrieving data to custom sidebar via feature layer hitTest method
         // skip FeatureSelection layer as well wich is created only for Feature selection graphics
 				// TODO remove or refactor allLayers identification
@@ -79,10 +76,7 @@ export class IdentifyService {
           } else {
             identifyParams.layerIds = [visibleLayersIds[item.layer.id]];
           }
-					console.log('url', item.layer.url)
           let defferedList = this.identify(item.layer.url).execute(identifyParams).then((response) => {
-            //console.log("RSP", response);
-            //console.log("ids",ids);
             let results = response.results.reverse();
             return results.map((result) => {
               let name = result.layerName;
@@ -96,7 +90,6 @@ export class IdentifyService {
               return feature;
             });
           }).then(function(response) {
-            //console.log('response', response)
             return response;
           }, (error) => { console.error(error); });
 
@@ -108,8 +101,7 @@ export class IdentifyService {
       //using dojo/promise/all function that takes multiple promises and returns a new promise that is fulfilled when all promises have been resolved or one has been rejected.
       all(def).then(function(response) {
         let resultsMerge = [].concat.apply([], response.reverse()); //merger all results
-        console.log('response resultsMerge', resultsMerge)
-        //remove emtpy Values
+        //remove empty Values
         resultsMerge = resultsMerge.filter((value) => value);
         if (resultsMerge.length > 0) {
           view.popup.open({

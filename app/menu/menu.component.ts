@@ -16,7 +16,7 @@ import { SwipeToolService } from './tools/swipe/swipe-tool.service';
 
 import watchUtils = require("esri/core/watchUtils");
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs'; 
 
 @Component({
   selector: 'menu-map',

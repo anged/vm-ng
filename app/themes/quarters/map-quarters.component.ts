@@ -37,10 +37,6 @@ import { Subscription } from 'rxjs';
     `]
 })
 export class MapQuartersComponent implements OnInit, OnDestroy {
-	get t() {
-		console.log("Changes MapQuartersComponent")
-		return '';
-	}
   //execution of an Observable,
   subscription: Subscription;
   queryUrlSubscription: Subscription;
@@ -211,7 +207,6 @@ export class MapQuartersComponent implements OnInit, OnDestroy {
     };
 
     this.view.then((view) => {
-			console.log('V', view)
       this.viewService.createSubLayers(this.queryParams, this.map);
 
       //if query paremeteters are defined get zoom and center

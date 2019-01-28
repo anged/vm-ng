@@ -3,7 +3,8 @@ import { NgModule } from '@angular/core';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 import { MapQuartersComponent } from './map-quarters.component';
-import { QuartersCriteriaComponent, CriteriaSelectionComponent } from './quarters-criteria.component';
+import { QuartersCriteriaComponent } from './quarters-criteria.component';
+import { CriteriaSelectionComponent } from './criteria-selection.component';
 import { CriteriaDescriptionTagComponent } from './criteria-description-tag.component';
 import { ShareModule } from '../../share.module';
 import { QuartersRouting } from './quarters.routing';
