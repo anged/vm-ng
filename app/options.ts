@@ -264,12 +264,12 @@ export const MapOptions: any = {
     buildings: {
       production: true, //if theme is ready for production
       custom: true, // true if theme funcionality is custom
-      name: "Pastatai", //theme name
-      description: "Gyvenamųjų pastatų šilumo suvartojimo informacija, faktinio energijos suvartojimo klasės, mėnesiniai šilumos suvartojimai pagal mokėjimus už šilumą", //meta description
+      name: "Pastatų energetika", //theme name
+      description: "Gyvenamųjų pastatų šilumo suvartojimo informacija, energetinis efektyvumas, faktinio energijos suvartojimo klasės, mėnesiniai šilumos suvartojimai pagal mokėjimus už šilumą", //meta description
       //id: "theme-buildings", //theme id class and theme URL query name
       id: "pastatai", //theme id class and theme URL query name
       imgUrl: "./app/img/pastatai.png", //image URL
-      imgAlt: "Pastatai", // image alt attribute
+      imgAlt: "Pastat7 energetika", // image alt attribute
       layers: {
         silumosSuvartojimas: { // layer unique name
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer

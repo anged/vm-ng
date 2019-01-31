@@ -16,7 +16,7 @@ export const projectRasterLayerID = "projects-mil";
 @Component({
   selector: 'swipe-tool',
   template: `
-		<button *ngIf="false" id="measure-button" class="tool-button" (click)="toggleSwipe()" [class.active]="toolActive">
+		<button *ngIf="true" id="measure-button" class="tool-button" (click)="toggleSwipe()" [class.active]="toolActive">
 			<span class="svg-measure">
 				<svg width="22" height="16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
 					<image *ngIf="!toolActive; else svgToolW" xlink:href="../../app/img/svg/swipe.svg" x="0" y="0" height="22px" width="16px"/>

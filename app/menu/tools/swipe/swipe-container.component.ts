@@ -25,7 +25,7 @@ export const SWIPE_LAYER_URL = new InjectionToken<string>('swipeLayerUrl');
 	`,
   styleUrls: ['app/menu/tools/swipe/swipe-container.component.css'],
   providers: [
-    { provide: SWIPE_LAYER_URL, useValue: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/itv_rasters/MapServer' }
+    { provide: SWIPE_LAYER_URL, useValue: 'https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/itv_rasters_cache/MapServer' }
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -72,12 +72,12 @@ export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
     const map = this.ms.returnMap();
 
     // create dynamic layer and add to map
-    const projectsMIL = this.ms.initDynamicLayerITV(url, 'projects-mil', 'new layers', 1);
+    const projectsMIL = this.ms.initTiledLayer(url, 'projects-mil');
 
     this.view = view;
 
     // currently using 8 layers scale, LEVEL 5 = 5000
-    // check basmepam's REST endpoiunt reference
+    // check basemap's REST endpoint reference
     projectsMIL.minScale = this.minScale;
 
     // allways add to last index and ad id to canvas
