@@ -25,7 +25,7 @@ export const SWIPE_LAYER_URL = new InjectionToken<string>('swipeLayerUrl');
 	`,
   styleUrls: ['app/menu/tools/swipe/swipe-container.component.css'],
   providers: [
-    { provide: SWIPE_LAYER_URL, useValue: 'https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/itv_rasters_cache/MapServer' }
+    { provide: SWIPE_LAYER_URL, useValue: 'https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/itv_rasters_cached/MapServer' }
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
