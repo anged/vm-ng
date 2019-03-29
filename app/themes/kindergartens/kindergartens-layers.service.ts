@@ -27,7 +27,6 @@ export class KindergartensLayersService {
     mapEsri.add(mainGroupLayer);
 
     forIn(themeLayers, (layer, key) => {
-      const response = this.mapService.fetchRequest(layer.dynimacLayerUrls)
       const popupEnabled = false;
 
       //create group and add all grouped layers to same group, so we could manage group visibility
@@ -36,7 +35,7 @@ export class KindergartensLayersService {
       this.mapService.pickMainThemeLayers(layer, key, queryParams, popupEnabled, groupLayer);
 
       //add feature layer with opacity 0
-      this.mapService.pickCustomThemeLayers(response, layer, key, queryParams, groupLayer, 0, 'simple-marker');
+      this.mapService.pickCustomThemeLayers(layer, key, queryParams, groupLayer, 0, 'simple-marker');
 
       //set raster layers
       const rasterLayers = this.mapService.getRasterLayers();

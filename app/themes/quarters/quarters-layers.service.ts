@@ -37,7 +37,7 @@ export class QuartersLayersService {
       const groupLayer = this.mapService.initGroupLayer(key + 'group', 'Vilniaus miesto kvartalai', 'hide-children');
       mainGroupLayer.add(groupLayer);
       //add feature layer with opacity 0
-      this.mapService.pickCustomThemeLayers(response, layer, key, queryParams, groupLayer, 0);
+      this.mapService.pickCustomThemeLayers(layer, key, queryParams, groupLayer, 0);
 
 			this.mapService.pickMainThemeLayers(layer, key, queryParams, popupEnabled, groupLayer);
 

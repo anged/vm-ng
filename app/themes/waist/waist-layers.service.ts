@@ -8,7 +8,7 @@ import pick from 'lodash-es/pick';
 import forIn from 'lodash-es/forIn';
 
 @Injectable()
-export class BuildingsLayersService {
+export class WaistLayersService {
 
   constructor(private mapService: MapService) { }
 
@@ -19,17 +19,17 @@ export class BuildingsLayersService {
     const map = this.mapService.returnMap();
 
     //all theme layers will be added to common group layer
-    const mainGroupLayer = this.mapService.initGroupLayer(themeName + 'group', 'Pastatai', 'show');
+    const mainGroupLayer = this.mapService.initGroupLayer(themeName + 'group', 'Atliekos', 'show');
     map.add(mainGroupLayer);
 
     forIn(themeLayers, (layer, key) => {
       const popupEnabled = false;
 
-      //create group and add all grouped layers to same group, so we could manage group visibility
-      const groupLayer = this.mapService.initGroupLayer(key + 'group', 'Šildymo sezono reitingas', 'hide-children');
+      // create group and add all grouped layers to same group, so we could manage group visibility
+      const groupLayer = this.mapService.initGroupLayer(key + 'group', 'Konteineriai', 'hide-children');
       mainGroupLayer.add(groupLayer);
-      //add feature layer with opacity 0
-      this.mapService.pickCustomThemeLayers(layer, key, queryParams, groupLayer, 2);
+      // add feature layer with opacity 0
+      this.mapService.pickCustomThemeLayers(layer, key, queryParams, groupLayer, 0, 'simple-marker');
 
 			this.mapService.pickMainThemeLayers(layer, key, queryParams, popupEnabled, groupLayer);
 		});

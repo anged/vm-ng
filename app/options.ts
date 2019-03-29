@@ -15,7 +15,7 @@ export const MapOptions: any = {
 			//for basemaps const check basemaps.ts in map-widgets folder
       basemapUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_LKS_su_rajonu/MapServer',
       basemapDarkUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_dark_calibrated/MapServer',
-      ortofotoUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORTOFOTO_2017_LKS/MapServer',
+      ortofotoUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORTO2016_GATVES_LKS/MapServer',
       basemapEngineeringUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_Inzinerija/MapServer',
       geometryUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Utilities/Geometry/GeometryServer',
       //printServiceUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/ITV_teritorijos/ITV_teritorijos_spausdinimas/GPServer/Export%20Web%20Map"
@@ -264,12 +264,12 @@ export const MapOptions: any = {
     buildings: {
       production: true, //if theme is ready for production
       custom: true, // true if theme funcionality is custom
-      name: "Šilumos suvartojimas", //theme name
+      name: "Pastatų energetika", //theme name
       description: "Gyvenamųjų pastatų šilumo suvartojimo informacija, energetinis efektyvumas, faktinio energijos suvartojimo klasės, mėnesiniai šilumos suvartojimai pagal mokėjimus už šilumą", //meta description
       //id: "theme-buildings", //theme id class and theme URL query name
       id: "pastatai", //theme id class and theme URL query name
       imgUrl: "./app/img/pastatai.png", //image URL
-      imgAlt: "Šilumos suvartojimas", // image alt attribute
+      imgAlt: "Pastat7 energetika", // image alt attribute
       layers: {
         silumosSuvartojimas: { // layer unique name
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
@@ -315,6 +315,23 @@ export const MapOptions: any = {
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
             "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Darzeliai/MapServer",
           name: "Darželiai"
+        }
+      }
+    },
+    waist: {
+      production: true, //if theme is ready for production
+      custom: true, // true if theme funcionality is custom
+      name: "Atliekų tvarkymas", //theme name
+      //id: "theme-buildings", //theme id class and theme URL query name
+      description: "Atliekų tvarkymo temoje  rasite informaciją apie atliekų išvežimo taškus, grafikus, vėlavimus ir kitą statistinę informaciją",
+      id: "atlieku-tvarkymas", //theme id class and theme URL query name
+      imgUrl: "./app/img/darzeliai.png", //image URL
+      imgAlt: "Atliekų tvarkymas", // image alt attribute
+      layers: {
+        atliekos: { // layer unique name
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+            "https://atviras.vplanas.lt/arcgis/rest/services/Testavimai/Konteineriu_pakelimai/MapServer",
+          name: "Atliekų tvarkymas"
         }
       }
     },
@@ -378,7 +395,7 @@ export const MapOptions: any = {
       }
     },
     vilnius3dExternal: {
-      url: "https://atviras.vplanas.lt/portal/apps/webappviewer3d/index.html?id=49e0fb95c0ed45d6ae1c5533176f63f3",
+      url: "https://3d.vilnius.lt/",
       production: true, //if theme is ready for production
       external: true, // external application
       custom: true, // true if theme funcionality is custom

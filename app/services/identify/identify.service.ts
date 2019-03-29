@@ -60,6 +60,8 @@ export class IdentifyService {
       //foreach item execute task
 			if (specialLayer === 'quarters') {
 				identificationLayers = this.mapService.returnMap().findLayerById('quarters').sublayers.items.sort((a, b) => a.id - b.id);
+			} else if (specialLayer === 'waist') {
+				identificationLayers = this.mapService.returnMap().findLayerById('atliekos').sublayers.items.sort((a, b) => a.id - b.id);
 			} else {
 				identificationLayers = view.layerViews.items
 			}
@@ -72,6 +74,8 @@ export class IdentifyService {
           if (item.layer.id === "bufferLayers") {
             identifyParams.layerIds = [0];
           } else if (specialLayer === 'quarters') {
+            identifyParams.layerIds = [item.id];
+          } else if (specialLayer === 'waist') {
             identifyParams.layerIds = [item.id];
           } else {
             identifyParams.layerIds = [visibleLayersIds[item.layer.id]];

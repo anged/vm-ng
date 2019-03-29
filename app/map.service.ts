@@ -82,7 +82,7 @@ export class MapService {
 
   viewMap(map: Map, container ='map'): MapView {
     // using runOutsideAngular instead of onPush change detection in component o avoid view ESRI UPDATES constanly initaiting change detection
-    this.zone.runOutsideAngular(() => {
+    //this.zone.runOutsideAngular(() => {
       const view = new MapView({
         //container: this.elementRef.nativeElement.firstChild, // AG good practis
         container,
@@ -107,7 +107,7 @@ export class MapService {
       });
       this.watchLayers(view);
       this.view = view;
-    });
+    //});
     return this.view;
   }
 
@@ -521,27 +521,17 @@ export class MapService {
     }, (error) => { console.error(error); });
   }
 
-  pickCustomThemeLayers(response, layer, key, queryParams, groupLayer, serviceKey, symbolType = 'simple-fill') {
-    //console.log('arguments', arguments);
-    response.subscribe(json => {
-      //(layer: string, opacity, index: number, id: number, title)
-      let feature = this.initCommonFeatureLayer(layer.dynimacLayerUrls + '/' + serviceKey, layer.opacity, key, layer.name, symbolType);
-      if (groupLayer) {
-        groupLayer.add(feature);
-      } else {
-        this.map.add(feature);
-      }
-      //check other url params if exists
-      //activate layer defined in url query params
-      this.activateLayersVisibility(this.view, queryParams, this.map);
-
-      //check for type raster and push to array
-      json.layers.forEach((layer) => {
-        if (layer.type === "Raster Layer") {
-          this.rasterLayers.push(layer.name);
-        }
-      })
-    });
+  pickCustomThemeLayers(layer, key, queryParams, groupLayer, serviceKey, symbolType = 'simple-fill') {
+    const feature = this.initCommonFeatureLayer(layer.dynimacLayerUrls + '/' + serviceKey, layer.opacity, key, layer.name, symbolType);
+    if (groupLayer) {
+      groupLayer.add(feature);
+    } else {
+      this.map.add(feature);
+    }
+    //check other url params if exists
+    //activate layer defined in url query params
+    this.activateLayersVisibility(this.view, queryParams, this.map);
+    
   }
 
   createFeatureLayers(layersNumber: number, url: String) {
