@@ -168,7 +168,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     //load message about sublayers if they are visible on Init
     this.view.on("layerview-create", (event) => {
       // refresh layer with goTo, since 4.6 API
-      // do not refresh when selecting adn creating feature selection layer
+      // do not refresh when selecting and creating feature selection layer
       // custom teams usually
       if ((event.layer.type !== 'graphics') && ((event.layer.type === 'map-image'))) {
         const mapView = this.mapService.getView();

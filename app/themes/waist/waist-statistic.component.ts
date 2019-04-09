@@ -119,7 +119,6 @@ export class WaistStatisticComponent implements OnInit, OnChanges {
     query.returnGeometry = false;
     query.where = `Konteinerio_Nr='${this.content.graphic.attributes.Konteinerio_Nr}'`;
     query.outFields = ['*'];
-    console.log('Query', query);
     const results = await queryTask.execute(query).then((result) => {
       return result;
     }, (error) => {

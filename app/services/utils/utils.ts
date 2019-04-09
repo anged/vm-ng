@@ -15,4 +15,8 @@ export class Utils {
 
 	}
 
+	static setMenuLayersAnchorOnPageLoad(url = '') {
+				window.location.hash = 'layers'
+	}
+
 }

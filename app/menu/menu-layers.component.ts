@@ -55,31 +55,32 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
     // init layers list widget
     const view = this.mapService.getView();
     const map = this.mapService.returnMap();
-    //console.log('OnInit Layers')
+    let initialLoad = true;
     view.then(() => {
       // reorder layers in map and view
       // allLayers layer must be always last in map array,
       // as we are hiding layer list manualy with css
       // as we will be using static component in theme
       this.viewCreateEvent = view.on("layerview-create", (event) => {
-        //console.log('ONN', this.listWidget)
         const index = map.layers.items.length - 1;
-        //console.log('%c LOADED', "color: red; font-size: 18px",event.layer.id, map.layers.items.length, event, map)
         // reorder only if allLayers layer comes before theme layers
         if (index > 0) {
           const subLayer = map.findLayerById("allLayers");
           if (typeof subLayer !== undefined) {
             map.reorder(subLayer, index);
-
             // simply activate :target speudo class with location href
             Utils.setMenuLayersAnchor();
           }
 
         }
+        if (index > 0 && initialLoad) {
+          // console.log('%c INIT LOAD', "color: green")
+          Utils.setMenuLayersAnchorOnPageLoad();
+          initialLoad = false;
+        }
 
         // set tool name Obs, to close tools boxes if opened
         this.toolsNameService.setCurentToolName('');
-        //this.cdr.detectChanges();
       });
 
       this.listWidget = this.mapService.initLayerListWidget(view, this.list.nativeElement);
@@ -96,4 +97,5 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
     this.viewCreateEvent.remove();
     this.listEvent.remove();
   }
+
 }

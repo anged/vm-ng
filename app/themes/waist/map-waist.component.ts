@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
   <div class="total-stats">
     <ul class="flex-container">
       <li class="flex-item"><p class="waist-stat__alert"><span class="waist-stat__name">Vakar išvežta konteinerių</span>
-      <span class="stat" [countUp]="totalStatistics.totalLifts">0</span> 
+      <span class="stat" [countUp]="totalStatistics.totalLifts">0</span> iš <span class="stat" [countUp]="5959">0</span> 
       </p></li>
       <li class="flex-item"><p><span class="waist-stat__name">Bendras kiekis atliekų</span> 
       <span class="stat" [countUp]="totalStatistics.weight" [options]="{decimalPlaces: 2}">0</span> kg 
@@ -198,7 +198,7 @@ export class MapWaistComponent implements OnInit, OnDestroy {
 
     view.hitTest(screenPoint)
       .then(features => {
-        console.log('%c Click features', 'font-size: 16px; color: green;', features.results[0].graphic.attributes);
+        // console.log('%c Click features', 'font-size: 16px; color: green;', features.results[0].graphic.attributes);
 
         const values = features.results[0];
         const showResult = values.graphic;
@@ -271,7 +271,6 @@ export class MapWaistComponent implements OnInit, OnDestroy {
 
       //init identification of default or sub layers on MapView
 			//this.identifyEvent = this.identify.identifyLayers(view, 'visible', 'waist');
-      console.log(view)
       //init view and get projects on vie stationary property changes
       this.initView(view);
 
@@ -311,8 +310,6 @@ export class MapWaistComponent implements OnInit, OnDestroy {
       }
 
     });
-
-    console.log('Stats: ', this.totalStatistics)
     this.cdr.detectChanges();
   }
 
