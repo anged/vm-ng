@@ -216,6 +216,7 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
 
     view.hitTest(screenPoint)
       .then(features => {
+        console.log('%c Features', 'color: blue', features.results);
         const values = features.results[0];
         const showResult = values.graphic;
         this.openSidebar();

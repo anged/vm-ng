@@ -271,6 +271,12 @@ export const MapOptions: any = {
       imgUrl: "./app/img/pastatai.png", //image URL
       imgAlt: "Šilumos suvartojimas", // image alt attribute
       layers: {
+        quarters: { // layer unique name //
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Kvartaline_renovacija/MapServer",
+          opacity: 1,
+          name: "Vilniaus miesto kvartalai" // dynamicLayers group name
+        },
         silumosSuvartojimas: { // layer unique name
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
             "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Pastatai_statyba/MapServer",
