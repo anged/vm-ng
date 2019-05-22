@@ -355,6 +355,11 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
     this.renderer2.setProperty(document.body.style, 'cursor', 'auto');
 
     this.renderer2.removeClass(document.body, 'kindergartens');
+
+     //remove existing graphic
+     this.view.graphics.removeAll();
+
+    console.log('destroy kind.. MAP ', this.map, this.view )
   }
 
 }
