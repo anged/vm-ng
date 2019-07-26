@@ -49,3 +49,6 @@ arcgis_js_api
 
 # ignore server.js file in root, which is for testing only
 server.js
+
+# dotenv
+.env

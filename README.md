@@ -13,9 +13,15 @@ Dowload and run the following at the command line to run the app in development 
 npm install
 npm start
 ```
-Create production build:
+
+Create dev build:
 ```bash
 npm run build
+```
+
+Create production build:
+```bash
+npm run build --prod
 ```
 Note: currently using express js and ejs in production  
   
