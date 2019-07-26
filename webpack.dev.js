@@ -5,12 +5,15 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
+require('dotenv').config();
+
 const PRODUCTION = process.env.NODE_ENV === 'production';
 console.log('PRODUCTION: ', PRODUCTION);
 
 var plugins = [
   new webpack.DefinePlugin({
-    'process.env.NODE_ENV': JSON.stringify('development')
+    'process.env.NODE_ENV': JSON.stringify('development'),
+    'process.env.SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN)
   }),
   new webpack.ContextReplacementPlugin(
     /angular(\\|\/)core(\\|\/)@angular|fesm5/,
@@ -20,7 +23,7 @@ var plugins = [
 
 
 const styles = {
-  test: /\.(css|scss)$/,
+  test: /\.(sc|c)ss$/,
   use: [
    {
     loader: 'style-loader'

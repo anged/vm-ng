@@ -9,7 +9,7 @@
   "scripts": {
     "lite": "lite-server",
     "start": "concurrently \"webpack --mode development --watch --config webpack.dev.js\" \"tsc\" \"npm run lite\" ",
-    "build": "concurrently \"webpack --mode production --config webpack.prod.js --progress\" \"tsc\" "
+    "build": "concurrently  \"webpack --mode-production --config webpack.prod.js --progress\" \"tsc\""
   },
   "keywords": [
     "angular-6",
@@ -42,6 +42,7 @@
     "popper.js": "^1.14.4",
     "raven-js": "^3.27.0",
     "rxjs": "^6.2.0",
+    "save-dev": "^2.0.0",
     "web-animations-js": "^2.3.1",
     "zone.js": "^0.8.26"
   },
@@ -62,13 +63,14 @@
     "cross-env": "^5.1.6",
     "css-loader": "^0.28.11",
     "dojo-typings": "^1.11.9",
+    "dotenv": "^8.0.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^2.0.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
-    "lite-server": "^2.4.0",
+    "lite-server": "^2.5.3",
     "mini-css-extract-plugin": "^0.4.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "normalize.css": "^8.0.0",
     "optimize-css-assets-webpack-plugin": "^4.0.2",
     "reflect-metadata": "^0.1.10",
