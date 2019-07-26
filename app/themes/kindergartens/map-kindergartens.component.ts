@@ -16,6 +16,18 @@ import { KindergartensLayersService } from './kindergartens-layers.service';
 import { IdentifyService } from '../../services/identify/identify.service';
 
 import { Subscription } from 'rxjs';
+import { tap, switchMapTo, switchMap, take } from 'rxjs/operators';
+
+export interface ISpatialReference {
+  latestWkid: number;
+  wkid: number;
+}
+
+export interface IGeometry {
+  x: number;
+  y: number;
+  spatialReference: ISpatialReference;
+}
 
 @Component({
   selector: 'esri-map-kindergartens',
@@ -228,32 +240,39 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
         let fullData = null;
         const values = Array.from(features.results);
         let isShown = false;
+        let esriGeometry: IGeometry; 
         values.forEach((value: any) => {
           if ((values && (value.graphic.layer.id !== 'feature-area'))) {
             if (!isShown) {
               isShown = true;
               const showResult = value.graphic;
               const mainInfo = this.dataStore && this.dataStore.mainInfo;
+
               mainInfo.forEach(data => {
                 if (data.GARDEN_ID === value.graphic.attributes.Garden_Id) {
                   fullData = Object.assign({}, data);
                 }
 
               });
+
               this.openSidebar();
               this.kindergartensContent = fullData;
 
               //add selectionResultsToGraphic
               const groupFeatureSelectionLayer = this._mapService.initFeatureSelectionGraphicLayer('FeatureSelection', showResult.layer.maxScale, showResult.layer.minScale, 'hide');
               const { geometry, layer, attributes } = showResult;
-              const selectionGraphic = this._mapService.initFeatureSelectionGraphic('point', geometry, layer, attributes, '26px', 'dash');
+ 
+              // BUG 4.5 not getting geometry
+              geometry ? esriGeometry = geometry : esriGeometry = features.mapPoint;
+            
+              const selectionGraphic = this._mapService.initFeatureSelectionGraphic('point', esriGeometry, layer, attributes, '26px', 'dash');
               groupFeatureSelectionLayer.graphics.add(selectionGraphic);
               this.map.add(groupFeatureSelectionLayer);
             }
 
           } else {
             if (!isShown) {
-              //TEMP null / 0 trick to initiate component change, as we can add data via sidbar compontent as well
+              //TEMP null / 0 trick to initiate component change, as we can add data via sidebar compontent as well
               this.kindergartensContent === null ? this.kindergartensContent = 0 : this.kindergartensContent = null;
             }
 
@@ -314,12 +333,21 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
       this.identify.identifyLayers(view);
 
       if (snapshotUrl) {
-        this.kindergartensLayersService.addCustomLayers(this.queryParams, snapshotUrl)
-          .subscribe((dataStore: DataStore) => {
+        this.kindergartensLayersService.addCustomLayers(this.queryParams, snapshotUrl);
+
+        this.kindergartensLayersService.dataStore$.pipe(
+          // tap(a =>  console.log(a)),
+          switchMap(a => a),
+          take(1)
+        )
+        .subscribe((dataStore: DataStore) => {
             this.dataStore = dataStore;
 
             //init identfication logic
             this.initIdentification(view);
+            
+            // detect changes before dataStore fetches
+			      this.cdr.detectChanges();
           });
       };
 
@@ -356,10 +384,9 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
 
     this.renderer2.removeClass(document.body, 'kindergartens');
 
-     //remove existing graphic
-     this.view.graphics.removeAll();
+    //remove existing graphic
+    this.view.graphics.removeAll();
 
-    console.log('destroy kind.. MAP ', this.map, this.view )
   }
 
 }

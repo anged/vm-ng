@@ -34,8 +34,8 @@ export class BuildingsTooltipService {
 
       view.hitTest(screenPoint)
         .then((response) => {
-
-          if (response.results.length > 0) {
+          // TEMP use address atribute for temp condition by showing only tooltip on buildings layer
+          if (response.results.length > 0 && response.results[0].graphic.attributes.ADRESAS) {
             stop = false;
             drawTooltip(response, event)
           } else {
@@ -58,14 +58,17 @@ export class BuildingsTooltipService {
       function draw() {
         const top = (event.y + 100) < window.innerHeight ? window.innerHeight - event.y + 10 + 'px' : window.innerHeight - event.y - 30 + 'px';
         const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
-        const values = response.results["0"];
+        // using 2 feature layers with different attributes
+        const values = response.results[0] ? response.results[0]: response.results[1];
         x += (event.x - x) * 0.5;
         y += (event.y - y) * 0.5;
 
         // don't add tooltip in case of stop variable
         // or in case we hit graphic object with no attributes
         if (!stop && values.graphic.attributes) {
-          const textMsg = `${values.graphic.attributes.ADRESAS}`;
+          // using 2 feature layers with different attributes
+          const textMsg = values.graphic.attributes.ADRESAS ? `${values.graphic.attributes.ADRESAS}` : `${values.graphic.attributes.Pavad}`;
+          
           tooltip.innerHTML = textMsg;
           rend.addClass(tooltip, 'buldings-tooltip');
           rend.setStyle(tooltip, 'transform', "translate3d(" + left + ", -" + top + ", 0)");

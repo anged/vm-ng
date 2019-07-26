@@ -504,7 +504,7 @@ export class SidebarComponent implements OnChanges {
       }, 200);
       this.lastHeatingYear = this.sidebarHeatContent.SEZONAS;
       // get data by months
-      this.mapWidgetsService.queryHeatingDataByMonths(this.sidebarHeatContent.SEZONAS, this.sidebarHeatContent.ID_NAMO).then(data => {
+      this.mapWidgetsService.queryHeatingDataByMonths(4, this.sidebarHeatContent.SEZONAS, this.sidebarHeatContent.ID_NAMO).then(data => {
         this.heatingMonthsData = data;
         this.heatMonthsChart && this.initHeatMonthsGraphic();
       });
