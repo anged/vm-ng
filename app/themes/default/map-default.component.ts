@@ -12,6 +12,8 @@ import { ShareButtonService } from '../../services/share-button.service';
 import { IdentifyService } from '../../services/identify/identify.service';
 
 import { Subscription } from 'rxjs';
+import StreamLayer = require('esri/layers/StreamLayer');
+import Renderer = require('esri/renderers/Renderer');
 
 @Component({
   selector: 'esri-map-default',
@@ -63,7 +65,7 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
   shareToggle(e) {
     this.shareContainerActive = !this.shareContainerActive;
     this.shareUrl = this.shareButtonService.shareToggle(e, this.shareContainerActive);
-  }
+  } 
 
   setActiveBasemap(view, basemap: string) {
     //toggle basemap
@@ -102,16 +104,38 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
       this.viewService.createThemeLayers(snapshotUrl, this.queryParams);
     };
     this.view.then((view) => {
-      //console.log('%c VIEW', 'color: red; font-size: 20px', view);
+      // TEMP create stream layer 
+      // const streamLayer = new StreamLayer({
+      //   url: 'https://geoevent.vilnius.lt/arcgis/rest/services/stream-service-out_GRINDA_LKS/StreamServer',
+      //   title: 'UAB Grinda automobilių parko stebėjimas'
+      // });
+
+      // streamLayer.renderer = {
+      //   type: 'simple',  // autocasts as new SimpleRenderer()
+      //   symbol: {
+      //     type: 'simple-marker',  // autocasts as new SimpleMarkerSymbol()
+      //     size: 6,
+      //     color: 'black',
+      //     outline: {  // autocasts as new SimpleLineSymbol()
+      //       width: 0.5,
+      //       color: 'white'
+      //     }
+      //   } 
+      // } as any as Renderer;
+
+      // this.map.add(streamLayer);
+    
+      // console.log('%c VIEW', 'color: red; font-size: 20px', view);
+
       this.viewService.createSubLayers(this.queryParams, this.map);
 
       //if query paremeteters are defined get zoom and center
-      this._mapService.centerZoom(view, this.queryParams);
+      this._mapService.centerZoom(view, this.queryParams, snapshotUrl);
 
       //add default search widget
       this.search = this.searchService.defaultSearchWidget(view);
       view.ui.add(this.search, {
-        position: "top-left",
+        position: 'top-left',
         index: 2
       });
 

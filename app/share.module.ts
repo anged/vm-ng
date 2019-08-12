@@ -14,8 +14,12 @@ import { MapWidgetsService } from './map-widgets/map-widgets.service';
 import { IdentifyService } from './services/identify/identify.service';
 import { FeatureQueryService } from './query/feature-query.service';
 import { ShareButtonService } from './services/share-button.service';
+import { ThemeNameService } from './services/theme-name.service';
 import { PointAddRemoveService } from './query/point-add-remove.service';
-import { ScaleAndLogoComponent, BasemapToggle, CreditsCompponent, CompassComponent, SidebarComponent, MaintenanceComponent } from './map-widgets';
+import { ScaleAndLogoComponent, BasemapToggle, CreditsCompponent, CompassComponent, MaintenanceComponent, LocateCenterComponent } from './map-widgets';
+
+import { RgbaColorDirective } from './map-widgets';
+
 
 import 'hammerjs';
 import { NgxPopperModule } from 'ngx-popper';
@@ -39,15 +43,17 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   ],
   declarations: [
     HideElementseDirective,
+    RgbaColorDirective,
     ScaleAndLogoComponent,
     BasemapToggle,
     CreditsCompponent,
     CompassComponent,
-    SidebarComponent,
-    MaintenanceComponent
+    MaintenanceComponent,
+    LocateCenterComponent
   ],
   exports: [
     HideElementseDirective,
+    RgbaColorDirective,
     CommonModule,
     FormsModule,
     PerfectScrollbarModule,
@@ -57,8 +63,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BasemapToggle,
     CreditsCompponent,
     CompassComponent,
-    SidebarComponent,
     MaintenanceComponent,
+    LocateCenterComponent
   ]
 })
 export class ShareModule {
@@ -76,6 +82,7 @@ export class ShareModule {
         FeatureQueryService,
         IdentifyService,
         ShareButtonService,
+        ThemeNameService,
         PointAddRemoveService,
         {
           provide: PERFECT_SCROLLBAR_CONFIG,

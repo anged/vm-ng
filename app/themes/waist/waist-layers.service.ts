@@ -22,16 +22,33 @@ export class WaistLayersService {
     const mainGroupLayer = this.mapService.initGroupLayer(themeName + 'group', 'Atliekos', 'show');
     map.add(mainGroupLayer);
 
+    mainGroupLayer.on("layerview-create", (event) => {
+      // create group and add all grouped layers to same group, so we could manage group visibility
+      const groupLayer = this.mapService.initGroupLayer('waistSub' + 'group', 'Konteineriai', 'hide-children');
+      mainGroupLayer.add(groupLayer);
+
+      groupLayer.on("layerview-create", (event) => {
+        forIn(themeLayers, (layer, key) => {
+          const popupEnabled = false;
+      
+          // add feature layer with opacity 0
+          this.mapService.pickCustomThemeLayers(layer, key, queryParams, groupLayer, 0, 'simple-marker');
+
+          this.mapService.pickMainThemeLayers(layer, key, queryParams, popupEnabled, groupLayer);
+        });
+    
+        //set raster layers
+        const rasterLayers = this.mapService.getRasterLayers();
+        this.mapService.setRasterLayers(rasterLayers);
+      });
+
+    });
+
     forIn(themeLayers, (layer, key) => {
       const popupEnabled = false;
 
-      // create group and add all grouped layers to same group, so we could manage group visibility
-      const groupLayer = this.mapService.initGroupLayer(key + 'group', 'Konteineriai', 'hide-children');
-      mainGroupLayer.add(groupLayer);
-      // add feature layer with opacity 0
-      this.mapService.pickCustomThemeLayers(layer, key, queryParams, groupLayer, 0, 'simple-marker');
 
-			this.mapService.pickMainThemeLayers(layer, key, queryParams, popupEnabled, groupLayer);
+
 		});
 
     //set raster layers

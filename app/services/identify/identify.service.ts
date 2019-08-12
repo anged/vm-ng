@@ -55,7 +55,7 @@ export class IdentifyService {
       identifyParams.width = view.width;
       identifyParams.height = view.height;
       identifyParams.layerOption = layerOption;
-
+ 
 			let identificationLayers: any[]
       //foreach item execute task
 			if (specialLayer === 'quarters') {

@@ -4,8 +4,6 @@ import { MapOptions } from '../../options';
 import { MapService } from '../../map.service';
 import { MenuService } from '../../menu/menu.service';
 
-import findKey from 'lodash-es/findKey';
-import pick from 'lodash-es/pick';
 import forIn from 'lodash-es/forIn';
 
 @Injectable()
@@ -32,9 +30,7 @@ export class ViewService {
     //create theme main layers grouped
     //const themeGroupLayer = this.mapService.initGroupLayer("theme-group", "Main theme layers", "show");
 
-    //using lodash find and pick themeLayer from options
-    let themeName = findKey(MapOptions.themes, ['id', snapshotUrl]);
-    let themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
+    let themeLayers = this.mapService.getThemeOptions(snapshotUrl);
 
     forIn(themeLayers, (layer, key) => {
       this.mapService.pickMainThemeLayers(layer, key, queryParams);

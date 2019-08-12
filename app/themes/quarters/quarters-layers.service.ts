@@ -27,26 +27,34 @@ export class QuartersLayersService {
 
     //all theme layers will be added to common group layer
     const mainGroupLayer = this.mapService.initGroupLayer(themeName + 'group', 'Kvartalinė renovacija', 'show');
-    map.add(mainGroupLayer);
-
-    forIn(themeLayers, (layer, key) => {
-      const response = this.mapService.fetchRequest(layer.dynimacLayerUrls)
-      const popupEnabled = false;
-
+		map.add(mainGroupLayer);
+		
+		
+    mainGroupLayer.on("layerview-create", (event) => {
       //create group and add all grouped layers to same group, so we could manage group visibility
-      const groupLayer = this.mapService.initGroupLayer(key + 'group', 'Vilniaus miesto kvartalai', 'hide-children');
+      const groupLayer = this.mapService.initGroupLayer('buildingsInneGroup', 'Šildymo sezono reitingas ir kvartalai pagal renovacijos programą', 'hide-children');
       mainGroupLayer.add(groupLayer);
-      //add feature layer with opacity 0
-      this.mapService.pickCustomThemeLayers(layer, key, queryParams, groupLayer, 0);
 
-			this.mapService.pickMainThemeLayers(layer, key, queryParams, popupEnabled, groupLayer);
+      groupLayer.on("layerview-create", (event) => {
+        forIn(themeLayers, (layer, key) => {
+					const response = this.mapService.fetchRequest(layer.dynimacLayerUrls)
+          const popupEnabled = false;
+      
+					//add feature layer with opacity 0
+					this.mapService.pickCustomThemeLayers(layer, key, queryParams, groupLayer, 0);
 
-			this.addQuarterLayersMeta(response);
-		});
+					this.mapService.pickMainThemeLayers(layer, key, queryParams, popupEnabled, groupLayer);
 
-    //set raster layers
-    const rasterLayers = this.mapService.getRasterLayers();
-    this.mapService.setRasterLayers(rasterLayers);
+					this.addQuarterLayersMeta(response);
+        });
+    
+        //set raster layers
+        const rasterLayers = this.mapService.getRasterLayers();
+        this.mapService.setRasterLayers(rasterLayers);
+      });
+
+    });
+
   }
 
 	addQuarterLayersMeta(mapLayersMeta$) {
