@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
 import { MatStepper } from '@angular/material';
 import { Subscription } from 'rxjs';
 ;
 import { MapService } from '../../../map.service';
-import { ThreeDExtractService } from "./threed-extract.service";
+import { DwgService } from "./dwg.service";
 
 import { leaveEnterTransition } from '../../../animations/leaveEnter-transition';
 
@@ -11,19 +11,21 @@ import Draw = require('esri/views/2d/draw/Draw');
 import PolygonDrawAction = require('esri/views/2d/draw/PolygonDrawAction');
 
 import isEmpty from 'lodash-es/isempty';
+import { s } from '@angular/core/src/render3';
 
 @Component({
-  selector: 'extract-container',
+  selector: 'dwg-container',
   animations: [leaveEnterTransition],
-  templateUrl: './app/menu/tools/threed-extract/extract-container.component.html',
-  styleUrls: ['./app/menu/tools/threed-extract/extract-container.component.css'],
+  templateUrl: './app/menu/tools/dwg/dwg-container.component.html',
+  styleUrls: ['./app/menu/tools/dwg/dwg-container.component.css']
 })
 
-export class ExtractContainerComponent implements OnInit {
+export class DwgContainerComponent implements OnInit {
   // dojo draw events handlers Array
   private eventHandlers = [];
-
   private drawActive = false;
+  private progressBarValue = 0;
+  private gpError = false;
 
   subscription: Subscription;
   view: any;
@@ -35,10 +37,15 @@ export class ExtractContainerComponent implements OnInit {
   @ViewChild('stepFirst') stepFirst: MatStepper;
   @ViewChild('stepSecond') stepSecond: MatStepper;
 
+  @HostListener('window:beforeunload')
+  beforeUnloadEvent() {
+    this.extractService.cancelJob(); 
+  }
+
   constructor(
     private mapService: MapService,
 		private cdr: ChangeDetectorRef,
-    private extractService: ThreeDExtractService,
+    private extractService: DwgService,
   ) { }
 
   ngOnInit() {
@@ -55,6 +62,7 @@ export class ExtractContainerComponent implements OnInit {
       this.extractService.initGeoprocessor(this.view);
     });
   }
+
 
   toggleDraw() {
     this.drawActive = !this.drawActive;
@@ -110,7 +118,7 @@ export class ExtractContainerComponent implements OnInit {
     // listen to draw-complete event on the action
     this.eventHandlers.push(action.on("draw-complete", (e) => {
       this.extractService.drawPolygon(e, this.drawActive, true);
-      if (this.extractService.calculatedUnits < 15) {
+      if (this.extractService.calculatedUnits < this.extractService.limits) {
         this.addStep(this.stepFirst);
         this.toggleDraw();
       }
@@ -126,11 +134,38 @@ export class ExtractContainerComponent implements OnInit {
 
   initExtract(): void {
     this.toggleExtractBtn();
-    this.extractService.submitExtractJob().then(() => {
+    this.setProgressBarValue();
+    this.extractService.submitExtractJob().then((e) => {
+      e ? this.gpError = false : this.gpError = true;
+
       this.addStep(this.stepSecond);
       this.toggleExtractBtn();
+
+      this.resetProgressBarValue();
     });
 
+  }
+
+  setProgressBarValue(): void {
+    this.progressBarValue = 0;
+    // f.e.: if 10 min set, run every 3 s, for at least  9 min 30 s
+    const interval = setInterval(()=> {
+      if (this.progressBarValue > 100 || this.extracDisabled || this.gpError)  {
+        this.gpError ? this.progressBarValue = 0 : this.progressBarValue = 100;
+        clearInterval(interval);
+      } else {
+        if (this.progressBarValue < this.extractService.time) {
+          // f.e.: if 10 min set, in 30 s set progress value to 10
+          this.progressBarValue +=  1/this.extractService.time * 10;
+        } else { 
+          this.progressBarValue += 1/this.extractService.time * 5;
+        }
+      }
+    }, 3000)
+  }
+
+  resetProgressBarValue(): void {
+    this.progressBarValue = 0;
   }
 
   resetTools(): void {
@@ -153,16 +188,18 @@ export class ExtractContainerComponent implements OnInit {
     this.view.graphics.removeAll();
     this.stepper.reset();
 
-    // reset eventHandler events
+    //reset eventHandler events
     this.removeEventHandlers();
 
     //unsuspend layers
     if (this.mapService.getSuspendedIdentitication()) {
       this.mapService.unSuspendLayersToggle();
     }
+
+    this.gpError = false;
   }
 
-  // remove eventHandlers
+  //remove eventHandlers
   removeEventHandlers() {
     this.eventHandlers.forEach((event) => {
       event.remove();

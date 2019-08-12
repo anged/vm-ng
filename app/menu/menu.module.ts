@@ -9,6 +9,7 @@ import { MeasureMapService } from './tools/measure/measure-map.service'; // re-e
 import { ProfileToolService } from './tools/profile/profile-tool.service'; // re-export the named thing
 import { SwipeToolService } from './tools/swipe/swipe-tool.service'; // re-export the named thing
 import { ToolsNameService } from './tools-name.service'; // re-export the named thing
+// import { DwgService } from "./tools/dwg/dwg.service";
 import { MenuComponent } from './menu.component';
 import {
   MenuLayersItvComponent,
@@ -29,7 +30,9 @@ import {
   //PrintMapComponent,
 	SwipeToolComponent,
 	SwipeToolContainerComponent,
-	SwipeContainerComponent
+  SwipeContainerComponent,
+  DwgComponent,
+  DwgContainerComponent
 } from '../menu';
 
 import { NgDraggableModule } from 'angular-draggable';
@@ -55,7 +58,8 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MeasureMapComponent, MeasureContainerComponent,
     ProfileToolComponent, ProfileToolContainerComponent, ProfileContainerComponent, ProfileElevationComponent,
     //PrintMapComponent,
-		SwipeToolComponent, SwipeToolContainerComponent, SwipeContainerComponent
+    SwipeToolComponent, SwipeToolContainerComponent, SwipeContainerComponent,
+    DwgComponent, DwgContainerComponent
   ],
   exports: [MenuComponent, MenuThemesComponent],
   providers: [
@@ -64,7 +68,8 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
     MeasureMapService,
     ProfileToolService,
     SwipeToolService,
-    ToolsNameService
+    ToolsNameService,
+    // DwgService
   ]
 })
 export class MenuModule { }

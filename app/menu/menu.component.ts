@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, Event } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { ToolsNameService } from './tools-name.service';
 import { MapOptions } from '../options';
 import { MapService } from '../map.service';
 import { ShareButtonService } from '../services/share-button.service';
+import { ThemeNameService } from '../services/theme-name.service';
 import { MenuService } from './menu.service';
 import { ProfileToolContainerComponent } from './tools/profile/profile-tool-container.component'; // re-export the named thing
 import { SwipeToolContainerComponent } from './tools/swipe/swipe-tool-container.component'; // re-export the named thing
@@ -68,7 +69,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     private router: Router,
     private sts: SwipeToolService,
 		private toolsNameService: ToolsNameService,
-    private menuService: MenuService, private shareButtonService: ShareButtonService
+    private menuService: MenuService,
+    private shareButtonService: ShareButtonService,
+    private themeNameService: ThemeNameService
 	) {
     // temporary: Hash toggle, reload, new page,
     window.location.hash = '#';
@@ -104,6 +107,10 @@ export class MenuComponent implements OnInit, OnDestroy {
       window.location.hash = '#closed';
       e.preventDefault();  // AG for JQuery same as": return false (in this case, prevents event handlers after click event)
     }
+  }
+
+  clickMenu(event) {
+    this.hash(event);
   }
 
   closeToggle() {
@@ -184,12 +191,9 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     this.watchLayers();
 
-    //get all anchor elements and run hash
-    //create array from array-like object
-    this.aTagList = Array.from(document.getElementsByTagName('a'));
-    this.aTagList.map(a => a.addEventListener('click', this.hash, false));
+    const theme: string = window.location.pathname.slice(1);
 
-    this.themeName = window.location.pathname.slice(1);
+    this.themeName = this.themeNameService.setCurrentThemeName(theme);
 
     //subscribe to sub layer list button activation
     this.subListSubscribtion = this.menuService.subLayersActivation.subscribe(activeState => {
@@ -209,7 +213,9 @@ export class MenuComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         // split # if using menuService
         // split ? if using url query params
-        this.themeName = this.router.url.slice(1).split('#')[0].split('?')[0];
+        const theme = this.router.url.slice(1).split('#')[0].split('?')[0];
+        this.themeName = this.themeNameService.setCurrentThemeName(theme);
+        
 
         // check if route changes completely, because we using hash attribute for menu navigation
         if (this.route !== this.themeName) {
@@ -224,6 +230,8 @@ export class MenuComponent implements OnInit, OnDestroy {
       });
   }
 
+  // currently we do not destroy component
+  // all events and subscribtion are active during whole app lifecycle
   ngOnDestroy() {
     this.subListSubscribtion.unsubscribe();
   }

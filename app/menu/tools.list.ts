@@ -3,5 +3,7 @@ export const ToolsList = {
 	extract: 'extract',
 	print: 'print',
 	profile: 'profile',
-	swipe: 'swipe'
+	swipe: 'swipe',
+	dwg: 'dwg', // Geodesics projects
+	dwgTech: 'dwgTech' // Technical projects
 };

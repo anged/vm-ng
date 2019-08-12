@@ -3,6 +3,8 @@ import { Component, ChangeDetectorRef, NgZone, OnInit,  OnDestroy, ViewChild, El
 import { MapService } from '../../../map.service';
 import { MeasureMapService } from './measure-map.service';
 import { AnalyzeParams } from './AnalyzeParams';
+import { ThemeNameService } from '../../../services/theme-name.service';
+
 import PolygonDrawAction = require('esri/views/2d/draw/PolygonDrawAction');
 
 import isEmpty from 'lodash-es/isempty';
@@ -69,7 +71,8 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private zone: NgZone,
     private mapService: MapService,
-    private measureMapService: MeasureMapService
+    private measureMapService: MeasureMapService,
+    private themeNameService: ThemeNameService
   ) { }
 
   ngOnInit() {

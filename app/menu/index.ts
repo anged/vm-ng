@@ -19,3 +19,5 @@ export { PrintMapComponent } from './tools/print/print-map.component'; // re-exp
 export { SwipeToolComponent } from './tools/swipe/swipe-tool.component'; // re-export the named thing
 export { SwipeToolContainerComponent } from './tools/swipe/swipe-tool-container.component'; // re-export the named thing
 export { SwipeContainerComponent } from './tools/swipe/swipe-container.component'; // re-export the named thing
+export { DwgComponent } from './tools/dwg/dwg.component'; // re-export the named thing
+export { DwgContainerComponent } from './tools/dwg/dwg-container.component'; // re-export the named thing

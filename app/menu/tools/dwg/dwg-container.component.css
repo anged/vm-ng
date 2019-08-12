@@ -78,10 +78,17 @@
 a {
   background: #e61c24;
   color: white !important;
-  padding: 4px;
-  margin: 10px 3px 10px 2px;
+  padding: 3px;
+  margin: 10px 2px 10px 2px;
   display: inline-block;
   border-radius: 2px;
+}
+
+h5 {
+  padding: 12px 15px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
 .alert-danger ol, ul {
@@ -93,4 +100,9 @@ a {
 .mat-error {
   margin-top: 0;
   margin-bottom: 20px;
+}
+
+.vp-mat-bar {
+  position: relative !important;
+  width: 186px;
 }

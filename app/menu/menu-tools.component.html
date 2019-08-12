@@ -9,6 +9,8 @@
 		<extract-3d></extract-3d>
 		<profile-tool></profile-tool>
 		<swipe-tool *ngIf="currentTheme === 'projektai'"></swipe-tool>
+		<extract-dwg [tool]="toolList.dwg" [title]="'Topografijos'" *ngIf="1"></extract-dwg>
+		<extract-dwg [tool]="toolList.dwgTech"  [title]="'Techninių pr.'" *ngIf="1"></extract-dwg>
   </div>
 
 </div>

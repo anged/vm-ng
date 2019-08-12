@@ -68,11 +68,6 @@ export class MenuService {
     this.subLayersState = true;
   }
 
-  //fetch sublayers arrray to allLayers layer group
-  fetchSublayersToLayer() {
-
-  }
-
   //update Sub layer list state after toggle button click
   updateSubState() {
     this.subLayersActive = !this.subLayersActive;

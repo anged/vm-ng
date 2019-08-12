@@ -5,6 +5,7 @@ import { MenuToolsService } from '../../menu-tools.service';
 import { MapOptions } from '../../../options';
 import { Symbols } from '../../symbols';
 import { FileIndex } from './fileIndex';
+import { ToolsList } from '../../tools.list';
 
 import Geoprocessor = require('esri/tasks/Geoprocessor');
 import Draw = require('esri/views/2d/draw/Draw');
@@ -12,35 +13,44 @@ import Graphic = require('esri/Graphic');
 import Polygon = require('esri/geometry/Polygon');
 import FeatureSet = require('esri/tasks/support/FeatureSet');
 import geometryEngine = require('esri/geometry/geometryEngine');
-import { Observable, interval, of } from 'rxjs';
-import { switchMapTo, tap, filter, map, take } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { interval, of, Observable, forkJoin, from } from 'rxjs';
+import { takeUntil, filter, mapTo, tap, switchMapTo, take, map } from 'rxjs/operators';
+import { property } from 'lodash-es';
 
+// AG using only one instance as we not using more than 1 tool at the same time
 @Injectable()
-export class ThreeDExtractService {
+export class DwgService {
   draw: Draw;
   view: any;
   polygon: Polygon;
   graphic: Graphic;
   featureSet = new FeatureSet();
+  tool: string = 'dwg';
+  toolTitle: string;
+  zip1OutputTitle: string;
+  zip2OutputTitle: string;
+  resultsMessage: string;
+  time: number;
+  limits: number;
 
   // file results promises
   fileResults = [];
 
   // file results urls
   fileResultsurls = {
-    pdf: null,
-    collada: null,
-    obj: null,
-    ds: null,
+    zip1: null,
+    zip2: null,
     succes: null
   };
-  calculatedUnits: number
+  calculatedUnits: number | string
   job: IPromise<any>
   geo: Geoprocessor;
 
   constructor(
     private mapService: MapService,
-    private menuToolsService: MenuToolsService
+    private menuToolsService: MenuToolsService,
+    private  http: HttpClient
   ) { }
 
   initDraw(view): Draw {
@@ -51,8 +61,28 @@ export class ThreeDExtractService {
     return this.draw;
   }
 
+  setTool(tool: string): void {
+    this.tool = tool;
+  }
+
   initGeoprocessor(view) {
-    const url = MapOptions.mapOptions.staticServices.extract3DGP.url;
+    const url = this.tool === ToolsList.dwg ? MapOptions.mapOptions.staticServices.extractDWG.url : MapOptions.mapOptions.staticServices.extractDWGTech.url;
+    if (this.tool === ToolsList.dwg) {
+      this.zip1OutputTitle = MapOptions.mapOptions.staticServices.extractDWG.zipFiles.zip1.title;
+      this.zip2OutputTitle = MapOptions.mapOptions.staticServices.extractDWG.zipFiles.zip2.title;
+      this.resultsMessage = MapOptions.mapOptions.staticServices.extractDWG.message;
+      this.time = MapOptions.mapOptions.staticServices.extractDWG.aproxExtractTime;
+      this.toolTitle = MapOptions.mapOptions.staticServices.extractDWG.title;
+      this.limits = MapOptions.mapOptions.staticServices.extractDWG.limitsFrontEnd;
+
+    } else {
+      this.zip1OutputTitle = MapOptions.mapOptions.staticServices.extractDWGTech.zipFiles.zip1.title;
+      this.zip2OutputTitle = MapOptions.mapOptions.staticServices.extractDWGTech.zipFiles.zip2.title;
+      this.resultsMessage = MapOptions.mapOptions.staticServices.extractDWGTech.zipFiles.message;
+      this.time = MapOptions.mapOptions.staticServices.extractDWGTech.aproxExtractTime;
+      this.toolTitle = MapOptions.mapOptions.staticServices.extractDWGTech.title;
+      this.limits = MapOptions.mapOptions.staticServices.extractDWGTech.limitsFrontEnd;
+    }
     this.geo = new Geoprocessor({
       url,
       outSpatialReference: view.spatialReference
@@ -108,8 +138,8 @@ export class ThreeDExtractService {
     this.labelAreas(polygon, area, ended);
   }
 
-  //Label polyon with its area
-  labelAreas(geom, area, ended) {
+  //Label polygon with its area
+  labelAreas(geom, area: number, ended: boolean) {
     const graphic = this.menuToolsService.createAreaLabelGraphic(geom, area, ended, 'ha');
     this.view.graphics.add(graphic);
 
@@ -124,78 +154,55 @@ export class ThreeDExtractService {
 
     this.fileResults = [];
     this.featureSet.features = [this.graphic];
-    params[MapOptions.mapOptions.staticServices.extract3DGP.params.name] = this.featureSet;
+    params[MapOptions.mapOptions.staticServices.extractDWG.params.name] = this.featureSet;
     this.job = this.geo.submitJob(params);
     return this.job.then((res) => {
       const jobId = res.jobId
 
       if (res.jobStatus !== 'job-failed') {
+        const zip1OutputName = this.tool === ToolsList.dwg ? MapOptions.mapOptions.staticServices.extractDWG.zipFiles.zip1.name : MapOptions.mapOptions.staticServices.extractDWGTech.zipFiles.zip1.name;
+        const zip2OutputName = this.tool === ToolsList.dwg ? MapOptions.mapOptions.staticServices.extractDWG.zipFiles.zip2.name : MapOptions.mapOptions.staticServices.extractDWGTech.zipFiles.zip2.name;
         //get results
-        const collada = this.geo.getResultData(jobId, 'COLLADA_zip');
-        const obj = this.geo.getResultData(jobId, 'OBJ_zip');
-        const ds = this.geo.getResultData(jobId, '3DS_zip');
-        const pdf = this.geo.getResultData(jobId, 'PDF_zip_');
-        const blogasDydis = this.geo.getResultData(jobId, 'BlogasDydis');
-
+        const zip1 = this.geo.getResultData(jobId, zip1OutputName);
+        const zip2 = this.geo.getResultData(jobId, zip2OutputName);
         // order is important check enum FileIndex
-        this.fileResults.push.apply(this.fileResults, [blogasDydis, collada, obj, ds, pdf]);
-
-        this.filePromise(this.fileResults);
+        this.fileResults.push.apply(this.fileResults, [zip1, zip2]);
+        this.executeFilesPromises(this.fileResults);
+        return true;
       } else {
         this.fileResultsurls.succes = false;
+        return false;
       }
 
     }).catch(function(error) {
       console.warn('VP Warn', error);
+      // return false and do not execute next step in component
+      return false;
     });
   }
 
-  filePromise(fileResults: any) {
-    //check first promise for fault results
-    fileResults[FileIndex.blogasDydis].then((res) => {
-      if (!res.value) {
-        this.fileResultsurls.succes = true;
-        this.executeFilesPromises(fileResults);
-
-      } else {
-        this.fileResultsurls.succes = false;
-      }
-    });
-  }
 
   executeFilesPromises(fileResults: any[]) {
-    fileResults.forEach((filePromise, index) => {
-      if (index > 0) {
-        filePromise.then((res) => {
-          switch (index) {
-            case FileIndex.obj:
-              this.fileResultsurls.obj = res.value.url;
-              break;
-            case FileIndex.ds:
-              this.fileResultsurls.ds = res.value.url;
-              break;
-            case FileIndex.collada:
-              this.fileResultsurls.collada = res.value.url;
-              break;
-            case FileIndex.pdf:
-              this.fileResultsurls.pdf = res.value.url;
-              break;
-          }
-        }).catch(function(error) {
-          this.fileResultsurls.succes = false;
-          console.warn('VP File Warn', error);
-        });
-      }
-    })
+    forkJoin(
+      fileResults
+    ).subscribe((response) => {
+      console.log(response)
+      this.fileResultsurls.zip1 = response[0].value.url;
+      this.fileResultsurls.zip2 = response[1].value.url;
+      this.fileResultsurls.succes = true
+    });
   }
 
+  //additional method to get job id and cancel job
   getJobinfo(): Observable<string> {
     const geo = this.geo as any;
     const jobs = Object.keys(geo._updateTimers);
     return interval(1000)
     .pipe(
+      // tap(b => { console.log('TAP', b) }),
       switchMapTo(of(jobs)
         .pipe(
+          // tap(jobs => { console.log('TAP', jobs) }),
           filter(jobs => jobs.length > 0),
           map(jobs => jobs[0])
         )
@@ -206,11 +213,19 @@ export class ThreeDExtractService {
 
   cancelJob() {
     if (this.job) {
+      // main method using _updateTimer property
+      const geo = this.geo as any;
+      const jobId = Object.keys(geo._updateTimers)[0];
+      this.geo.cancelJob(jobId);
+
+      // additional method in case  _updateTimer not available
       this.job.cancel();
         this.getJobinfo().subscribe(jobId => {
           this.geo.cancelJob(jobId)}
         )
+    
 
+      
     } 
 
   }

@@ -33,8 +33,8 @@ export const SWIPE_LAYER_URL = new InjectionToken<string>('swipeLayerUrl');
 export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
   @ViewChild('swipeLine') swipeLine: ElementRef;
   @ViewChild('swipeMsg') swipeMsg: ElementRef;
-  private projectsMIL: any;
   private esriRoot: Element;
+  private sidebarWidth = 326;
   // map element
   private mapElement: Element;
   img: string;
@@ -73,6 +73,7 @@ export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
 
     // create dynamic layer and add to map
     const projectsMIL = this.ms.initTiledLayer(url, 'projects-mil');
+    projectsMIL.opacity = 0;
 
     this.view = view;
 
@@ -96,7 +97,7 @@ export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
         )
           .subscribe((lastIndex) => {
             // move layer to last index
-            map.reorder(this.projectsMIL, map.allLayers.items.length);
+            map.reorder(projectsMIL, map.allLayers.items.length);
 
             const canvas = document.getElementsByClassName('esri-display-object')[lastIndex - 1] as any;
             canvas.id = 'projects-mil';
@@ -110,6 +111,9 @@ export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
 
             // init rectangle drawing
             this.drawRect();
+
+            projectsMIL.opacity = 1;
+
           });
       });
     })
@@ -151,7 +155,6 @@ export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
     if (this.view.scale > this.minScale && this.canvas) {
       const rect = this.swipeLine.nativeElement.getBoundingClientRect();
 
-      //console.log('width', rect, this.canvas.width)
       this.rend.setStyle(this.swipeMsg.nativeElement, 'width', (this.mapElement.clientWidth - rect.left) + 'px')
       this.rend.setStyle(this.swipeMsg.nativeElement, 'display', 'flex')
     } else {
@@ -165,7 +168,7 @@ export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
     // clip specific canvas elements
     const rect = this.swipeLine.nativeElement.getBoundingClientRect();
     this.rend.setStyle(this.canvas, 'clip-path', `inset(${0}px ${0}px ${0}px ${x}px)`);
-    this.rend.setStyle(document.getElementById('projects-mil'), 'clip', `rect(${0}px, ${this.canvas.width}px, ${rect.height}px, ${rect.left}px)`);
+    this.rend.setStyle(document.getElementById('projects-mil'), 'clip', `rect(${0}px, ${window.innerWidth-this.sidebarWidth}px, ${rect.height}px, ${rect.left}px)`);
   }
 
   ngOnDestroy(): void {

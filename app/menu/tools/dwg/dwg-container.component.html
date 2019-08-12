@@ -1,4 +1,7 @@
 <div class="extract-content">
+	<h5>
+		{{ extractService.toolTitle }}
+	</h5>
 
 	<div class="extract-results">
 		<div class="feature-count animate">
@@ -26,23 +29,23 @@
 							</div>
 						</div>
 
-						<div hideElement *ngIf="this.extractService.calculatedUnits > 15" @leaveEnterTransition class="alert alert-danger alert-margin-top" role="alert">
+						<div hideElement *ngIf="this.extractService.calculatedUnits > extractService.limits" @leaveEnterTransition class="alert alert-danger alert-margin-top" role="alert">
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
-							Teritorijos plotas negali viršyti 15 ha
+							Teritorijos plotas negali viršyti {{ extractService.limits | number:'1.0-0' }} ha
 						</div>
 
 				</mat-step>
 
 				<mat-step completed="false" #stepSecond [class.active-step]="stepper.selectedIndex===1">
 
-						<ng-template matStepLabel>Formuoti 3D traukimą</ng-template>
+						<ng-template matStepLabel>Formuoti užsakymą</ng-template>
 
 						<div *ngIf="extracDisabled" >
 
 							<div class="alert alert-success" role="alert">
-								Sėkmingai įvedėte teritoriją, galite formuoti 3D  užsakymą.
+								Sėkmingai įvedėte teritoriją, galite formuoti užsakymą.
 							</div>
 
 							<!-- <button mat-button matStepperPrevious>Atgal</button> -->
@@ -53,9 +56,10 @@
 						</div>
 
 						<div *ngIf="!extracDisabled" class="alert alert-success button-margin-top" role="alert">
-							Priklausomai nuo teritorijos ploto, duomenų traukimas gali užtrukti iki kelių minučių.
+							Duomenys yra ruošiami, įprastai tai gali trukti iki {{ this.extractService.time }} minučių.
 						</div>
-						<mat-spinner *ngIf="!extracDisabled" diameter="50"></mat-spinner>
+						<mat-progress-bar *ngIf="!extracDisabled" class="vp-mat-bar" mode="determinate" [value]="progressBarValue"></mat-progress-bar>
+						<!-- <mat-spinner *ngIf="!extracDisabled" diameter="50"></mat-spinner> -->
 
 				</mat-step>
 
@@ -64,25 +68,23 @@
 					<div>
 						<div *ngIf="extractService.fileResultsurls.succes; else errorMsg">
 							<div class="alert alert-success" role="alert">
-								3D ištraukos sėkmingai suformuotos
+								Ištraukos sėkmingai suformuotos
 							</div>
-							<div>Atsisiųskite ištraukas norimu formatu:</div>
-							<a [href]="extractService.fileResultsurls.pdf" target="_blank" rel="noopener noreferrer">PDF</a>
-							<a [href]="extractService.fileResultsurls.ds" target="_blank" rel="noopener noreferrer">3DS</a>
-							<a [href]="extractService.fileResultsurls.collada" target="_blank" rel="noopener noreferrer">Collada</a>
-							<a [href]="extractService.fileResultsurls.obj" target="_blank" rel="noopener noreferrer">OBJ</a>
+							<div>{{ extractService.resultsMessage }}</div>
+							<a [href]="extractService.fileResultsurls.zip1" target="_blank" rel="noopener noreferrer">{{ extractService.zip1OutputTitle }} zip</a>
+							<a [href]="extractService.fileResultsurls.zip2" target="_blank" rel="noopener noreferrer">{{ extractService.zip2OutputTitle }} zip</a>
 							<!-- <button mat-button matStepperPrevious>Back</button> -->
 
 						</div>
 						<button mat-button (click)="resetTools()">Užsakyti iš naujo</button>
 						<ng-template #errorMsg>
-							<mat-spinner class="mat-error" *ngIf="extractService.fileResultsurls.succes === null" diameter="50"></mat-spinner>
-							<div *ngIf="extractService.fileResultsurls.succes !== null" class="alert alert-danger" role="alert">
+							<mat-spinner class="mat-error" *ngIf="!gpError && extractService.fileResultsurls.succes === null" diameter="50"></mat-spinner>
+							<div *ngIf="extractService.fileResultsurls.succes !== null || gpError" class="alert alert-danger" role="alert">
 								Nepavyko suformuoti užklausos.
 								<br>
 								Galimos priežastys:
 								<ol>
-									<li>Į teritoriją nepatenka antžemininis pastatas'-ai	</li>
+									<li>Per didelis užklausų kiekis</li>
 									<li>Kitos priežastys	</li>
 								</ol>
 							</div>
