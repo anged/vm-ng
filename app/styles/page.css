@@ -1119,7 +1119,6 @@ p.build-p:first-child {
 }
 
 .module-build .inner {
-  ;
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -1256,7 +1255,6 @@ p.build-p:first-child {
 .inner p span {
   font-size: 14px;
   line-height: 18px;
-  text-transform: lowercase;
   color: #7D7D7D;
   font-weight: normal;
 }
@@ -1264,7 +1262,6 @@ p.build-p:first-child {
 .inner .first-build p span, .inner .second-build p span {
   font-size: 11px;
   line-height: 18px;
-  text-transform: uppercase;
   color: #5D5D5D;
   font-weight: bold;
 }
@@ -1272,7 +1269,6 @@ p.build-p:first-child {
 .inner .first-build p span, .inner .second-build p span {
   font-size: 11px;
   line-height: 18px;
-  text-transform: uppercase;
   color: #5D5D5D;
   font-weight: bold;
   letter-spacing: 1px;

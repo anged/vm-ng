@@ -6,12 +6,7 @@ esri-map .map {
   margin: 0;
   padding: 0;
   line-height: 1.6;
-  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-}
-
-html {
-  overflow: auto;
 }
 
 body {
@@ -19,7 +14,8 @@ body {
   font-size: 17px;
   letter-spacing: 0;
   color: #4c4c4c;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 :focus {
@@ -1118,7 +1114,7 @@ measure-map {
 
 #filters-button .button-active svg,
 #filters-button-projects .button-active svg,
-#measure-button .button-active svg, {
+#measure-button .button-active svg {
   transform: rotate(-90deg);
 }
 
@@ -1195,8 +1191,6 @@ measure-map {
   width: 100%;
   margin: 10px 0 0;
 }
-
-#filter-wrapper {}
 
 /*ANIMATION*/
 .filters-container {
@@ -1815,8 +1809,6 @@ menu-legend div {
   overflow: hidden;
 }
 
-.menu-header {}
-
 .layers-wrapper {
   /* overflow-y: auto;
     overflow-x: hidden; */
@@ -1910,30 +1902,32 @@ menu-map {
 }
 
 .top-nav {
-  display: none;
+  display: inherit;
   width: 100%;
   height: 100%;
+  width: 100%;
+  max-width: 260px;
   z-index: -1;
   position: fixed;
   top: 0;
   left: 0;
-  opacity: 0;
+  opacity: 1;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  -webkit-transform: translate(-100px, 0);
-  -moz-transform: translate(-100px, 0);
-  -ms-transform: translate(-100px, 0);
-  transform: translate(-100px, 0);
+  -webkit-transform: translate(-100%, 0);
+  -moz-transform: translate(-100%, 0);
+  -ms-transform: translate(-100%, 0);
+  transform: translate(-100%, 0);
+  -webkit-transition: -webkit-transform .125s ease-in;
+  -moz-transition: -moz-transform .125s ease-in;
+  transition: transform .125s ease-in;
 }
 
 .top-nav.mobile-active {
   display: inherit;
   opacity: 1;
-  width: 100%;
-  max-width: 260px;
-  height: 100%;
   -webkit-transform: translate(0, 0);
   -moz-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
@@ -2046,9 +2040,14 @@ ul>li .esri-layer-list__item-title,
   display: none;
 }
 
-.button.close:hover, .mobile-menu-close:hover .button.close, #build-data .button.close:hover {
+.button.close:hover, #build-data .button.close:hover {
   background-color: inherit;
   color: inherit;
+}
+
+.mobile-menu-close:hover .button.close {
+  background-color: inherit;
+  color: #fff;
 }
 
 #tools.sub-menu {
@@ -3239,6 +3238,10 @@ ul>li .esri-layer-list__item-title {
     height: -webkit-calc(100% - 10px);
     height: -o-calc(100% - 10px);
     height: calc(100% - 10px);
+  }
+
+  .top-nav {
+    max-width: 100%;
   }
 
   .top-nav.maps-nav.mobile-active,
