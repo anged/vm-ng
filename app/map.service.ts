@@ -26,6 +26,15 @@ import LayerList = require("esri/widgets/LayerList");
 import QueryTask = require("esri/tasks/QueryTask");
 import Query = require("esri/tasks/support/Query");
 
+import findKey from 'lodash-es/findKey';
+import pick from 'lodash-es/pick';
+
+interface ParamI {
+  x: number,
+  y: number,
+  zoom?: number 
+}
+
 @Injectable()
 export class MapService {
   //selection graphic layer array:
@@ -240,22 +249,22 @@ export class MapService {
   initGraphic(type: string, name: String, attr: any, geom, scale: any = "", graphicLayer, size = '12px', style = 'solid') {
     return new Graphic({
       geometry: geom,
-      symbol: this.initSymbol(type, size, style),
+      symbol: this.initSymbol(type, size, style, [181, 14, 18, 1]),
       layer: graphicLayer
     });
   }
 
   //create selection graphic for feature layers
-  initFeatureSelectionGraphic(type: string, geometry, layer, attributes, size = '12px', style = 'solid') {
+  initFeatureSelectionGraphic(type: string, geometry, layer, attributes, size = '12px', style = 'solid', outlineColor=[181, 14, 18, 1]) {
     return new Graphic({
       attributes,
       geometry,
       layer,
-      symbol: this.initSymbol(type, size, style)
+      symbol: this.initSymbol(type, size, style, outlineColor)
     });
   }
 
-  initSymbol(type: string, size: any, style: string) {
+  initSymbol(type: string, size: any, style: string, outlineColor) {
     let symbol;
     switch (type) {
       case "point":
@@ -263,7 +272,7 @@ export class MapService {
           color: new Color([255, 255, 255, 0]),
           size,
           outline: { // autocasts as new SimpleLineSymbol()
-            color: new Color([181, 14, 18, 1]),
+            color: new Color(outlineColor),
             style,
             width: 3
           }
@@ -272,7 +281,7 @@ export class MapService {
       case "polyline":
         symbol = new SimpleLineSymbol({
           //color: [251,215,140],
-          color: new Color([181, 14, 18, 1]),
+          color: new Color(outlineColor),
           style: "solid",
           width: 3
         });
@@ -282,7 +291,7 @@ export class MapService {
           //color: [251,215,140],
           outline: { // autocasts as new SimpleLineSymbol()
             //color: [251,215,140],
-            color: new Color([181, 14, 18, 1]),
+            color: new Color(outlineColor),
             style: "solid",
             miterLimit: 1,
             width: 3
@@ -523,11 +532,13 @@ export class MapService {
 
   pickCustomThemeLayers(layer, key, queryParams, groupLayer, serviceKey, symbolType = 'simple-fill') {
     const feature = this.initCommonFeatureLayer(layer.dynimacLayerUrls + '/' + serviceKey, layer.opacity, key, layer.name, symbolType);
+    
     if (groupLayer) {
       groupLayer.add(feature);
     } else {
       this.map.add(feature);
     }
+
     //check other url params if exists
     //activate layer defined in url query params
     this.activateLayersVisibility(this.view, queryParams, this.map);
@@ -601,16 +612,53 @@ export class MapService {
     });
   }
 
+  goTo(view: any, { x, y, zoom=0 }: ParamI): void {
+    //center to point and add spatialReference
+    const coordinates = [x ? x : view.center.x, y ? y : view.center.y];
+    const zoomLevel = zoom ? zoom :  view.zoom;
+    const point = new Point({
+      x: coordinates[0],
+      y: coordinates[1],
+      spatialReference: {
+        "wkid": 3346
+      }
+    });
+
+    view.goTo({
+      target: point,
+      zoom: zoomLevel
+    }, MapOptions.animation.options);
+  }
+
+  getThemeOptions(snapshotUrl: string) {
+       //using lodash find and pick themeLayer from options
+       const themeName = findKey(MapOptions.themes, ['id', snapshotUrl]);
+       const themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
+       return themeLayers;
+  }
+
   //on map component OnInit center and zoom based on URL query params
-  centerZoom(view: any, params: any) {
-    let point: any;
-    point = [params.x ? parseFloat(params.x) : view.center.x, params.y ? parseFloat(params.y) : view.center.y];
-    view.zoom = params.zoom;
+  centerZoom(view: any, { x, y, zoom }: ParamI, snapshotUrl=null) {
+    let coordinates = [x ? x : view.center.x, y ? y : view.center.y];
+    view.zoom =  zoom ? zoom :  view.zoom;
+
+    if (snapshotUrl) {
+      const themeName = findKey(MapOptions.themes, ['id', snapshotUrl]);
+      const themeOptions = pick(MapOptions.themes, themeName)[themeName];
+      if (themeOptions.zoomLevel) {
+        view.zoom = themeOptions.zoomLevel;
+      }
+
+      if (themeOptions.zoomCoords) {
+        coordinates = themeOptions.zoomCoords;
+      }
+      
+    }
 
     //center to point and add spatialReference
-    point = new Point({
-      x: point[0],
-      y: point[1],
+    const point = new Point({
+      x: coordinates[0],
+      y: coordinates[1],
       spatialReference: {
         "wkid": 3346
       }
@@ -622,7 +670,7 @@ export class MapService {
   // center Map on Compass clicking
   // init only once
   centerMapWithCompass() {
-    this.centerZoom(this.view, { x: 581205.6135, y: 6064062.25 });
+    this.goTo(this.view, { x: 581205.6135, y: 6064062.25 });
   }
 
 
@@ -633,8 +681,6 @@ export class MapService {
       for (let param in params) {
         if (params.hasOwnProperty(param)) {
           let layer = map.findLayerById(param);
-          // console.log("layer found", layer);
-          // console.log("param", param);
           if (layer) {
             layer.on("layerview-create", (event) => {
               // The LayerView for the layer that emitted this event
@@ -642,9 +688,13 @@ export class MapService {
             });
 
           }
+
         }
+
       }
+
     }
+
   }
 
   findSublayer(layer: any, ids: string, map: any) {
@@ -652,7 +702,7 @@ export class MapService {
     idsArr.forEach(id => {
       let sublayer = layer.findSublayerById(parseInt(id));
       sublayer ? sublayer.visible = true : "";
-    })
+    });
   }
 
   //mobile check
@@ -698,13 +748,36 @@ export class MapService {
   updateOpacity(event) {
     const parentLayer = event.item.layer;
     const actionName = event.action.id;
+    if (parentLayer.layers) {
+      parentLayer.layers.items.forEach(layer => {
+        if (layer.layers) {
+          layer.layers.items.forEach(innerLayer => {
+            // do not set opacity in custom themes
+            // for built in feature layers
+            // as we're minimizing features on init in order to have hover and hitTest functionality
+            if (innerLayer.type !== 'feature') {
+              this.setOpacityValue(innerLayer, actionName)
+            }
+          });
+        } else {
+          this.setOpacityValue(layer, actionName)
+        }
+
+      });
+    } else {
+      this.setOpacityValue(parentLayer, actionName)
+    }
+
+  }
+
+  setOpacityValue(layer, actionName) {
     if (actionName === 'increase-opacity') {
-      if (parentLayer.opacity < 1) {
-        parentLayer.opacity += 0.1;
+      if (layer.opacity < 1) {
+        layer.opacity += 0.1;
       }
     } else if (actionName === 'decrease-opacity') {
-      if (parentLayer.opacity > 0) {
-        parentLayer.opacity -= 0.1;
+      if (layer.opacity > 0) {
+        layer.opacity -= 0.1;
       }
     }
   }
