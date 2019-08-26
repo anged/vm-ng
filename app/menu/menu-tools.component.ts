@@ -7,6 +7,11 @@ import { ToolsList } from './tools.list';
 @Component({
   selector: 'menu-tools',
   templateUrl: './app/menu/menu-tools.component.html',
+  styles: [`
+    a, a:hover {
+      color: inherit;
+    }
+  `],
   providers: [MenuToolsService]
 })
 

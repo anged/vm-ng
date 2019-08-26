@@ -11,6 +11,10 @@
 		<swipe-tool *ngIf="currentTheme === 'projektai'"></swipe-tool>
 		<extract-dwg [tool]="toolList.dwg" [title]="'Topografijos'" *ngIf="1"></extract-dwg>
 		<extract-dwg [tool]="toolList.dwgTech"  [title]="'Techninių pr.'" *ngIf="1"></extract-dwg>
+		<button class="tool-button">
+			<span class="esri-icon-link" aria-label="link icon"></span> 
+			<a href="http://zemelapiai.vplanas.lt/Suliniu_korteles" target="blank" rel="noopener, noreferrer"> Įrenginių kortelės</a>
+		</button>
   </div>
 
 </div>

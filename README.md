@@ -86,7 +86,7 @@ For older commits use package.json with match version exactly instead of compati
 
 
 NPM 6.1.0  
-Node v8.11.2  
+Node v10.x  
 Webpack 4.x  
 
 ## ToDo
