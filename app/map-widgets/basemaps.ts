@@ -15,6 +15,11 @@ export const BASEMAPS: any[] = [
     serviceName: "basemapUrl" //based on Options.ts
   },
   {
+    id: "base-map-19",
+    name: "Ortofoto / C",
+    serviceName: "ortofotoDetailed19Url" //based on Options.ts
+  },
+  {
     id: "base-en-t",
     name: "Inžinerija / T", //engineering plus base-dark
     serviceName: "basemapEngineeringUrl" //based on Options.ts

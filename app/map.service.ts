@@ -165,7 +165,7 @@ export class MapService {
     });
   }
 
-  //update view
+  // update view
   updateView(view) {
     return this.view = view;
   }
@@ -174,7 +174,7 @@ export class MapService {
     return this.view;
   }
 
-  //update map
+  // update map
   updateMap(map) {
     return this.map = map;
   }
@@ -183,7 +183,7 @@ export class MapService {
     return this.map;
   }
 
-  //suspend layers toggle (e.g. suspend layers while drawing with measure tools), define boolean type value, isntead of  this.suspendedIdentitication = !this.suspendedIdentitication
+  // suspend layers toggle (e.g. suspend layers while drawing with measure tools), define boolean type value, isntead of  this.suspendedIdentitication = !this.suspendedIdentitication
   suspendLayersToggle() {
     this.suspendedIdentitication = true;
   }
@@ -196,7 +196,7 @@ export class MapService {
     return this.suspendedIdentitication;
   }
 
-  //for default themes
+  // for default themes
   initDynamicLayer(layer: string, id: string = "itv", title: string = "itv", opacity = 1, sublayers = null, popupEnabled = true) {
     return new MapImageLayer({
       url: layer,
@@ -208,7 +208,7 @@ export class MapService {
     });
   }
 
-  //for projects theme
+  // for projects theme
   initDynamicLayerITV(layer: string, id: string = "itv", name: string = "itv", opacity = 1) {
     return new MapImageLayer({
       url: layer,
@@ -231,7 +231,7 @@ export class MapService {
   initGraphicLayer(id: number, scale: any = {}) {
     return new GraphicsLayer({
       id: "selection-graphic-" + id,
-      //declaredClass: "selected",
+      // declaredClass: "selected",
       maxScale: scale["max"],
       minScale: scale["min"]
     });
@@ -254,7 +254,7 @@ export class MapService {
     });
   }
 
-  //create selection graphic for feature layers
+  //  create selection graphic for feature layers
   initFeatureSelectionGraphic(type: string, geometry, layer, attributes, size = '12px', style = 'solid', outlineColor=[181, 14, 18, 1]) {
     return new Graphic({
       attributes,
@@ -280,7 +280,7 @@ export class MapService {
         break;
       case "polyline":
         symbol = new SimpleLineSymbol({
-          //color: [251,215,140],
+          // color: [251,215,140],
           color: new Color(outlineColor),
           style: "solid",
           width: 3
@@ -303,14 +303,14 @@ export class MapService {
     return symbol;
   }
 
-  //remove selection of feature layer with id name
+  // remove selection of feature layer with id name
   removeFeatureSelection(name = 'FeatureSelection') {
     //remove existing graphic
     const selectionLayer = this.map.findLayerById(name)
     if (selectionLayer) {
       this.map.remove(selectionLayer)
 
-      //FIXME temp removing dublicates
+      // FIXME temp removing dublicates
       this.removeFeatureSelection();
     }
   }

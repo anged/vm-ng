@@ -12,13 +12,14 @@ export const MapOptions: any = {
       }
     },
     staticServices: {
-			//for basemaps const check basemaps.ts in map-widgets folder
+			// for basemaps const check basemaps.ts in map-widgets folder
       basemapUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_LKS_su_rajonu/MapServer',
       basemapDarkUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_dark_calibrated/MapServer',
       ortofotoUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORTOFOTO_2017_LKS/MapServer',
+      ortofotoDetailed19Url: 'http://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORTOFOTO_2019_LKS/MapServer',
       basemapEngineeringUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_Inzinerija/MapServer',
       geometryUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Utilities/Geometry/GeometryServer',
-      //printServiceUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/ITV_teritorijos/ITV_teritorijos_spausdinimas/GPServer/Export%20Web%20Map"
+      //  printServiceUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/ITV_teritorijos/ITV_teritorijos_spausdinimas/GPServer/Export%20Web%20Map"
       printServiceUrl: 'https://zemelapiai.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Interaktyvus_Default/GPServer/Export%20Web%20Map',
       extract3DGP: {
         url: 'https://atviras.vplanas.lt/arcgis/rest/services/Geoprocesingai/3DEXPORT_LIMITED/GPServer/3D_OBJ_GP_su_PIKET_LIMIT',
@@ -56,7 +57,7 @@ export const MapOptions: any = {
         params: {
           name: 'Input_area'
         },
-        limitsFrontEnd: 4.1, //limited size, backend has same limits
+        limitsFrontEnd: 4.1, // limited size, backend has same limits
         title: 'Atsisiųsti techninių projektų DWG fragmentą:',
         message: 'Atsisiųskite patvirtinų arba rengiamų projektų dwg ištraukas zip formatu:',
         icon: 'esri-icon-maps',
