@@ -6,7 +6,7 @@ export const BASEMAPS: any[] = [
   },
   {
     id: "base-orto",
-    name: "Ortofoto",
+    name: "Ortofoto / 2017",
     serviceName: "ortofotoUrl"//based on Options.ts
   },
   {
@@ -16,7 +16,7 @@ export const BASEMAPS: any[] = [
   },
   {
     id: "base-map-19",
-    name: "Ortofoto / C",
+    name: "Ortofoto / 2019",
     serviceName: "ortofotoDetailed19Url" //based on Options.ts
   },
   {

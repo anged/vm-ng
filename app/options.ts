@@ -16,7 +16,7 @@ export const MapOptions: any = {
       basemapUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_LKS_su_rajonu/MapServer',
       basemapDarkUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_basemap_dark_calibrated/MapServer',
       ortofotoUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORTOFOTO_2017_LKS/MapServer',
-      ortofotoDetailed19Url: 'http://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORTOFOTO_2019_LKS/MapServer',
+      ortofotoDetailed19Url: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/ORTOFOTO_2019_LKS/MapServer',
       basemapEngineeringUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Baziniai_zemelapiai/Vilnius_Inzinerija/MapServer',
       geometryUrl: 'https://gis.vplanas.lt/arcgis/rest/services/Utilities/Geometry/GeometryServer',
       //  printServiceUrl: "https://zemelapiai.vplanas.lt/arcgis/rest/services/ITV_teritorijos/ITV_teritorijos_spausdinimas/GPServer/Export%20Web%20Map"
@@ -141,12 +141,12 @@ export const MapOptions: any = {
           // TODO add gallery feature
           gallery: false
         },
-        // vilniausVandenys: { // layer unique name //
-        //   dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
-        //     "https://gis.vv.lt/arcgis/rest/services/Public/Avarijos_public/MapServer",
-        //   opacity: 0.8,
-        //   name: "Vandentiekio ir nuotekų tinklo avarijos" // dynamicLayers group name
-        // }
+        vilniausVandenys: { // layer unique name //
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+            "https://gis.vv.lt/arcgis/rest/services/Public/Avarijos_public/MapServer",
+          opacity: 0.8,
+          name: "Vandentiekio ir nuotekų tinklo avarijos:" // dynamicLayers group name
+        }
       }
     },
     environment: {
@@ -190,6 +190,12 @@ export const MapOptions: any = {
             "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Transportas/MapServer",
           name: "Transportas / Dviračiai:",// dynamicLayers group name
           opacity: 0.9
+        },
+        sisp: { // layer unique name //
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+            "https://arcgis.sisp.lt/arcgis/rest/services/VT_tinklas_atnaujintas/MapServer",
+          opacity: 0.8,
+          name: "Viešojo transporto maršrutai (SĮSP):" // dynamicLayers group name
         }
       }
     },
