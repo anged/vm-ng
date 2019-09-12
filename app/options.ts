@@ -146,6 +146,12 @@ export const MapOptions: any = {
             "https://gis.vv.lt/arcgis/rest/services/Public/Avarijos_public/MapServer",
           opacity: 0.8,
           name: "Vandentiekio ir nuotekų tinklo avarijos:" // dynamicLayers group name
+        },
+        sisp: { // layer unique name //
+          dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
+            "https://arcgis.sisp.lt/arcgis/rest/services/VT_tinklas_atnaujintas/MapServer",
+          opacity: 0.8,
+          name: "Viešojo transporto maršrutai (SĮSP):" // dynamicLayers group name
         }
       }
     },
