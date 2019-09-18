@@ -29,7 +29,7 @@ export const MapOptions: any = {
         }
       },
       extractDWG: {
-        url: 'https://atviras.vplanas.lt/arcgis/rest/services/Geoprocesingai/fgdbDwgZipLimited/GPServer/fgdbDwgZipLimited',
+        url: 'https://atviras.vplanas.lt/arcgis/rest/services/Geoprocesingai/fgdbDwgZipLimitedAlt/GPServer/fgdbDwgZipLimitedAlt',
         params: {
           name: 'Input_area'
         },
@@ -554,7 +554,14 @@ export const MapOptions: any = {
 			//id: "civ-sauga", //theme id class and theme URL query name
 			id: "empty", //theme id class and theme URL query name
 			imgUrl: "./app/img/civiline-sauga.png", //image URL
-			imgAlt: "Tuščia tema" // image alt attribute
+      imgAlt: "Tuščia tema", // image alt attribute
+      layers: {
+        empty: { // layer unique name //
+          dynimacLayerUrls:  //  dynamicService URL, only 1 url per uniquer Layer
+            "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Empty/MapServer",
+            name: "Demonstraciniai sluoksniai"
+        }
+      }
 		},
     // legacyMap: {
     //   production: false, //if theme is ready for production
