@@ -35,7 +35,8 @@ app.get('/*', (req, res) => {
 				oembedUrl: oembedUrl + req.url,
 				oembedDescription: `${themes[themeName].description} `,
 				oembedTitle: `${themes[themeName].name} / ${oembedTitle}`,
-				oembedImg: themes[themeName].imgUrl
+				oembedImg: themes[themeName].imgUrl,
+				noIndex: themes[themeName].name.hide
 			});
 
 		} else {

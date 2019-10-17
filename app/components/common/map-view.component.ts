@@ -145,7 +145,7 @@ export class MapViewComponent implements OnInit, AfterViewInit {
         clearInterval(intervalProgress);
         // currently only one stream layer per theme
         setTimeout(() =>{ this.rend.setStyle(this.bar.nativeElement, 'display', 'block'), 2000});
-        
+
         if (!streamsViews[0].layer.visible) {
           this.rend.setStyle(this.bar.nativeElement, 'display', 'none');
         }

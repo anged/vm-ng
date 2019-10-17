@@ -4,7 +4,10 @@
 	  <title><%= oembedTitle %></title>
 	  <meta charset="UTF-8" />
 	  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"  />
-	  <meta name="description" content="<%= oembedDescription %>" />
+    <meta name="description" content="<%= oembedDescription %>" />
+    <% if(noIndex){ %>
+    <meta name="robots" content="noindex" />
+    <% } %>
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content="<%= oembedTitle %>" />
 		<meta property="og:description" content="<%= oembedDescription %>" />
@@ -19,7 +22,6 @@
     <script >
       window.dojoConfig = {
         has: {
-          "esri-featurelayer-webgl": 1,
           "esri-promise-compatibility": 1
         },
         locale: "lt",

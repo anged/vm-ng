@@ -314,7 +314,7 @@ export const MapOptions: any = {
       imgUrl: "./app/img/soc-paslaugos.png", //image URL
       imgAlt: "Socialinės paslaugos", // image alt attribute
       layers: {
-        elderships: { // layer unique name //
+        socialLayer: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
             "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Socialines_paslaugos/MapServer",
           opacity: 1,
@@ -332,7 +332,7 @@ export const MapOptions: any = {
       imgUrl: "./app/img/saugus-miestas.png", //image URL
       imgAlt: "Saugus miestas", // image alt attribute
       layers: {
-        elderships: { // layer unique name //
+        safeCityLayer: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
             "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Saugus_miestas/MapServer",
           opacity: 1,
@@ -341,7 +341,8 @@ export const MapOptions: any = {
       }
     },
     odlTownProjects: {
-      production: process.env.NODE_ENV !== 'production', //if theme is ready for production
+      production: 'production', //if theme is ready for production
+      hide: true, //hide from themes menu, but add route with functionality
       name: "Senamiesčio projektai", //theme name
       //id: "civ-sauga", //theme id class and theme URL query name
       description: "Senamiesčio projektai",
@@ -351,7 +352,7 @@ export const MapOptions: any = {
       zoomLevel: 4,
       zoomCoords: [583035.2149091947, 6061202.102446364],
       layers: {
-        elderships: { // layer unique name //
+        oldTownLayer: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
             "https://zemelapiai.vplanas.lt/arcgis/rest/services/TESTAVIMAI/maps_vilnius_kilpos/MapServer",
           opacity: 1,
@@ -370,7 +371,7 @@ export const MapOptions: any = {
       zoomLevel: 4,
       zoomCoords: [583035.2149091947, 6061202.102446364],
       layers: {
-        elderships: { // layer unique name //
+        propUnitsLayer: { // layer unique name //
           dynimacLayerUrls:  // dynamicService URL, only 1 url per uniquer Layer
             "https://gis.vplanas.lt/arcgis/rest/services/Interaktyvus_zemelapis/Savivaldybes_turtas/MapServer",
           opacity: 1,
