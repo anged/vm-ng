@@ -5,6 +5,9 @@ import { MapService } from '../../map.service';
 import { MenuService } from '../../menu/menu.service';
 
 import forIn from 'lodash-es/forIn';
+import { IStreamConfig } from '../../services/streams/IStreamConfig';
+import { MapStreamService } from '../../services/streams/map-stream.service';
+import values from 'lodash-es/values';
 
 @Injectable()
 export class ViewService {
@@ -13,7 +16,8 @@ export class ViewService {
 
   constructor(
     private mapService: MapService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private mapStreamService: MapStreamService
   ) { }
 
   setmapElementRef(el: ElementRef): void {
@@ -38,6 +42,16 @@ export class ViewService {
 
     //set raster layers
     this.mapService.setRasterLayers(rasterLayers);
+
+    // set stream layers if exists
+    const streamsConfig: IStreamConfig = this.mapService.getThemeOptions(snapshotUrl, 'streamLayers');
+    if (streamsConfig) {
+      for (const prop in streamsConfig) {
+        const config = streamsConfig[prop];
+        this.mapStreamService.createStreamService(config, prop, queryParams);
+      } 
+    }
+
   }
 
   //create sub Layers

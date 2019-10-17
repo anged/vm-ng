@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 
 import { MapService } from '../../map.service';
@@ -12,8 +12,7 @@ import { ShareButtonService } from '../../services/share-button.service';
 import { IdentifyService } from '../../services/identify/identify.service';
 
 import { Subscription } from 'rxjs';
-import StreamLayer = require('esri/layers/StreamLayer');
-import Renderer = require('esri/renderers/Renderer');
+import { MapStreamService } from '../../services/streams/map-stream.service';
 
 @Component({
   selector: 'esri-map-default',
@@ -47,6 +46,7 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
 	mobileActive = true;
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private _mapService: MapService,
 		private menuService: MenuService,
     private metaService: MetaService,
@@ -55,6 +55,7 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private basemapsService: BasemapsService,
     private viewService: ViewService,
+    private mapStreamService: MapStreamService,
     private shareButtonService: ShareButtonService) { }
 
   select(e) {
@@ -82,7 +83,6 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
       }
     );
     this.queryUrlSubscription.unsubscribe();
-    //console.log("init");
     // add snapshot url and pass path name ta Incetable map service
     // FIXME ActivatedRoute issues
     // const snapshotUrl = this.router.url.slice(1);
@@ -104,27 +104,6 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
       this.viewService.createThemeLayers(snapshotUrl, this.queryParams);
     };
     this.view.then((view) => {
-      // TEMP create stream layer 
-      // const streamLayer = new StreamLayer({
-      //   url: 'https://geoevent.vilnius.lt/arcgis/rest/services/stream-service-out_GRINDA_LKS/StreamServer',
-      //   title: 'UAB Grinda automobilių parko stebėjimas'
-      // });
-
-      // streamLayer.renderer = {
-      //   type: 'simple',  // autocasts as new SimpleRenderer()
-      //   symbol: {
-      //     type: 'simple-marker',  // autocasts as new SimpleMarkerSymbol()
-      //     size: 6,
-      //     color: 'black',
-      //     outline: {  // autocasts as new SimpleLineSymbol()
-      //       width: 0.5,
-      //       color: 'white'
-      //     }
-      //   } 
-      // } as any as Renderer;
-
-      // this.map.add(streamLayer);
-    
       // console.log('%c VIEW', 'color: red; font-size: 20px', view);
 
       this.viewService.createSubLayers(this.queryParams, this.map);
@@ -138,6 +117,9 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
         position: 'top-left',
         index: 2
       });
+
+            // run change detection
+            this.cdr.detectChanges();
 
       //init identification of default or sub layers on MapView
       this.identifyEvent = this.identify.identifyLayers(view);
@@ -167,7 +149,10 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
 
 		// clear and destroy search widget and sear data
 		this.search.clear();
-		this.search.destroy();
+    this.search.destroy();
+    
+    // destroy streams (only if exists)
+    this.mapStreamService.destroy();
 
   }
 }

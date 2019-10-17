@@ -26,6 +26,7 @@ import { NgxPopperModule } from 'ngx-popper';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { MapStreamService } from './services/streams/map-stream.service';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -84,6 +85,7 @@ export class ShareModule {
         ShareButtonService,
         ThemeNameService,
         PointAddRemoveService,
+        MapStreamService,
         {
           provide: PERFECT_SCROLLBAR_CONFIG,
           useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG

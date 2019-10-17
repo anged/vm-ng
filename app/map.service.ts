@@ -489,6 +489,7 @@ export class MapService {
               this.map.add(dynamicLayer);
             }
 
+
             //check other url params if exists
             //activate layer defined in url query params
             this.activateLayersVisibility(this.view, queryParams, this.map);
@@ -502,7 +503,7 @@ export class MapService {
           }
 
         },
-        err => console.error(`VP dyamic layer not loaded`, err)
+        err => console.error(`VP dynamic layer not loaded`, err)
       );
     } else {
       if (groupLayer) {
@@ -630,10 +631,10 @@ export class MapService {
     }, MapOptions.animation.options);
   }
 
-  getThemeOptions(snapshotUrl: string) {
+  getThemeOptions(snapshotUrl: string, layer = 'layers') {
        //using lodash find and pick themeLayer from options
        const themeName = findKey(MapOptions.themes, ['id', snapshotUrl]);
-       const themeLayers = pick(MapOptions.themes, themeName)[themeName]["layers"];
+       const themeLayers = pick(MapOptions.themes, themeName)[themeName][layer];
        return themeLayers;
   }
 
@@ -702,6 +703,10 @@ export class MapService {
     idsArr.forEach(id => {
       let sublayer = layer.findSublayerById(parseInt(id));
       sublayer ? sublayer.visible = true : "";
+      // TODO add logic for streams
+      if (id === '0' && layer.type === 'stream') {
+        layer.visible = true;
+      }
     });
   }
 

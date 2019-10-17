@@ -1,3 +1,5 @@
+import { IStreamConfig } from './services/streams/IStreamConfig';
+
 export const MapOptions: any = {
   defaultTitle: 'Vilniaus miesto interaktyvūs žemėlapiai',
   mapOptions: {
@@ -153,6 +155,15 @@ export const MapOptions: any = {
           opacity: 0.8,
           name: "Viešojo transporto maršrutai (SĮSP):" // dynamicLayers group name
         }
+      },
+      streamLayers: {
+        grindaStream: {
+          url: 'https://geoevent.vilnius.lt/arcgis/rest/services/stream-service-out_GRINDA_LKS/StreamServer',
+          visible: false,
+          title: 'UAB Grinda automobilių parko stebėjimas',
+          setRotation: true,
+          rotationAttribute: 'direction',
+        } as IStreamConfig
       }
     },
     environment: {
@@ -203,6 +214,25 @@ export const MapOptions: any = {
           opacity: 0.8,
           name: "Viešojo transporto maršrutai (SĮSP):" // dynamicLayers group name
         }
+      },
+      streamLayers: {
+        vvtStream: {
+          url: 'https://geoevent.vilnius.lt/arcgis/rest/services/stream-service-out_VIESASIS_TRANSPORTAS_LKS/StreamServer',
+          visible: false,
+          title: 'Viešojo transporto stebėjimas',
+          setRotation: true,
+          rotationAttribute: 'Field7',
+          stops: {
+            type: 'color',
+            field: 'Field1',
+            valueExpressionTitle: 'Legenda',
+            legendOptions: { showLegend: false },
+            stops: [
+              { value: 'Troleibusai', color: '#e61d25' },
+              { value: 'Autobusai', color: '#ef7f1a' }
+            ]
+          }
+        } as IStreamConfig
       }
     },
     leisure: {
