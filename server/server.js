@@ -55,7 +55,8 @@ app.get('/*', (req, res) => {
       oembedUrl: oembedUrl + req.url,
       oembedDescription,
       oembedTitle: oembedTitle,
-      oembedImg
+			oembedImg,
+			noIndex: false
     });
   }
 
