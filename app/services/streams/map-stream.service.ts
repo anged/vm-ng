@@ -24,6 +24,7 @@ export class MapStreamService {
   private timeoutID;
   private config: IStreamConfig;
   private id: string;
+  private queryParams;
   private streamSuspended = false;
   handle;
   constructor(private mapService: MapService) { }
@@ -99,9 +100,11 @@ export class MapStreamService {
     this.config = config;
     this.id = id;
     this.map = this.mapService.returnMap();
+    this.queryParams = queryParams;
+    const streamParams = queryParams[id]; 
     this.stream = this.addStream(url, visible, title, style, color, setRotation, rotationAttribute, stops, id);
     this.map.add(this.stream);
-    this.setLayerView(this.stream, queryParams[id]);
+    this.setLayerView(this.stream, streamParams);
   }
 
   setLayerView(stream: StreamLayer, streamParams: string) {
@@ -131,7 +134,7 @@ export class MapStreamService {
       // TODO remove layers instead of disconnecting
       this.streamLayerView.disconnect();
       this.streamSuspended = true;
-    }, 1000 * 60 * 10);
+    }, 1000 * 60 * 1);
   }
 
   clearTimeOut() {
@@ -196,7 +199,7 @@ export class MapStreamService {
     this.clearTimeOut();
     this.removeHandles();
     this.removeStream(() => {
-      this.createStreamService(this.config, this.id);
+      this.createStreamService(this.config, this.id, this.queryParams);
       this.streamSuspended = false;
     });
   }
