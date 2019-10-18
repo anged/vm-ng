@@ -71,7 +71,7 @@ export class MapViewComponent implements OnInit, AfterViewInit {
     // check for errors and add maintenance mode if neccessary
     basemaps.forEach((basemap) => {
       basemap
-        .then(
+        .when(
           () => { },
           () => { this.maintenanceOn = true; }
         );
@@ -102,7 +102,7 @@ export class MapViewComponent implements OnInit, AfterViewInit {
 	ngAfterViewInit() {
 		this.mapService.setProgressBar(this.bar);
 
-		this.view.then((view) => {
+		this.view.when((view) => {
 			watchUtils.whenTrue(view, "updating", () => {
 				if (this.bar && this.bar.nativeElement) {
 					this.rend.setStyle(this.bar.nativeElement, 'display', 'block');

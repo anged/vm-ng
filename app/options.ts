@@ -163,6 +163,7 @@ export const MapOptions: any = {
           title: 'UAB Grinda automobilių parko stebėjimas',
           setRotation: true,
           rotationAttribute: 'direction',
+          labelFeature: 'plate'
         } as IStreamConfig
       }
     },
@@ -222,14 +223,16 @@ export const MapOptions: any = {
           title: 'Viešojo transporto stebėjimas',
           setRotation: true,
           rotationAttribute: 'Field7',
+          labelFeature: 'Field2',
           stops: {
             type: 'color',
             field: 'Field1',
             valueExpressionTitle: 'Legenda',
             legendOptions: { showLegend: false },
             stops: [
-              { value: 'Troleibusai', color: '#e61d25' },
-              { value: 'Autobusai', color: '#ef7f1a' }
+              // API 13 : value must be number
+              { value: 'Troleibusai', color: '#e61d25', label: 'Troleibusai' },
+              { value: 'Autobusai', color: '#ef7f1a', label: 'Autobusai' }
             ]
           }
         } as IStreamConfig

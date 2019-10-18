@@ -84,7 +84,7 @@ export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
     // allways add to last index and ad id to canvas
     // though layer usually shoul be added at last index
     // (idetify canvas position with specified index)
-    view.then(() => {
+    view.when(() => {
       const index = map.allLayers.items.length;
       map.add(projectsMIL, index + 1);
 

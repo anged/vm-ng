@@ -65,7 +65,7 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
     const map = this.mapService.returnMap();
     let initialLoad = true;
     let timeId;
-    mapView.then((view) => {
+    mapView.when((view) => {
       // reorder layers in map and view
       // allLayers layer must be always last in map array,
       // as we are hiding layer list manualy with css
@@ -83,7 +83,7 @@ export class MenuLayersComponent implements OnInit, OnDestroy {
 
           // reorder stream layer if exist
           if (event.layer.type === 'stream') {
-            map.reorder.layer(event.layer, index)
+            map.reorder(event.layer, index)
           }
 
           if (timeId) {

@@ -103,7 +103,7 @@ export class MapDefaultComponent implements OnInit, OnDestroy {
     if (snapshotUrl) {
       this.viewService.createThemeLayers(snapshotUrl, this.queryParams);
     };
-    this.view.then((view) => {
+    this.view.when((view) => {
       // console.log('%c VIEW', 'color: red; font-size: 20px', view);
 
       this.viewService.createSubLayers(this.queryParams, this.map);

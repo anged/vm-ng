@@ -701,12 +701,14 @@ export class MapService {
   findSublayer(layer: any, ids: string, map: any) {
     let idsArr = ids.split("!");
     idsArr.forEach(id => {
-      let sublayer = layer.findSublayerById(parseInt(id));
-      sublayer ? sublayer.visible = true : "";
-      // TODO add logic for streams
-      if (id === '0' && layer.type === 'stream') {
+      if (layer.type !== 'stream') {
+        let sublayer = layer.findSublayerById(parseInt(id));
+        sublayer ? sublayer.visible = true : "";
+      } else if (id === '0' && layer.type === 'stream') {
+        // logic for streams
         layer.visible = true;
-      }
+      } 
+  
     });
   }
 

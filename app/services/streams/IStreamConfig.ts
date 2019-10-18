@@ -6,5 +6,6 @@ export interface IStreamConfig {
   rotationAttribute?: string;
   color?: string;
   style?: string;
+  labelFeature?: string;
   stops?: any;
 }

@@ -79,7 +79,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     this.view = this.mapService.getView();
 
     // add draw capabilities for temporary geometries
-    this.view.then(() => {
+    this.view.when(() => {
       this.draw = this.measureMapService.initDraw(this.view);
     });
   }

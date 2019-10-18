@@ -29,7 +29,7 @@ export class IdentifyService {
   }
 
   //identify dafault theme layers
-  identifyLayers(view,layerOption = 'all', specialLayer = '') {
+  identifyLayers(view, layerOption = 'all', specialLayer = '') {
     const identifyParams = this.identifyParams();
     view.popup.dockOptions = {
       position: 'bottom-left'
@@ -39,8 +39,6 @@ export class IdentifyService {
       const suspended = this.mapService.getSuspendedIdentitication();
       //store all deffered objects of identify task in def array
       let def = [];
-      let ids: any = this.shareButtonService.getVisibleLayersIds(view);
-      let visibleLayersIds: number[] = ids.identificationsIds;
       view.popup.dockEnabled = false;
       view.popup.dockOptions = {
         // Disables the dock button from the popup
@@ -70,7 +68,6 @@ export class IdentifyService {
         // skip FeatureSelection layer as well wich is created only for Feature selection graphics
 				// TODO remove or refactor allLayers identification
         if ((item.layer.id !== "bufferPolygon") && (item.layer.id !== "allLayers_") && (!suspended) && (item.layer.listMode !== 'hide-children') && (item.layer.type !== 'group' ) && item.layer.type !== 'stream' && (item.layer.id !== 'FeatureSelection') && (item.layer.id !== 'AreaSelection') && (item.layer.popupEnabled) && item.visible) {
-          console.log(item.layer.title)
           //if layer is buffer result, add custom visibility
           if (item.layer.id === "bufferLayers") {
             identifyParams.layerIds = [0];
@@ -79,7 +76,10 @@ export class IdentifyService {
           } else if (specialLayer === 'waist') {
             identifyParams.layerIds = [item.id];
           } else {
-            identifyParams.layerIds = [visibleLayersIds[item.layer.id]];
+            const ids: any = this.shareButtonService.getVisibleLayersIds(view);
+            const visibleLayersIds = ids.identificationsIds;
+            const id = item.layer.id;
+            identifyParams.layerIds = [...visibleLayersIds[id]];
           }
           
           let defferedList = this.identify(item.layer.url).execute(identifyParams).then((response) => {
