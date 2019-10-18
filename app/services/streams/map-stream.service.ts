@@ -134,7 +134,7 @@ export class MapStreamService {
       // TODO remove layers instead of disconnecting
       this.streamLayerView.disconnect();
       this.streamSuspended = true;
-    }, 1000 * 60 * 1);
+    }, 1000 * 60 * 10);
   }
 
   clearTimeOut() {
