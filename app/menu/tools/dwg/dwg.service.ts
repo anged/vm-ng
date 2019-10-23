@@ -197,11 +197,12 @@ export class DwgService {
   //additional method to get job id and cancel job
   getJobinfo(): Observable<string> {
     const geo = this.geo as any;
-    const jobs = Object.keys(geo._updateTimers);
-    return interval(1000)
+    // Get Map keys
+    // only 1 job in Map object
+    const jobs = geo._timers.keys();    return interval(1000)
     .pipe(
       // tap(b => { console.log('TAP', b) }),
-      switchMapTo(of(jobs)
+      switchMapTo(of([jobs.next().value])
         .pipe(
           // tap(jobs => { console.log('TAP', jobs) }),
           filter(jobs => jobs.length > 0),
@@ -214,18 +215,10 @@ export class DwgService {
 
   cancelJob() {
     if (this.job) {
-      // main method using _updateTimer property
-      const geo = this.geo as any;
-      const jobId = Object.keys(geo._updateTimers)[0];
-      this.geo.cancelJob(jobId);
-
-      // additional method in case  _updateTimer not available
       this.job.cancel();
         this.getJobinfo().subscribe(jobId => {
           this.geo.cancelJob(jobId)}
         )
-    
-
       
     } 
 

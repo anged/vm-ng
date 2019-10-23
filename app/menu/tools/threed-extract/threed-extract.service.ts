@@ -14,6 +14,7 @@ import FeatureSet = require('esri/tasks/support/FeatureSet');
 import geometryEngine = require('esri/geometry/geometryEngine');
 import { Observable, interval, of } from 'rxjs';
 import { switchMapTo, tap, filter, map, take } from 'rxjs/operators';
+import { Map } from 'core-js';
 
 @Injectable()
 export class ThreeDExtractService {
@@ -192,10 +193,12 @@ export class ThreeDExtractService {
   getJobinfo(): Observable<string> {
     const geo = this.geo as any;
     console.log(this.geo);
-    const jobs = Object.keys(geo._updateTimers);
+    // Get Map keys
+    // only 1 job in Map object
+    const jobs = geo._timers.keys();
     return interval(1000)
     .pipe(
-      switchMapTo(of(jobs)
+      switchMapTo(of([jobs.next().value])
         .pipe(
           filter(jobs => jobs.length > 0),
           map(jobs => jobs[0])
