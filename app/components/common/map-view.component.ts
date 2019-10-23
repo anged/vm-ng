@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, Renderer2, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 import { MapService } from '../../map.service';
 import { ViewService } from '../../themes/default/view.service';
@@ -17,22 +17,27 @@ import { MapStreamService } from '../../services/streams/map-stream.service';
 	    padding: 6px 10px;
 	    margin-top: 10px;
 			font-size: 14px;
-	}
-	.share-btn {
-		margin-top: 10px;
-    padding: 6px 10px 6px 10px;
-    background-color: #ffffff;
-    border: 1px solid #53565d;
-    border-radius: 2px;
-    font-size: 14px;
-    color: #4c4c4c;
-    float: right;
-	}
-`]
+	  }
+    .share-btn {
+      margin-top: 10px;
+      padding: 6px 10px 6px 10px;
+      background-color: #ffffff;
+      border: 1px solid #53565d;
+      border-radius: 2px;
+      font-size: 14px;
+      color: #4c4c4c;
+      float: right;
+    }
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapViewComponent implements OnInit, AfterViewInit {
+  get commonGetter() {
+    console.log('G Common View')
+    return '';
+  }
   @ViewChild('mainContainer') mainContainer: ElementRef;
-  @ViewChild('bar', {read: ElementRef}) private bar: ElementRef;
+  @ViewChild('bar', { read: ElementRef }) private bar: ElementRef;
 
   queryParams = { basemap: null };
   maintenanceOn = false;
@@ -43,7 +48,7 @@ export class MapViewComponent implements OnInit, AfterViewInit {
 
   view: any;
 
-	isCopiedToClipboard = false;
+  isCopiedToClipboard = false;
 
   constructor(
     private rend: Renderer2,
@@ -59,7 +64,7 @@ export class MapViewComponent implements OnInit, AfterViewInit {
 
   // toggle share container
   shareToggle() {
-		this.isCopiedToClipboard = false;
+    this.isCopiedToClipboard = false;
     this.shareContainerActive = !this.shareContainerActive;
     this.shareUrl = this.shareButtonService.shareToggle(this.shareContainerActive);
   }
@@ -78,10 +83,10 @@ export class MapViewComponent implements OnInit, AfterViewInit {
     });
   }
 
-	copy() {
-		this.isCopiedToClipboard = false;
-		this.isCopiedToClipboard = this.shareButtonService.copyToClipBoard();
-	}
+  copy() {
+    this.isCopiedToClipboard = false;
+    this.isCopiedToClipboard = this.shareButtonService.copyToClipBoard();
+  }
 
   ngOnInit() {
     // create the map
@@ -99,33 +104,33 @@ export class MapViewComponent implements OnInit, AfterViewInit {
 
   }
 
-	ngAfterViewInit() {
-		this.mapService.setProgressBar(this.bar);
+  ngAfterViewInit() {
+    this.mapService.setProgressBar(this.bar);
 
-		this.view.when((view) => {
-			watchUtils.whenTrue(view, "updating", () => {
-				if (this.bar && this.bar.nativeElement) {
-					this.rend.setStyle(this.bar.nativeElement, 'display', 'block');
+    this.view.when((view) => {
+      watchUtils.whenTrue(view, "updating", () => {
+        if (this.bar && this.bar.nativeElement) {
+          this.rend.setStyle(this.bar.nativeElement, 'display', 'block');
 
           this.addLoading(view);
         }
-			});
+      });
 
       // Not using this approach 
       // Because we're not controlling third party services and their order
       // so if theme has stream layers not loaded last, we will not see progress laoding bar
-			// this.view.on("layerview-create", (event) => {
-			// 	console.log(event.layer);
-			// 	if (event.layer.id !== "allLayers" && this.bar && event.layer.type !== 'stream') {
-			// 		setTimeout(() => {
-			// 			// this.rend.setStyle(this.bar.nativeElement, 'display', 'none');
-			// 		}, 600);
+      // this.view.on("layerview-create", (event) => {
+      // 	console.log(event.layer);
+      // 	if (event.layer.id !== "allLayers" && this.bar && event.layer.type !== 'stream') {
+      // 		setTimeout(() => {
+      // 			// this.rend.setStyle(this.bar.nativeElement, 'display', 'none');
+      // 		}, 600);
       //   } else if ( event.layer.type === 'stream') {
       //     this.addLoading(view);
       //   }
-        
-			// });
-		});
+
+      // });
+    });
   }
 
   addLoading(view) {
@@ -144,14 +149,14 @@ export class MapViewComponent implements OnInit, AfterViewInit {
       if (streamsViews.length > 0) {
         clearInterval(intervalProgress);
         // currently only one stream layer per theme
-        setTimeout(() =>{ this.rend.setStyle(this.bar.nativeElement, 'display', 'block'), 2000});
+        setTimeout(() => { this.rend.setStyle(this.bar.nativeElement, 'display', 'block'), 2000 });
 
         if (!streamsViews[0].layer.visible) {
           this.rend.setStyle(this.bar.nativeElement, 'display', 'none');
         }
 
         try {
-          const dataEvent = this.mapStreamService.getStreamLayerView().on('data-received', (e)=> {
+          const dataEvent = this.mapStreamService.getStreamLayerView().on('data-received', (e) => {
             this.rend.setStyle(this.bar.nativeElement, 'display', 'none');
             dataEvent.remove();
           });
@@ -163,8 +168,8 @@ export class MapViewComponent implements OnInit, AfterViewInit {
 
     }, 50);
   }
-  
-  excludeStreamLayersUpdates(view)  {
+
+  excludeStreamLayersUpdates(view) {
     return view.layerViews.items.filter(item => item.layer.type === 'stream' && item.updating)
   }
 

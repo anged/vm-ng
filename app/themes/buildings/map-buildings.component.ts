@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Renderer2, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
@@ -57,9 +57,11 @@ import { Subscription } from 'rxjs';
         padding: 0;
     }
     .buldings-tooltip {
+      position: absolute;
+      bottom: 0;
+      left: 0;
       max-width: 120px;
       width: auto;
-      position: absolute;
       background-color:  #fff;
       border-radius: 2px;
       font-size: 14px;
@@ -93,11 +95,15 @@ import { Subscription } from 'rxjs';
       transition('s-open => s-close', animate('100ms ease-in')),
       transition('s-close => s-open', animate('100ms ease-out'))
     ])
-  ]//,
-  //changeDetection: ChangeDetectionStrategy.OnPush
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 
 })
 export class MapBuildingsComponent implements OnInit, OnDestroy {
+  get buildingsGetter() {
+    console.log('G Buildings')
+    return '';
+  }
   //@ViewChild('mainContainer') mainContainer: ElementRef;
   @ViewChild('heatContent') heatContent;
 
@@ -296,7 +302,7 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
       this.buildingsLayersService.addCustomLayers(this.queryParams, snapshotUrl);
     };
 
-    this.view.then((view) => {
+    this.view.when((view) => {
       this.viewService.createSubLayers(this.queryParams, this.map);
 
       //if query paremeteters are defined get zoom and center

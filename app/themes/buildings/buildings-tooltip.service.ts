@@ -2,13 +2,11 @@ import { Injectable, ElementRef, Renderer2 } from '@angular/core';
 
 @Injectable()
 export class BuildingsTooltipService {
-  parentNode: ElementRef;
-
   //dojo events
   tooltipEvent: any;
-
   // tooltip dom
   tooltip: any;
+  parentNode: ElementRef;
 
   constructor() { }
 
@@ -37,10 +35,9 @@ export class BuildingsTooltipService {
           // TEMP use address atribute for temp condition by showing only tooltip on buildings layer
           if (response.results.length > 0 && response.results[0].graphic.attributes.ADRESAS) {
             stop = false;
-            drawTooltip(response, event)
+            drawTooltip(response, event);
           } else {
             stop = true;
-						drawTooltip(response, event)
             rend.setProperty(document.body.style, 'cursor', 'auto');
           }
         });
@@ -50,12 +47,17 @@ export class BuildingsTooltipService {
     let x = 0;
     let y = 0;
 
+    const self = this;
+
     function drawTooltip(response, event) {
-      if (stop) {
-        return;
-      }
-      //function draw(now) {
       function draw() {
+        rend.setProperty(document.body.style, 'cursor', 'pointer');
+
+        if (stop) {
+          cancelAnimationFrame(moveRaFTimer) 
+          return;
+        }
+
         const top = (event.y + 100) < window.innerHeight ? window.innerHeight - event.y + 10 + 'px' : window.innerHeight - event.y - 30 + 'px';
         const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
         // using 2 feature layers with different attributes
@@ -74,23 +76,12 @@ export class BuildingsTooltipService {
           rend.setStyle(tooltip, 'transform', "translate3d(" + left + ", -" + top + ", 0)");
           rend.setStyle(tooltip, 'padding', '5px');
           rend.setStyle(tooltip, 'display', 'block');
-          rend.setProperty(document.body.style, 'cursor', 'pointer');
-          if (((Math.abs(x - event.x) < 1) && (Math.abs(y - event.y) < 1))) {
-            x = event.x;
-            y = event.y;
-          } else {
-            moveRaFTimer = null;
-            //moveRaFTimer = requestAnimationFrame(draw);
-						moveRaFTimer = draw();
-          }
         }
+
+        moveRaFTimer = requestAnimationFrame(draw);
       }
 
-      if (!0) {
-        //moveRaFTimer = requestAnimationFrame(draw);
-				moveRaFTimer = draw();
-      }
-
+      moveRaFTimer = requestAnimationFrame(draw);
     }
 
   }
