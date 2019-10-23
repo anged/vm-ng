@@ -1,5 +1,5 @@
 <div class="profile-content">
- <div id="draw-line" class="esri-widget-button auto-width esri-widget esri-interactive" title="Brėžti liniją" (click)="isFullScreen = !isFullScreen" [ngClass]="{'active': isFullScreen}">
+ <div id="draw-line" class="esri-widget-button auto-width esri-widget esri-interactive" title="Brėžti liniją" (click)="toggleFullScreen()" [ngClass]="{'active': isFullScreen}">
 	<ng-container *ngIf="isFullScreen, else Expand">
 		  <span aria-hidden="true" class="esri-icon-minimize"></span>
 		Sumažinti

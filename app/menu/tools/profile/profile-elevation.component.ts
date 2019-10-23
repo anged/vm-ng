@@ -1,4 +1,4 @@
-import { Component, Input, SimpleChanges, AfterViewInit, OnChanges, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, SimpleChanges, AfterViewInit, OnChanges, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { Symbols } from '../../symbols';
@@ -99,6 +99,7 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
   view: any;
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private mapService: MapService
   ) { }
 
@@ -197,8 +198,8 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
 
     this.profileChart.data.labels = this.getLabel(data, chartData);
     this.profileChart.data.datasets = datasets;
-
     this.profileChart.update();
+
   }
 
   getLabel(dataZCoord: number[], chartData): string[] {
@@ -257,6 +258,8 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
     this.profileChart.data.datasets = [{ data: [] }];
     this.profileChart.data.labels = [];
     this.profileChart.update();
+    this.cdr.detectChanges();
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -266,6 +269,7 @@ export class ProfileElevationComponent implements AfterViewInit, OnChanges, OnDe
     // do not init chart if fullscreen value has change,
     // run init only on first time
     this.data && !changes.fullscreen && this.initProfileElevationChart(this.data);
+    this.cdr.detectChanges();
 
     if (!this.data && this.profileChart) {
       this.resetChart();

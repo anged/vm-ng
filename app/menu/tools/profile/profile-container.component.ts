@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy, ViewChild, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, NgZone, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 import { ProfileToolService } from './profile-tool.service';
 import { ProfileElevationComponent } from './profile-elevation.component';
-import PolylineDrawAction = require('esri/views/2d/draw/PolylineDrawAction');
+import PolylineDrawAction = require('esri/views/draw/PolylineDrawAction');
 
-import Draw = require('esri/views/2d/draw/Draw');
+import Draw = require('esri/views/draw/Draw');
 
 import isEmpty from 'lodash-es/isempty';
 
@@ -75,7 +75,7 @@ import isEmpty from 'lodash-es/isempty';
 	`]
 })
 
-export class ProfileContainerComponent implements OnInit, OnDestroy {
+export class ProfileContainerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(ProfileElevationComponent) pEC;
   private drawActive = false;
 
@@ -90,9 +90,10 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
 
   constructor(
     private zone: NgZone,
+    private cdr: ChangeDetectorRef,
     private mapService: MapService,
     private profileToolService: ProfileToolService
-  ) { }
+  ) {  }
 
   ngOnInit() {
     this.view = this.mapService.getView();
@@ -103,6 +104,15 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
       this.profileToolService.initGeoprocessor(this.view);
     });
   }
+  
+  ngAfterViewInit() {
+    this.cdr.detach();
+  }
+
+  toggleFullScreen() {
+    this.isFullScreen = !this.isFullScreen;
+    this.cdr.detectChanges();
+  } 
 
   toggleDraw() {
     this.drawActive = !this.drawActive;
@@ -119,6 +129,9 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
       this.enableCreatePolyline();
       this.toggleDraw();
     } else {
+      // important
+      this.cdr.detectChanges();
+
       this.pEC.resetChart();
       this.hasError = false;
       this.view.graphics.removeAll();
@@ -127,6 +140,7 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
       this.mapService.suspendLayersToggle();
       this.enableCreatePolyline();
     }
+
   }
 
   //Polygon approach
@@ -151,7 +165,8 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
 
       // listen to draw-complete event on the action
       this.eventHandlers.push(action.on("draw-complete", (e) => {
-        this.zone.run(() => { this.updatingChart = true; })
+        this.updatingChart = true;
+
         this.profileToolService.createPolylineGraphic(e, true).then((result) => {
           this.zone.run(() => {
             this.updatingChart = false;
@@ -163,9 +178,15 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
               this.chartData = result;
             }
           })
+
+          // important
+          this.cdr.detectChanges();
         });
         this.toggleDraw();
-				this.removeEventHandlers();
+        this.removeEventHandlers();
+
+        // important
+        this.cdr.detectChanges();
       }));
 
     });
@@ -202,6 +223,7 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
     if (this.mapService.getSuspendedIdentitication()) {
       this.mapService.unSuspendLayersToggle();
     }
+
   }
 
   ngOnDestroy() {

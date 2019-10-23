@@ -7,7 +7,7 @@ import { Symbols } from '../../symbols';
 import { AnalyzeParams } from './AnalyzeParams';
 
 import Geoprocessor = require('esri/tasks/Geoprocessor');
-import Draw = require('esri/views/2d/draw/Draw');
+import Draw = require('esri/views/draw/Draw');
 import Graphic = require('esri/Graphic');
 import Polygon = require('esri/geometry/Polygon');
 import geometryEngine = require('esri/geometry/geometryEngine');

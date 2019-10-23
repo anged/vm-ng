@@ -8,7 +8,7 @@ import { FileIndex } from './fileIndex';
 import { ToolsList } from '../../tools.list';
 
 import Geoprocessor = require('esri/tasks/Geoprocessor');
-import Draw = require('esri/views/2d/draw/Draw');
+import Draw = require('esri/views/draw/Draw');
 import Graphic = require('esri/Graphic');
 import Polygon = require('esri/geometry/Polygon');
 import FeatureSet = require('esri/tasks/support/FeatureSet');
@@ -146,7 +146,7 @@ export class DwgService {
     this.calculatedUnits = area.toFixed(4);
   }
 
-  submitExtractJob() {
+  async submitExtractJob() {
     let params = {};
 
     //null succes result
@@ -156,7 +156,8 @@ export class DwgService {
     this.featureSet.features = [this.graphic];
     params[MapOptions.mapOptions.staticServices.extractDWG.params.name] = this.featureSet;
     this.job = this.geo.submitJob(params);
-    return this.job.then((res) => {
+    const jobInfo = await this.job;
+    return this.geo.waitForJobCompletion(jobInfo.jobId).then((res) => {
       const jobId = res.jobId
 
       if (res.jobStatus !== 'job-failed') {

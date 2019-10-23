@@ -7,7 +7,7 @@ import { Symbols } from '../../symbols';
 import { FileIndex } from './fileIndex';
 
 import Geoprocessor = require('esri/tasks/Geoprocessor');
-import Draw = require('esri/views/2d/draw/Draw');
+import Draw = require('esri/views/draw/Draw');
 import Graphic = require('esri/Graphic');
 import Polygon = require('esri/geometry/Polygon');
 import FeatureSet = require('esri/tasks/support/FeatureSet');
@@ -34,7 +34,7 @@ export class ThreeDExtractService {
     ds: null,
     succes: null
   };
-  calculatedUnits: number
+  calculatedUnits: number;
   job: IPromise<any>
   geo: Geoprocessor;
 
@@ -116,7 +116,7 @@ export class ThreeDExtractService {
     this.calculatedUnits = area.toFixed(4);
   }
 
-  submitExtractJob() {
+  async submitExtractJob() {
     let params = {};
 
     //null succes result
@@ -126,9 +126,9 @@ export class ThreeDExtractService {
     this.featureSet.features = [this.graphic];
     params[MapOptions.mapOptions.staticServices.extract3DGP.params.name] = this.featureSet;
     this.job = this.geo.submitJob(params);
-    return this.job.then((res) => {
+    const jobInfo = await this.job;
+    return this.geo.waitForJobCompletion(jobInfo.jobId).then((res) => {
       const jobId = res.jobId
-
       if (res.jobStatus !== 'job-failed') {
         //get results
         const collada = this.geo.getResultData(jobId, 'COLLADA_zip');
@@ -191,6 +191,7 @@ export class ThreeDExtractService {
 
   getJobinfo(): Observable<string> {
     const geo = this.geo as any;
+    console.log(this.geo);
     const jobs = Object.keys(geo._updateTimers);
     return interval(1000)
     .pipe(

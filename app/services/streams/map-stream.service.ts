@@ -89,15 +89,17 @@ export class MapStreamService {
       const expression = `$feature.${labelFeature}`
       const labelClass = new LabelClass({
         labelExpressionInfo: { expression },
-        labelPlacement: 'center-center',
+        labelPlacement: 'above-center',
         minScale: 5000,
         symbol: {
           type: 'text',  // autocasts as new TextSymbol()
+          haloColor: "white",
+          haloSize: "1px",
           rotated: true,
-          yoffset: 0,
+          yoffset: -3,
           color: 'black',
           font: {
-            size: 6
+            size: 7
           },
         } as any
       }) as LabelClass;
@@ -158,7 +160,7 @@ export class MapStreamService {
         this.streamLayerView = null;
       }
 
-    }, 1000 * 60 * 1);
+    }, 1000 * 60 * 10); // 10 min
   }
 
   clearTimeOut() {

@@ -7,8 +7,8 @@ import { DwgService } from "./dwg.service";
 
 import { leaveEnterTransition } from '../../../animations/leaveEnter-transition';
 
-import Draw = require('esri/views/2d/draw/Draw');
-import PolygonDrawAction = require('esri/views/2d/draw/PolygonDrawAction');
+import Draw = require('esri/views/draw/Draw');
+import PolygonDrawAction = require('esri/views/draw/PolygonDrawAction');
 
 import isEmpty from 'lodash-es/isempty';
 import { s } from '@angular/core/src/render3';

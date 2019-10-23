@@ -5,7 +5,7 @@ import { MeasureMapService } from './measure-map.service';
 import { AnalyzeParams } from './AnalyzeParams';
 import { ThemeNameService } from '../../../services/theme-name.service';
 
-import PolygonDrawAction = require('esri/views/2d/draw/PolygonDrawAction');
+import PolygonDrawAction = require('esri/views/draw/PolygonDrawAction');
 
 import isEmpty from 'lodash-es/isempty';
 
@@ -31,7 +31,6 @@ import forOwn from 'lodash-es/forOwn';
 
 export class MeasureContainerComponent implements OnInit, OnDestroy {
   @ViewChild('bufferCheckbox') bufferCheckbox: ElementRef;
-
   view: any;
   draw: any;
   activeToolsState = false;
@@ -64,6 +63,8 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     }
   };
 
+  destroyView: boolean;
+
   // dojo draw events handlers Array
   eventHandlers = [];
 
@@ -73,7 +74,9 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private measureMapService: MeasureMapService,
     private themeNameService: ThemeNameService
-  ) { }
+  ) {
+    this.cdr.detach();
+  }
 
   ngOnInit() {
     this.view = this.mapService.getView();
@@ -171,7 +174,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
         //add or remove disabled attribute and activeTool name
         this.activeToolsState = true;
         this.activeTool = value.name;
-
+        this.cdr.detectChanges();
       }
     });
   }
@@ -183,7 +186,8 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
     }));
 
     //set active tool to empty string
-    this.zone.run(() => {this.activeTool = ""});
+    this.zone.run(() => {this.activeTool = "";
+  });
 
     // unsuspend layers
     if (this.mapService.getSuspendedIdentitication()) {
@@ -194,6 +198,10 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
       } else {
         this.mapService.unSuspendLayersToggle();
       }
+    }
+
+    if (!this.destroyView) {
+      this.cdr.detectChanges();
     }
 
   }
@@ -281,6 +289,7 @@ export class MeasureContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroyView = true;
     this.checkboxChecked = false;
     this.measureMapService.resetCalculate();
     this.mapService.unSuspendLayersToggle();

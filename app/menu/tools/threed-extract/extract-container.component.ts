@@ -7,8 +7,8 @@ import { ThreeDExtractService } from "./threed-extract.service";
 
 import { leaveEnterTransition } from '../../../animations/leaveEnter-transition';
 
-import Draw = require('esri/views/2d/draw/Draw');
-import PolygonDrawAction = require('esri/views/2d/draw/PolygonDrawAction');
+import Draw = require('esri/views/draw/Draw');
+import PolygonDrawAction = require('esri/views/draw/PolygonDrawAction');
 
 import isEmpty from 'lodash-es/isempty';
 
@@ -39,7 +39,9 @@ export class ExtractContainerComponent implements OnInit {
     private mapService: MapService,
 		private cdr: ChangeDetectorRef,
     private extractService: ThreeDExtractService,
-  ) { }
+  ) {
+    // this.cdr.detach();
+  }
 
   ngOnInit() {
     // set previuos step uneditable
@@ -53,6 +55,7 @@ export class ExtractContainerComponent implements OnInit {
     this.view.when(() => {
       this.draw = this.extractService.initDraw(this.view);
       this.extractService.initGeoprocessor(this.view);
+      this.cdr.detectChanges();
     });
   }
 
@@ -75,6 +78,9 @@ export class ExtractContainerComponent implements OnInit {
       this.mapService.suspendLayersToggle();
       this.enableCreatePolygon();
     }
+
+    this.cdr.detectChanges();
+
   }
 
   // add step logic after draw complete event
@@ -83,7 +89,7 @@ export class ExtractContainerComponent implements OnInit {
     this.stepper.selected.completed = true
     this.isLinear = true;
     this.stepper.next();
-		this.cdr.detectChanges();
+		// this.cdr.detectChanges();
   }
 
   resetDraw(): void {
@@ -113,6 +119,7 @@ export class ExtractContainerComponent implements OnInit {
       if (this.extractService.calculatedUnits < 15) {
         this.addStep(this.stepFirst);
         this.toggleDraw();
+        // this.cdr.detectChanges();
       }
 
 			this.removeEventHandlers();
@@ -122,6 +129,7 @@ export class ExtractContainerComponent implements OnInit {
 
   toggleExtractBtn(): void {
     this.extracDisabled = !this.extracDisabled;
+    this.cdr.detectChanges();
   }
 
   initExtract(): void {
@@ -129,7 +137,8 @@ export class ExtractContainerComponent implements OnInit {
     this.extractService.submitExtractJob().then(() => {
       this.addStep(this.stepSecond);
       this.toggleExtractBtn();
-    });
+    }, 
+    (err) => {console.error(err)});
 
   }
 
@@ -171,10 +180,7 @@ export class ExtractContainerComponent implements OnInit {
   }
 
 
-  ngOnDestroy() {
-    // detach to prevent change detection
-    this.cdr.detach();
-    
+  ngOnDestroy() {   
     this.subscription.unsubscribe();
     this.extractService.cancelJob()
     this.resetTools();

@@ -9,6 +9,8 @@ import IdentifyParameters = require("esri/tasks/support/IdentifyParameters");
 import on = require("dojo/on");
 import all = require("dojo/promise/all");
 
+type LayerOptions = 'top'|'visible'|'all';
+
 @Injectable()
 export class IdentifyService {
 	// dojo events
@@ -52,7 +54,7 @@ export class IdentifyService {
       identifyParams.tolerance = 10;
       identifyParams.width = view.width;
       identifyParams.height = view.height;
-      identifyParams.layerOption = layerOption;
+      identifyParams.layerOption = layerOption as LayerOptions;
  
 			let identificationLayers: any[]
       //foreach item execute task

@@ -160,7 +160,7 @@ export class MapService {
     return new GroupLayer({
       id: id,
       title: name,
-      listMode: listMode//,
+      listMode: listMode as "show" | "hide" | "hide-children"//,
       //visibilityMode: "independent"
     });
   }
@@ -239,7 +239,7 @@ export class MapService {
 
   initFeatureSelectionGraphicLayer(name: string, maxScale, minScale, listMode = 'show') {
     return new GraphicsLayer({
-      listMode,
+      listMode: listMode as "show" | "hide" | "hide-children",
       id: name,
       maxScale,
       minScale
@@ -273,7 +273,8 @@ export class MapService {
           size,
           outline: { // autocasts as new SimpleLineSymbol()
             color: new Color(outlineColor),
-            style,
+            // TODO from TS 3.4 us as const
+            style: style as any,
             width: 3
           }
         });

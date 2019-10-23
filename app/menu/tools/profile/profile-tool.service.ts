@@ -6,7 +6,7 @@ import { MenuToolsService } from '../../menu-tools.service';
 import { Symbols } from '../../symbols';
 
 import Geoprocessor = require('esri/tasks/Geoprocessor');
-import Draw = require('esri/views/2d/draw/Draw');
+import Draw = require('esri/views/draw/Draw');
 import Graphic = require('esri/Graphic');
 import FeatureSet = require('esri/tasks/support/FeatureSet');
 import geometryEngine = require('esri/geometry/geometryEngine');
@@ -50,7 +50,8 @@ export class ProfileToolService {
     const url = MapOptions.mapOptions.staticServices.profileGP.url;
     this.geo = new Geoprocessor({
       url,
-      outSpatialReference: view.spatialReference
+      outSpatialReference: view.spatialReference,
+      returnZ: true
     });
     return this.geo;
   }
@@ -103,8 +104,7 @@ export class ProfileToolService {
   submitExtractJob() {
     let params = {
      // TODO expand choice list, curent list: [ , FINEST, 1m ]
-     DEMResolution: 'FINEST', //default '1m'
-     returnZ: true
+     DEMResolution: 'FINEST' //default '1m'
     };
 
     this.featureSet.features = [this.graphic];
