@@ -561,7 +561,7 @@ export const MapOptions: any = {
       imgAlt: "Bendrojo plano palyginimas" // image alt attribute
     },
     treesExternal: {
-      url: "https://vplanas.maps.arcgis.com/apps/Editor/index.html?appid=f99ff842f8d94967aba4e35baa07fe05",
+      url: "https://arcg.is/jvjfe",
       production: true, //if theme is ready for production
       external: true, // external application
       custom: true, // true if theme funcionality is custom
