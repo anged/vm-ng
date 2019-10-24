@@ -100,10 +100,6 @@ import { Subscription } from 'rxjs';
 
 })
 export class MapBuildingsComponent implements OnInit, OnDestroy {
-  get buildingsGetter() {
-    console.log('G Buildings')
-    return '';
-  }
   //@ViewChild('mainContainer') mainContainer: ElementRef;
   @ViewChild('heatContent') heatContent;
 

@@ -600,18 +600,6 @@ export class MapService {
     graphic = this.initSelectionGraphic(results, { max: maxScale, min: minScale }, graphicLayer);
     graphicLayer.add(graphic);
     map.add(graphicLayer);
-
-    //watch layer creaton and asign class to svg graphcis
-    graphicLayer.on("layerview-create", function(event) {
-      // The LayerView for the layer that emitted this event
-      //do not add class and css animation on mobile devices
-      if (!this.mobile) {
-        setTimeout(function() {
-          let node = event.layerView.graphicsView._frontGroup.parent;
-          node ? node.element.className += " selected-itv-point" : node;
-        }, 1000);
-      }
-    });
   }
 
   goTo(view: any, { x, y, zoom=0 }: ParamI): void {

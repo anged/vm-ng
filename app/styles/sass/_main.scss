@@ -656,6 +656,53 @@ li.list-active {
   background-color: #fff;
 }
 
+.esri-swipe--horizontal .esri-swipe__divider {
+  background-color: #e61c24;
+  width: 5px;
+  height: 100vh;
+  padding: 0 !important;
+  margin: 0;
+  cursor: col-resize;
+  left: 50%;
+  position: absolute;
+}
+
+.esri-swipe__handle {
+  position: absolute;
+	width: 20px;
+  left: -8px;
+  padding: 6px 0;
+  border-radius: 2px;
+	display: flex;
+	justify-content: center;
+  align-items: center;
+  background: #e61c24;
+	font-size: 30px;
+	color: #fff;
+}
+
+.esri-swipe__handle:after, .esri-swipe__handle:before {
+  background: none;
+  content: "";
+  position: absolute;
+  width: auto;
+  height: 32px;
+  border: none;
+}
+
+.esri-swipe--horizontal .esri-swipe__container {
+  margin-left: -2px;
+  height: 100%;
+  cursor: col-resize;
+}
+
+.esri-swipe--horizontal .esri-swipe__divider {
+  border: none;
+}
+.esri-swipe.esri-widget {
+  background: none;
+}
+
 #close-print,
 #close-measure {
   padding: 4px;
@@ -1715,6 +1762,7 @@ measure-map {
   background-color: black;
   opacity: 0.4;
   top: 0;
+  left: 0;
   z-index: 8;
 }
 

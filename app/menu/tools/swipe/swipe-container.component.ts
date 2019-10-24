@@ -1,24 +1,16 @@
-import { Component, Inject, InjectionToken, AfterViewInit, OnDestroy, ChangeDetectionStrategy, ViewChild, ElementRef, Renderer2, NgZone } from '@angular/core';
+import { Component, Inject, InjectionToken, AfterViewInit, OnDestroy, ChangeDetectionStrategy, ViewChild, ElementRef, Renderer2, NgZone, ChangeDetectorRef } from '@angular/core';
 
 import { MapService } from '../../../map.service';
 
-import watchUtils = require("esri/core/watchUtils");
-
 import { timer, of } from 'rxjs';
 import { filter, switchMap, first } from 'rxjs/operators';
+import Swipe = require('esri/widgets/Swipe');
 
 export const SWIPE_LAYER_URL = new InjectionToken<string>('swipeLayerUrl');
 
 @Component({
   selector: 'swipe-container',
   template: `
-		<div class="swipe-vertical-line"
-		 (panmove)="onPanMove($event)"
-		 #swipeLine
-		>
-			<span class="swipe-icon esri-icon-handle-vertical" aria-label="handle-vertical icon"></span>
-		</div>
-
 		<div class="swipe-msg" #swipeMsg>
 			Priartinkite mastelį
 		</div>
@@ -31,39 +23,30 @@ export const SWIPE_LAYER_URL = new InjectionToken<string>('swipeLayerUrl');
 })
 
 export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('swipeLine') swipeLine: ElementRef;
   @ViewChild('swipeMsg') swipeMsg: ElementRef;
-  private esriRoot: Element;
-  private sidebarWidth = 326;
-  // map element
-  private mapElement: Element;
   img: string;
   ctx: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
   view;
-  watchU;
+  private swiper: Swipe;
   minScale = 2000;
+  remove =false;
 
   constructor(
     @Inject(SWIPE_LAYER_URL) public swipeLayerUrl: string,
     private ngZone: NgZone,
     private ms: MapService,
-    private rend: Renderer2
+    private rend: Renderer2,
   ) { }
 
   ngAfterViewInit() {
-		this.ngZone.runOutsideAngular(() => {
-			this.mapElement = document.getElementById('map');
-			this.initDomManipulation();
-		});
+    this.ngZone.runOutsideAngular(() => {
+      this.initDomManipulation();
+    });
   }
 
   initDomManipulation(): void {
-    this.esriRoot = document.getElementsByClassName('esri-view-root')[0];
-
-    this.rend.appendChild(this.esriRoot, this.swipeLine.nativeElement);
-
-    // append swipe msg el
+    // // append swipe msg el
     const esriSurface = document.getElementsByClassName('esri-view-surface')[0];
     this.rend.appendChild(esriSurface, this.swipeMsg.nativeElement);
 
@@ -73,7 +56,7 @@ export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
 
     // create dynamic layer and add to map
     const projectsMIL = this.ms.initTiledLayer(url, 'projects-mil');
-    projectsMIL.opacity = 0;
+    projectsMIL.opacity = 1;
 
     this.view = view;
 
@@ -88,95 +71,70 @@ export class SwipeContainerComponent implements AfterViewInit, OnDestroy {
       const index = map.allLayers.items.length;
       map.add(projectsMIL, index + 1);
 
-      projectsMIL.on('layerview-create', () => {
+      projectsMIL.on('layerview-create', (e) => {
+        let trailingLayers = [projectsMIL];
+        const swipe = new Swipe({
+          view: view,
+          trailingLayers,
+          // container: 'swipe',
+          position: 50 // position set to middle of the view (50%)
+        });
+        view.ui.add(swipe);
+        this.swiper = swipe;
+
         // check if our specific canvas has been loaded with rxjs
-        timer(200, 400).pipe(
-          switchMap(() => of(document.getElementsByClassName('esri-display-object').length - 1)),
-          filter(objIndex => index <= objIndex),
+        (timer(200, 400) as any).pipe(
+          switchMap(() => of(document.getElementsByClassName('esri-swipe__container'))),
+          filter((element: HTMLCollection) => element.length > 0),
           first()
         )
-          .subscribe((lastIndex) => {
-            // move layer to last index
-            map.reorder(projectsMIL, map.allLayers.items.length);
+          .subscribe((el) => {
+            const requestAnimation = window.requestAnimationFrame.bind(SwipeContainerComponent);
+            const self = this;
+            const rend = this.rend;
+            const msgEl = this.swipeMsg.nativeElement;
+            const scale = this.minScale;
+            const sContainer = el[0];
+            let stop = false;
 
-            const canvas = document.getElementsByClassName('esri-display-object')[lastIndex - 1] as any;
-            canvas.id = 'projects-mil';
-            this.canvas = canvas;
-            this.ctx = canvas.getContext('2d');
+            this.rend.listen(sContainer, 'pointermove', (position) => {
+              if (position.pressure > 0 && stop) {
+                stop = true;
+                drawRect();
+              }
 
-            const rect = this.swipeLine.nativeElement.getBoundingClientRect();
+            });
 
-            // set initial clip
-            this.setClip(rect.x);
+            // ADHOC draw message container using request animation frame
+            // stop on component destroy
+            function drawRect() {
+              if (self.remove) {
+                return;
+              }
+              // console.log('animate')
+              if (view.scale > scale) {
+                rend.setStyle(msgEl, 'width', 100 - swipe.position + '%')
+                rend.setStyle(msgEl, 'display', 'flex')
+              } else {
+                rend.setStyle(msgEl, 'width', '0px');
+                rend.setStyle(msgEl, 'display', 'none');
+              }
+              requestAnimation(drawRect);
+            }
 
-            // init rectangle drawing
-            this.drawRect();
-
-            projectsMIL.opacity = 1;
+            drawRect();
 
           });
+
       });
-    })
-
-    this.watchU = watchUtils.whenTrue(view, "stationary", () => {
-      if (view.extent) {
-        // init rectangle drawing
-        this.drawRect()
-      }
-
     });
-  }
 
-  onPanMove(event): void {
-    if (this.swipeLine.nativeElement) {
-      // move vertical swipeLine
-      if (event.center.x > 0 && event.center.x < this.mapElement.clientWidth) {
-        this.rend.setStyle(this.swipeLine.nativeElement, 'left', event.center.x + 'px');
-      }
-
-      // if moving left out of the view
-      if (event.center.x <= 0 && event.direction === 2) {
-        this.rend.setStyle(this.swipeLine.nativeElement, 'left', '0px');
-      }
-
-      // if moving right out of the view
-      if (event.center.x > this.mapElement.clientWidth && event.direction === 4) {
-        this.rend.setStyle(this.swipeLine.nativeElement, 'left', document.getElementById('map').clientWidth - 4 + 'px');
-      }
-
-      // clip specific canvas elements
-      this.setClip(event.center.x);
-      this.drawRect();
-    }
-  }
-
-  drawRect() {
-    // TODO check support
-    if (this.view.scale > this.minScale && this.canvas) {
-      const rect = this.swipeLine.nativeElement.getBoundingClientRect();
-
-      this.rend.setStyle(this.swipeMsg.nativeElement, 'width', (this.mapElement.clientWidth - rect.left) + 'px')
-      this.rend.setStyle(this.swipeMsg.nativeElement, 'display', 'flex')
-    } else {
-      this.rend.setStyle(this.swipeMsg.nativeElement, 'width', '0px');
-      this.rend.setStyle(this.swipeMsg.nativeElement, 'display', 'none');
-    }
-  }
-
-  // clip specific canvas elements
-  setClip(x) {
-    // clip specific canvas elements
-    const rect = this.swipeLine.nativeElement.getBoundingClientRect();
-    this.rend.setStyle(this.canvas, 'clip-path', `inset(${0}px ${0}px ${0}px ${x}px)`);
-    this.rend.setStyle(document.getElementById('projects-mil'), 'clip', `rect(${0}px, ${window.innerWidth-this.sidebarWidth}px, ${rect.height}px, ${rect.left}px)`);
   }
 
   ngOnDestroy(): void {
-    this.rend.removeChild(document.getElementsByClassName('esri-view-root')[0], this.swipeLine.nativeElement);
+    this.remove = true;
     this.rend.removeChild(document.getElementsByClassName('esri-view-root')[0], this.swipeMsg.nativeElement);
-    this.rend.removeStyle(this.canvas, 'clip-path');
-    this.rend.removeStyle(this.canvas, 'clip');
-    this.watchU.remove();
+    this.swiper.destroy();
   }
 
 }

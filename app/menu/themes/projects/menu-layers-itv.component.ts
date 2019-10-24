@@ -67,7 +67,7 @@ export class MenuLayersItvComponent implements OnInit {
     const map = this.mapService.returnMap();
     let initialLoad = true;
     //console.log('OnInit Layers')
-    view.then(() => {
+    view.when(() => {
       // reorder layers in map and view
       // allLayers layer must be always last in map array,
       // as we are hiding layer list manualy with css

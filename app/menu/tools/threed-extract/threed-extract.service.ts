@@ -192,7 +192,6 @@ export class ThreeDExtractService {
 
   getJobinfo(): Observable<string> {
     const geo = this.geo as any;
-    console.log(this.geo);
     // Get Map keys
     // only 1 job in Map object
     const jobs = geo._timers.keys();

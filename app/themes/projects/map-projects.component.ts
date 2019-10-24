@@ -266,7 +266,7 @@ export class MapProjectsComponent implements OnInit, OnDestroy {
 		this.renderer2.addClass(document.body, 'map-projects');
 
 
-    this.view.then((view) => {
+    this.view.when((view) => {
       //if query paremeteters defined zoom and center
       this._mapService.centerZoom(view, this.queryParams);
       //do not initVIew on every new subscribe event
