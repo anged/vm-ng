@@ -316,7 +316,7 @@ export class MapKindergartensComponent implements OnInit, OnDestroy {
       this.setActiveBasemap(this.view, this.queryParams.basemap);
     }
 
-    this.view.then((view) => {
+    this.view.when((view) => {
       this.viewService.createSubLayers(this.queryParams, this.map);
 
       //if query paremeteters are defined get zoom and center

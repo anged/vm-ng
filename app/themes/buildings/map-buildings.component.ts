@@ -336,8 +336,10 @@ export class MapBuildingsComponent implements OnInit, OnDestroy {
 
 		// dojo on remove event handler
 		this.identify.removeEvent();
-		this.buildingsTooltipService.clearMemoryAndNodes(this.renderer2);
-    this.clickEvent.remove();
+    this.buildingsTooltipService.clearMemoryAndNodes(this.renderer2);
+    if (this.clickEvent) {
+      this.clickEvent.remove();
+    }
 
     //remove theme layers, exclude allLayers (JS API performance BUG)
     this.map.removeAll();

@@ -1,4 +1,5 @@
 import { Injectable, ElementRef, Renderer2 } from '@angular/core';
+import { Subject } from 'rxjs';
 
 
 @Injectable()
@@ -8,14 +9,16 @@ export class KindergartensTooltipService {
 	tooltipEvent: any;
 
 	// tooltip dom
-	tooltip: any;
+  tooltip: any;
+  private unsubsribe$: Subject<void>;
 
   constructor() { }
 
   addTooltip(view, mapView, element: ElementRef, rend: Renderer2, dataStore): void {
 		const tooltip = rend.createElement('div');
 		this.tooltip = tooltip;
-		this.parentNode = element;
+    this.parentNode = element;
+    
     this.tooltipEvent = mapView.on("pointer-move", (event) => {
       const screenPoint = {
         // hitTest BUG, as browser fails to execute 'elementFromPoint' on 'Document'
@@ -25,8 +28,8 @@ export class KindergartensTooltipService {
       };
 
       if (tooltip.textContent.length > 0) {
-        tooltip.textContent = '';
-        rend.setStyle(tooltip, 'padding', '0px');
+        // tooltip.textContent = '';
+        // rend.setStyle(tooltip, 'padding', '0px');
       };
 
       view.hitTest(screenPoint)
@@ -39,18 +42,24 @@ export class KindergartensTooltipService {
               const filter = dataStore.mainInfo.filter(data => data.GARDEN_ID === values.graphic.attributes.Garden_Id);
               const textMsg = filter[0].LABEL;
               const text = rend.createText(textMsg);
-              rend.appendChild(tooltip, text);
+              console.log(filter[0].LABEL)
+              tooltip.textContent = textMsg;
               rend.appendChild(element.nativeElement, tooltip);
               rend.addClass(tooltip, 'buldings-tooltip')
               rend.setStyle(tooltip, 'top', top);
               rend.setStyle(tooltip, 'left', left);
+              rend.setStyle(tooltip, 'display', 'block');
               rend.setStyle(tooltip, 'padding', '5px');
               rend.setProperty(document.body.style, 'cursor', 'pointer');
             } else {
+              tooltip.textContent = '';
+              rend.setStyle(tooltip, 'display', 'none');
               rend.setProperty(document.body.style, 'cursor', 'auto');
             }
 
           } else {
+            tooltip.textContent = '';
+            rend.setStyle(tooltip, 'display', 'none');
             rend.setProperty(document.body.style, 'cursor', 'auto');
           }
 
@@ -61,7 +70,14 @@ export class KindergartensTooltipService {
 	clearMemoryAndNodes(rend) {
 		if (this.tooltipEvent) {
 			this.tooltipEvent.remove();
-		}
+    }
+    
+    if (this.unsubsribe$) {
+      this.unsubsribe$.next();
+      this.unsubsribe$.complete();
+      this.unsubsribe$ = null;
+    }
+
 		rend.removeChild(this.parentNode, this.tooltip);
 	}
 

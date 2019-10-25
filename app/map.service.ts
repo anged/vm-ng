@@ -671,7 +671,8 @@ export class MapService {
       for (let param in params) {
         if (params.hasOwnProperty(param)) {
           let layer = map.findLayerById(param);
-          if (layer) {
+          // group doesn't have findSubLayerById method
+          if (layer && layer.findSublayerById) {
             layer.on("layerview-create", (event) => {
               // The LayerView for the layer that emitted this event
               this.findSublayer(layer, params[param], map);

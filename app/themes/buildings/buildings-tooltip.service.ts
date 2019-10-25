@@ -1,4 +1,7 @@
 import { Injectable, ElementRef, Renderer2 } from '@angular/core';
+import { EventEmitter } from 'events';
+import { Observable, fromEvent, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Injectable()
 export class BuildingsTooltipService {
@@ -6,17 +9,32 @@ export class BuildingsTooltipService {
   tooltipEvent: any;
   // tooltip dom
   tooltip: any;
+  unsubsribe$: Subject<void>;
   parentNode: ElementRef;
-
+  private clear = false;
   constructor() { }
 
   addTooltip(view, mapView, element: ElementRef, rend: Renderer2) {
     const tooltip = rend.createElement('div');
     this.tooltip = tooltip;
     this.parentNode = element;
+    this.clear = false;
     rend.appendChild(element.nativeElement, this.tooltip);
     const requestAnimationFrame = window.requestAnimationFrame.bind(window)
     let stop = true;
+
+    this.unsubsribe$ = new Subject<void>();
+
+    fromEvent(document, 'pointermove').pipe(
+      takeUntil(this.unsubsribe$)
+    ).subscribe((e) => {
+      if ((e.target as Element).tagName === 'CANVAS') {
+        stop = false;
+      } else {
+        stop = true;
+      }
+    });
+
     this.tooltipEvent = mapView.on("pointer-move", (event) => {
       const screenPoint = {
         // hitTest BUG, as browser fails to execute 'elementFromPoint' on 'Document'
@@ -30,12 +48,18 @@ export class BuildingsTooltipService {
         rend.setStyle(tooltip, 'padding', '0px');
       };
 
+      let response;
       view.hitTest(screenPoint)
         .then((response) => {
           // TEMP use address atribute for temp condition by showing only tooltip on buildings layer
           if (response.results.length > 0 && response.results[0].graphic.attributes.ADRESAS) {
+            const newRsponse = response.results[0].graphic.attributes.ADRESAS;
             stop = false;
-            drawTooltip(response, event);
+            if (response !== newRsponse) {
+              drawTooltip(response, event);
+            }
+
+            response = newRsponse;
           } else {
             stop = true;
             rend.setProperty(document.body.style, 'cursor', 'auto');
@@ -43,7 +67,6 @@ export class BuildingsTooltipService {
         });
     });
 
-    let moveRaFTimer;
     let x = 0;
     let y = 0;
 
@@ -53,8 +76,8 @@ export class BuildingsTooltipService {
       function draw() {
         rend.setProperty(document.body.style, 'cursor', 'pointer');
 
-        if (stop) {
-          cancelAnimationFrame(moveRaFTimer) 
+        if (stop || self.clear) {
+          rend.setStyle(tooltip, 'display', 'none');
           return;
         }
 
@@ -62,9 +85,6 @@ export class BuildingsTooltipService {
         const left = (event.x + 100) < window.innerWidth ? event.x + 20 + 'px' : (event.x - 110) + 'px';
         // using 2 feature layers with different attributes
         const values = response.results[0] ? response.results[0]: response.results[1];
-        x += (event.x - x) * 0.5;
-        y += (event.y - y) * 0.5;
-
         // don't add tooltip in case of stop variable
         // or in case we hit graphic object with no attributes
         if (!stop && values.graphic.attributes) {
@@ -78,18 +98,24 @@ export class BuildingsTooltipService {
           rend.setStyle(tooltip, 'display', 'block');
         }
 
-        moveRaFTimer = requestAnimationFrame(draw);
+        requestAnimationFrame(draw);
       }
 
-      moveRaFTimer = requestAnimationFrame(draw);
+      requestAnimationFrame(draw);
     }
-
+ 
   }
 
   clearMemoryAndNodes(rend) {
+    this.clear = true;
 		if (this.tooltipEvent) {
 			this.tooltipEvent.remove();
-		}
+    }
+    
+    this.unsubsribe$.next();
+    this.unsubsribe$.complete();
+    this.unsubsribe$ = null;
+
     rend.removeChild(this.parentNode, this.tooltip);
   }
 
