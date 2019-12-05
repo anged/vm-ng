@@ -492,6 +492,7 @@ export class SidebarBuildingsComponent implements OnChanges {
         borderWidth: 2
       }]
     };
+    this.chartLabels = []
     const dataset = data.datasets[0];
     this.heatingClassesData.classes.forEach((name) => {
       this.chartLabels.push(this.heatingClassesData.dataByClasses[name].label + ', viso pastatų: ');
@@ -583,7 +584,7 @@ export class SidebarBuildingsComponent implements OnChanges {
     // close main heat content while adding animation
     this.innerState = 's-close';
 
-    // check if heat data is emptyŠF
+    // check if heat data is empty
     if (this.sidebarHeatContent && (this.mainSidebarState === 's-open')) {
       //add setTimeout  for main heat content animation
       setTimeout(() => {
